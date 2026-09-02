@@ -36,6 +36,11 @@ dev = [
     "httpx>=0.28",
 ]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = ["gpu: ต้องมี GPU + โมเดลจริง (deselect ด้วย -m 'not gpu')"]
+
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
