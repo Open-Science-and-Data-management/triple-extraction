@@ -19,6 +19,17 @@ class DocumentIn(BaseModel):
     text: str
     meta: dict | None = None
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "text": "Barack Obama was born in Honolulu, Hawaii.",
+                    "meta": {"source": "wikipedia", "lang": "en"},
+                }
+            ]
+        }
+    }
+
 
 class JobOut(BaseModel):
     id: str
@@ -26,6 +37,22 @@ class JobOut(BaseModel):
     triples: list[dict] | None
     timing: dict | None
     error: str | None = None
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id": "a1b2c3d4",
+                    "status": "done",
+                    "triples": [
+                        {"head": "Barack Obama", "type": "place of birth", "tail": "Honolulu"}
+                    ],
+                    "timing": {"extract_s": 1.23},
+                    "error": None,
+                }
+            ]
+        }
+    }
 
 
 def create_app(store: JobStore | None = None, extractor=None,
@@ -47,23 +74,27 @@ def create_app(store: JobStore | None = None, extractor=None,
         if start_worker:
             worker.stop()
 
-    app = FastAPI(lifespan=lifespan)
+    app = FastAPI(
+        lifespan=lifespan,
+        title="Triple Extraction API",
+        description="ส่งข้อความเข้ามา แล้วดึง (head, relation, tail) triples ด้วย REBEL — สร้าง job แล้ว poll ผลที่ /v1/jobs/{id}",
+    )
 
-    @app.post("/v1/documents")
+    @app.post("/v1/documents", summary="สร้าง job สกัด triples จากข้อความ")
     def create_document(doc: DocumentIn):
         if len(doc.text) > MAX_TEXT_CHARS:
             raise HTTPException(413, f"text exceeds {MAX_TEXT_CHARS} characters")
         job = store.create_job(text=doc.text, meta=doc.meta)
         return {"job_id": job["id"]}
 
-    @app.get("/v1/jobs/{job_id}", response_model=JobOut)
+    @app.get("/v1/jobs/{job_id}", response_model=JobOut, summary="ดูสถานะ/ผลลัพธ์ของ job")
     def get_job(job_id: str):
         job = store.get_job(job_id)
         if job is None:
             raise HTTPException(404, "job not found")
         return job
 
-    @app.get("/v1/health")
+    @app.get("/v1/health", summary="ตรวจสถานะ service + device")
     def health():
         return {"status": "ok", "device": extractor.device}
 

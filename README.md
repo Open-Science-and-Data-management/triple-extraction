@@ -19,6 +19,8 @@ uv run python -m triple_extraction.smoke "Some text..."         # ยิง pipe
 
 ### เรียกใช้ API
 
+Swagger UI (พร้อม input examples กด Try it out ได้เลย): <http://localhost:8000/docs>
+
 ```bash
 # ส่งเอกสาร → ได้ job_id ทันที (ไม่บล็อกรอ inference)
 curl -s -X POST localhost:8000/v1/documents \
