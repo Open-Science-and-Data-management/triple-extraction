@@ -22,7 +22,7 @@
   - Acceptance: ดึง job queued → processing → done/failed ด้วย extractor ที่ inject ได้ (mock ใน test); ตายระหว่าง extract → mark failed; ตอนบูต mark stale processing เป็น failed
   - Verify: `uv run pytest tests/test_worker.py`
   - Files: `triple_extraction/worker.py`, `tests/test_worker.py`
-- [ ] Task 6: FastAPI app (3 endpoints) + wire worker
+- [x] Task 6: FastAPI app (3 endpoints) + wire worker
   - Acceptance: `POST /v1/documents` (422 ผิดรูป, 413 เกิน 500k chars) / `GET /v1/jobs/{id}` (404 ไม่พบ, คืน triples+timing เมื่อ done) / `GET /v1/health` (คืน device); response ฝัง `extractor: "rebel"`
   - Verify: `uv run pytest tests/test_api.py` (mock extractor)
   - Files: `triple_extraction/api.py`, `tests/test_api.py`

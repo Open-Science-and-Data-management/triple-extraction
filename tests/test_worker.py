@@ -10,8 +10,10 @@ class FakeExtractor:
     """mock extractor — คืน triples ตายตัว ไม่แตะโมเดล"""
 
     def __init__(self, triples=None, error=None):
+        self.device = "cpu"
+        # เลียน contract ของ RebelExtractor: ทุก triple มี extractor ฝังมาแล้ว
         self.triples = triples if triples is not None else [
-            {"head": "a", "relation": "r", "tail": "b"}
+            {"head": "a", "relation": "r", "tail": "b", "extractor": "rebel"}
         ]
         self.error = error
 
@@ -29,7 +31,8 @@ def test_process_next_completes_job_with_triples_and_timing(tmp_path):
 
     got = store.get_job(job["id"])
     assert got["status"] == "done"
-    assert got["triples"] == [{"head": "a", "relation": "r", "tail": "b"}]
+    assert got["triples"] == [{"head": "a", "relation": "r", "tail": "b",
+                               "extractor": "rebel"}]
     assert "total_ms" in got["timing"]
 
 
