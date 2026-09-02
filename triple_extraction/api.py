@@ -6,6 +6,7 @@ worker เป็น background thread ใน process เดียวกับ uv
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+import torch
 from pydantic import BaseModel, Field
 
 from triple_extraction.db import JobStore
@@ -35,7 +36,10 @@ def create_app(store: JobStore | None = None, extractor=None,
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        print(f"device: {extractor.device}", flush=True)
+        gpu = (
+            f": {torch.cuda.get_device_name(0)}" if extractor.device == "cuda" else ""
+        )
+        print(f"device: {extractor.device}{gpu}", flush=True)
         worker.recover()  # ตอนบูต: mark job ค้าง processing เป็น failed เสมอ
         if start_worker:
             worker.start()

@@ -26,7 +26,7 @@
   - Acceptance: `POST /v1/documents` (422 ผิดรูป, 413 เกิน 500k chars) / `GET /v1/jobs/{id}` (404 ไม่พบ, คืน triples+timing เมื่อ done) / `GET /v1/health` (คืน device); response ฝัง `extractor: "rebel"`
   - Verify: `uv run pytest tests/test_api.py` (mock extractor)
   - Files: `triple_extraction/api.py`, `tests/test_api.py`
-- [ ] Task 7: ปลายทางจริง end-to-end + save
+- [x] Task 7: ปลายทางจริง end-to-end + save
   - Acceptance: startup พิมพ์ `cuda: NVIDIA GeForce RTX 5060 Ti`; ยิงเอกสารจริงผ่าน curl → triples จริง; kill+restart → job เดิมอ่านซ้ำได้; `uv run pytest` เขียว
   - Verify: รัน server จริง + curl ตาม README; commit spec/plan/tasks/โค้ด
   - Files: `README.md`, ทุกไฟล์ข้างบน (commit)

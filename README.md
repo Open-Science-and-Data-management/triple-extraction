@@ -3,10 +3,44 @@
 พื้นที่เก็บโค้ดสำหรับศึกษาและทดลองการสกัดความสัมพันธ์/ไตรภาค `(หัว, ความสัมพันธ์, เป้าหมาย)` จากข้อความ
 ด้วยโมเดลหลากหลายแนวทาง ทั้งแบบ zero-shot (GLiREL, GLiDRE) และแนวทางตามรายงานวิจัยอื่น ๆ
 
+## REBEL HTTP API (`triple_extraction/`)
+
+ห่อ `Babelscape/rebel-large` ด้วย FastAPI — ส่งข้อความทั้งฉบับ ได้ triples
+`{head, relation, tail, sentence_index, start, end, extractor}` โดยไม่ต้องจัดการ
+sentence split / batching / parsing เอง (spec: `docs/specs/SPEC-rebel-triple-api.md`)
+
+```bash
+uv sync                                    # ติดตั้ง deps + spaCy model (torch CUDA build)
+uv run uvicorn triple_extraction.api:app --port 8000            # เริ่ม server (พิมพ์ device ที่ startup)
+uv run pytest                              # รัน test ทั้งหมด (mock extractor, ไม่ต้องมี GPU)
+uv run pytest -m gpu                       # smoke test โมเดลจริงบน GPU
+uv run python -m triple_extraction.smoke "Some text..."         # ยิง pipeline จริง 1 ข้อความ
+```
+
+### เรียกใช้ API
+
+```bash
+# ส่งเอกสาร → ได้ job_id ทันที (ไม่บล็อกรอ inference)
+curl -s -X POST localhost:8000/v1/documents \
+  -H 'Content-Type: application/json' \
+  -d '{"text": "Barack Obama was born in Honolulu.", "meta": {"source": "demo"}}'
+# → {"job_id": "..."}
+
+# คำถามสถานะ job (queued/processing → done/failed พร้อม triples + timing)
+curl -s localhost:8000/v1/jobs/<job_id>
+
+curl -s localhost:8000/v1/health    # → {"status": "ok", "device": "cuda"}
+```
+
+- text เกิน 500,000 ตัวอักษร → `413`, body ผิดรูป → `422`, job ไม่พบ → `404`
+- Job เก็บใน SQLite (`data/jobs.db`, env `TRIPLE_EXTRACTION_DB` เปลี่ยนพาธได้) —
+  restart server แล้ว job เสร็จแล้วอ่านซ้ำได้, job ค้าง `processing` ตอนบูตถูก mark `failed`
+
 ## โครงสร้าง
 
 | พาธ | คำอธิบาย |
 |---|---|
+| `triple_extraction/` | **REBEL API** — FastAPI + worker thread + SQLite + GPU inference |
 | `glirel/` | **GLiREL** — zero-shot relation extraction (spaCy NER → GLiREL) |
 | `glidre/` | **GLiDRE** — document relation extraction (GLiNER-based) พร้อม wrapper `process_text()` |
 | `docs/` | รายงานการทดลอง + เอกสารอ้างอิง |
@@ -31,7 +65,7 @@ uv run python test_3para.py
 uv run python test_glidre.py
 ```
 
-โมเดลจะถูกโหลดครั้งแรกจาก Hugging Face Hub (`jackboyla/glirel-large-v0`, `cea-list-ia/glidre_large`)
+โมเดลจะถูกโหลดครั้งแรกจาก Hugging Face Hub (`jackboyla/glirel-large-v0`, `cea-list-ia/glidre_large`, `Babelscape/rebel-large`)
 จำเป็นต้องดาวน์โหลดครั้งแรกก่อนใช้งาน
 
 ## เอกสาร / รายงาน
