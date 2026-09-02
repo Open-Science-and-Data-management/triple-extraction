@@ -18,7 +18,7 @@
   - Acceptance: แบ่งประโยคด้วย spaCy, batch ยิงโมเดลบน device ที่ settings กำหนด (cuda default), คืน triples พร้อม `sentence_index, start, end`; โมเดล lazy-load
   - Verify: `uv run pytest tests/test_extractor.py` (โหลดโมเดลจริง, mark gpu) + `uv run python -m triple_extraction.smoke "..."` พิมพ์ device
   - Files: `triple_extraction/extractor/rebel.py` (ต่อ), `triple_extraction/smoke.py`, `tests/test_gpu_smoke.py`
-- [ ] Task 5: Worker thread + job lifecycle
+- [x] Task 5: Worker thread + job lifecycle
   - Acceptance: ดึง job queued → processing → done/failed ด้วย extractor ที่ inject ได้ (mock ใน test); ตายระหว่าง extract → mark failed; ตอนบูต mark stale processing เป็น failed
   - Verify: `uv run pytest tests/test_worker.py`
   - Files: `triple_extraction/worker.py`, `tests/test_worker.py`
