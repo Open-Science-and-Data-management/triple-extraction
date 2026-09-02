@@ -14,7 +14,7 @@
   - Acceptance: parse `<trip> h <sep> r <sep> t` ได้ triples; edge case (คอลัมน์ขาด/เกิน, ว่าง, ไม่มี tag) รอด + เก็บ raw ใน `unparsed`
   - Verify: `uv run pytest tests/test_rebel_parse.py`
   - Files: `triple_extraction/extractor/__init__.py`, `triple_extraction/extractor/rebel.py`, `tests/test_rebel_parse.py`
-- [ ] Task 4: RebelExtractor (sentence split + batch + GPU infer)
+- [x] Task 4: RebelExtractor (sentence split + batch + GPU infer)
   - Acceptance: แบ่งประโยคด้วย spaCy, batch ยิงโมเดลบน device ที่ settings กำหนด (cuda default), คืน triples พร้อม `sentence_index, start, end`; โมเดล lazy-load
   - Verify: `uv run pytest tests/test_extractor.py` (โหลดโมเดลจริง, mark gpu) + `uv run python -m triple_extraction.smoke "..."` พิมพ์ device
   - Files: `triple_extraction/extractor/rebel.py` (ต่อ), `triple_extraction/smoke.py`, `tests/test_gpu_smoke.py`
