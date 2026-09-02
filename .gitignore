@@ -1,6 +1,9 @@
 .venv
 */configs
 */data
+data/
 glidre/glidre
 */img
 *.log
+__pycache__/
+.pytest_cache/
