@@ -10,7 +10,7 @@
   - Acceptance: สร้าง db อัตโนมัติ, `create_job/get_job/complete_job/fail_job/recover_stale_jobs` ทำงาน; WAL + busy_timeout ตั้งครบ
   - Verify: `uv run pytest tests/test_db.py`
   - Files: `triple_extraction/settings.py`, `triple_extraction/db.py`, `tests/test_db.py`
-- [ ] Task 3: REBEL output parser (TDD)
+- [x] Task 3: REBEL output parser (TDD)
   - Acceptance: parse `<trip> h <sep> r <sep> t` ได้ triples; edge case (คอลัมน์ขาด/เกิน, ว่าง, ไม่มี tag) รอด + เก็บ raw ใน `unparsed`
   - Verify: `uv run pytest tests/test_rebel_parse.py`
   - Files: `triple_extraction/extractor/__init__.py`, `triple_extraction/extractor/rebel.py`, `tests/test_rebel_parse.py`
