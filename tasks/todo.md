@@ -6,7 +6,7 @@
   - Acceptance: `uv sync` สำเร็จ; `uv run python -c "import torch; print(torch.cuda.is_available())"` → `True`; torch เป็น cu128 build
   - Verify: คำสั่งด้านบน + `uv run python -c "import spacy; spacy.load('en_core_web_sm')"`
   - Files: `pyproject.toml`, `.gitignore`, `.python-version`
-- [ ] Task 2: settings + SQLite db (schema, CRUD, restart recovery)
+- [x] Task 2: settings + SQLite db (schema, CRUD, restart recovery)
   - Acceptance: สร้าง db อัตโนมัติ, `create_job/get_job/complete_job/fail_job/recover_stale_jobs` ทำงาน; WAL + busy_timeout ตั้งครบ
   - Verify: `uv run pytest tests/test_db.py`
   - Files: `triple_extraction/settings.py`, `triple_extraction/db.py`, `tests/test_db.py`
