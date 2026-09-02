@@ -2,7 +2,7 @@
 
 > Plan: `tasks/plan.md` · Spec: `docs/specs/SPEC-rebel-triple-api.md`
 
-- [ ] Task 1: uv project + deps พร้อม CUDA torch
+- [x] Task 1: uv project + deps พร้อม CUDA torch
   - Acceptance: `uv sync` สำเร็จ; `uv run python -c "import torch; print(torch.cuda.is_available())"` → `True`; torch เป็น cu128 build
   - Verify: คำสั่งด้านบน + `uv run python -c "import spacy; spacy.load('en_core_web_sm')"`
   - Files: `pyproject.toml`, `.gitignore`, `.python-version`

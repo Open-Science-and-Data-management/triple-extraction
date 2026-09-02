@@ -12,7 +12,10 @@ dependencies = [
     "uvicorn>=0.34",
     "spacy>=3.8.16",
     "transformers==4.52.4",
+    "huggingface_hub<1.0",
     "torch>=2.7",
+    # spaCy model ไม่อยู่บน PyPI — ติดตั้งจาก wheel ตรง ให้ `uv sync` ได้ครบในรอบเดียว
+    "en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl",
 ]
 
 [tool.uv]
