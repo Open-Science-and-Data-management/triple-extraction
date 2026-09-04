@@ -1,0 +1,71 @@
+[project]
+name = "bakeoff"
+version = "0.1.0"
+description = "Bake-off r2: encoder zero-shot dedicated IE — one-off benchmark script"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "torch",
+    # thinc 8.2.4 คอมไพล์กับ numpy 1.x (dtype size mismatch กับ numpy 2.x) — 8.2.5+ รองรับ numpy 2
+    "thinc>=8.2.5",
+]
+
+[project.scripts]
+bakeoff = "scripts.bakeoff:main"
+
+# transformers pin ชนกันระหว่าง relik (<4.42) กับ glirel/gliner (4.52.4)
+# → แยก dependency-groups ต่อ model สลับ env ด้วย:
+#   uv sync --no-default-groups --group relik   (ReLiK)
+#   uv sync                                     (gliner group = default)
+[dependency-groups]
+gliner = [
+    # relik pin spacy<3.8 จึงอยู่ per-group — 3.7.x พังกับ pydantic v1 shim บน py3.12.13
+    "spacy>=3.8",
+    "typer",
+    "transformers==4.52.4",
+    "huggingface-hub<1.0",
+    "gliner",
+    "glirel",
+    # pins ตาม memory glirel-setup: glirel ลืมประกาศ logaru + deps ของ tokenizer
+    "loguru",
+    "sentencepiece",
+    "protobuf",
+    "tiktoken",
+    # glirel→seqeval ลาก scikit-learn 1.3.0 เก่าเกิน (พังกับ numpy 2.x) — force เวอร์ชันใหม่
+    "scikit-learn>=1.6",
+    # NuExtract 2.0 โหลดผ่าน transformers ตรง ๆ ไม่ต้องมี lib แยก
+    "typer-slim[standard]>=0.21.2",
+]
+relik = [
+    "relik",
+    "transformers>=4.41,<4.42",
+    "huggingface-hub<1.0",
+    # relik import optimum.onnxruntime ตอนโหลด module แต่ลืมประกาศ
+    "optimum[onnxruntime]",
+    # pathtools import `imp` ตอน runtime ด้วย (ผ่าน wandb<0.18)
+    "zombie-imp",
+]
+
+[tool.uv]
+default-groups = ["gliner"]
+# group ทั้งสอง pin transformers ขัดกันโดยตั้งใจ — ห้าม install พร้อมกัน
+conflicts = [[{ group = "gliner" }, { group = "relik" }]]
+
+# torch cu128 wheel — รองรับ sm_89 + driver CUDA 13.3
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[tool.uv.extra-build-dependencies]
+# pathtools (ผ่าน relik→wandb) ใช้ stdlib `imp` ที่ถูกลบใน 3.12 — ใส่ backport เข้า build env
+pathtools = ["zombie-imp"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]

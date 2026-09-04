@@ -18,15 +18,15 @@
 
 ### Phase 1: Foundation
 
-- [ ] **Task 1: uv project + deps** — `bake-off/pyproject.toml` (deps: torch cu128, transformers==4.52.4, huggingface_hub<1.0, gliner, glirel, relik, spacy; `[project.scripts] bakeoff = "scripts.bakeoff:main"`) + `uv sync` + spacy `en_core_web_sm`
+- [x] **Task 1: uv project + deps** — `bake-off/pyproject.toml` (deps: torch cu128, transformers==4.52.4, huggingface_hub<1.0, gliner, glirel, relik, spacy; `[project.scripts] bakeoff = "scripts.bakeoff:main"`) + `uv sync` + spacy `en_core_web_sm`
 
   **Acceptance criteria:**
-  - [ ] `uv run python -c "import torch, gliner, glirel, relik, spacy"` ผ่าน
-  - [ ] `torch.cuda.is_available()` เป็น True บนเครื่อง
+  - [x] `uv run python -c "import torch, gliner, glirel, relik, spacy"` ผ่าน *(ปรับ: pin ชนตามคาด → แยก dependency-groups ต่อ model ตามที่ human ยืนยัน — ตรวจ import แยก per group: gliner group = torch/gliner/glirel/spacy ✓, relik group = torch/relik ✓)*
+  - [x] `torch.cuda.is_available()` เป็น True บนเครื่อง
 
   **Verification:**
-  - [ ] `cd bake-off && uv sync` จบไม่ error
-  - [ ] `uv run python -m spacy download en_core_web_sm` จบไม่ error
+  - [x] `cd bake-off && uv sync` จบไม่ error
+  - [x] `uv run python -m spacy download en_core_web_sm` จบไม่ error
 
   **Dependencies:** None · **Files:** `bake-off/pyproject.toml` · **Scope:** S
 
@@ -45,7 +45,7 @@
   **Dependencies:** Task 1 · **Files:** `bake-off/schema/seed.json`, ประโยคฝังใน `scripts/bakeoff.py` · **Scope:** S
 
 ### Checkpoint: Foundation
-- [ ] `uv sync` + import ครบ + CUDA พร้อม
+- [x] `uv sync` + import ครบ + CUDA พร้อม
 - [ ] data โหลดได้, category ครบ
 
 ### Phase 2: Framework + Smoke (fail fast ตัวเสี่ยงก่อน)
