@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 from collections.abc import Callable
@@ -70,7 +71,10 @@ def load_data() -> tuple[dict, list[dict]]:
     return schema, SENTENCES
 
 
-MODELS = ["gliner-relex", "glirel", "gliner-pyrheads", "relik", "nuextract"]
+# r3 เติม decoder: gollie — knowcoder ตัดตอน smoke (ดาวน์โหลด 13GB ไม่เสร็จ — report/raw/deaths.json)
+MODELS = ["gliner-relex", "glirel", "gliner-pyrheads", "relik", "nuextract", "gollie"]
+# static map สำหรับ report — ห้ามใช้ factory (โหลดโมเดลทั้งคันเพื่ออ่าน field เดียว)
+PARADIGM = {"nuextract": "decoder", "knowcoder": "decoder", "gollie": "decoder"}
 
 
 @dataclass
@@ -87,6 +91,21 @@ class Triple:
 class Adapter:
     name: str
     extract: Callable[[list[str]], list[list[Triple]]]
+    paradigm: str = "encoder"  # r3: ใช้แยกสีบนแผนที่ r3 (encoder | decoder)
+
+
+def _tok_char_probs(tok, out_ids, scores) -> tuple[str, list[tuple[int, int, float]]]:
+    """map token → ช่วง char ใน output text + prob ของ token (greedy) — ใช้ร่วมกันของ decoder r3"""
+    import torch
+
+    text = tok.decode(out_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+    tok_probs = torch.softmax(torch.stack(scores, 0), -1).max(-1).values
+    ranges, prev = [], 0
+    for i in range(len(out_ids)):
+        end = len(tok.decode(out_ids[:i + 1], skip_special_tokens=True, clean_up_tokenization_spaces=False))
+        ranges.append((prev, end, float(tok_probs[i])))  # ponytail: decode ซ้ำ O(n²) — output สั้นจึงช่างมัน
+        prev = end
+    return text, ranges
 
 
 # stub คืน [] ทุกประโยค — ทยอยแทนด้วย loader จริงใน Task 4–7
@@ -302,6 +321,137 @@ def make_relik() -> Adapter:
 ADAPTER_FACTORIES["relik"] = make_relik
 
 
+def make_knowcoder() -> Adapter:
+    """ตัดตอน smoke — checkpoint ดาวน์โหลดไม่เสร็จ (สายช้า ~3.3MB/s) บันทึกใน report/raw/deaths.json
+    เก็บโค้ดไว้เพราะ prompt format วิจัยแล้ว (ICT-GoKnow/KnowCoder eval/src) — รันต่อได้ถ้าเอา checkpoint มาครบ"""
+    import re
+
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+
+    # prompt format จาก eval/src ของ ICT-GoKnow/KnowCoder (build_prompt + template/RE):
+    # system + "Input:\n{schema code + sentence}\nOutput:\n" → completion code, greedy, stop ที่ '"""'
+    ckpt = "golaxy/KnowCoder-7B-IE"
+    bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.float16)
+    tok = AutoTokenizer.from_pretrained(ckpt, legacy=False)
+    model = AutoModelForCausalLM.from_pretrained(ckpt, quantization_config=bnb).eval()
+
+    schema = load_schema()
+    # class name ต้องเป็น identifier → camel จาก relation hint แล้ว map กลับตอน parse (แค่เปลี่ยนชื่อ ไม่กรองผล)
+    to_camel = lambda h: "".join(w.capitalize() for w in h.split())  # noqa: E731
+    rel_by_class = {to_camel(h): h for h in schema["relation_hints"]}
+    class_defs = "\n".join(
+        f"class {cls}(Relation):\n"
+        "\tdef __init__(self, head_entity: Entity, tail_entity: Entity):\n"
+        "\t\tsuper().__init__(head_entity=head_entity, tail_entity=tail_entity)"
+        for cls in rel_by_class)
+    system = ("You are a highly skilled assistant at digesting "
+              "and extracting information from textual content. "
+              "Below is an input containing standard type definitions "
+              "and textual content. Please complete it with the "
+              "extracted information in the form of structured code.")
+    query_head = f'''class Entity:
+\tdef __init__(self, name: str):
+\t\tself.name = name
+
+class Relation:
+\tdef __init__(self, head_entity: Entity, tail_entity: Entity):
+\t\tself.head_entity = head_entity
+\t\tself.tail_entity = tail_entity
+{class_defs}
+"""
+This is an object-oriented programming task: Some Relation Classes and related Entity Classes are defined above. Please instantiate all the corresponding Relation Objects in the following sentence.
+"""
+sentence = '''
+    # output format: results = [\n\tRel(Entity("head"), Entity("tail"))] — pattern เดียวกับ convert_re.py
+    triple_re = re.compile(r'(\w+)\(\s*\w+\("(.+?)"\),\s*\w+\("(.+?)"\)')
+
+    def parse(text: str, ranges: list[tuple[int, int, float]]) -> list[Triple]:
+        out = []
+        for m in triple_re.finditer(text):
+            rel = rel_by_class.get(m.group(1), m.group(1))  # นอก schema → เก็บชื่อ class เดิม (ไม่ทิ้ง)
+            ps = [p for s, e, p in ranges if e > m.start() and s < m.end()]
+            score = sum(ps) / len(ps) if ps else 0.0
+            out.append(Triple(m.group(2), rel, m.group(3), score))
+        return out
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        results = []
+        for s in sentences:  # ponytail: batch=1 ต่อประโยค ตาม pipeline จริง (spaCy แบ่งแล้วยิงทีละประโยค)
+            prompt = "\n".join([system, "Input:\n" + query_head + f'"{s}"', "Output:\n"])
+            inputs = tok(prompt, return_tensors="pt").to("cuda")
+            with torch.inference_mode():
+                gen = model.generate(**inputs, do_sample=False, num_beams=1, max_new_tokens=640,
+                                     output_scores=True, return_dict_in_generate=True)
+            out_ids = gen.sequences[0][inputs["input_ids"].shape[1]:]
+            text, ranges = _tok_char_probs(tok, out_ids, gen.scores)
+            results.append(parse(text, ranges))
+        return results
+
+    return Adapter("knowcoder", extract, paradigm="decoder")
+
+
+ADAPTER_FACTORIES["knowcoder"] = make_knowcoder
+
+
+def make_gollie() -> Adapter:
+    import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+
+    # โหลดเป็น LlamaForCausalLM แท้ (config.model_type = "llama", rope_scaling = null) —
+    # auto_map ของ checkpoint ชี้ modeling_flash_llama ที่ hard-require flash-attn (คอมไพล์ไม่ได้ที่นี่)
+    # ponytail: prompt <2k token → vanilla attention ผลต่างศูนย์จาก flash path; คุยกับ trust_remote_code ทีหลังถ้าผลผิดปกติ
+    ckpt = "HiTZ/GoLLIE-7B"  # CodeLlama-7b + ฝึกด้วย guideline เป็น Python class
+    bnb = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.float16)
+    tok = AutoTokenizer.from_pretrained(ckpt)
+    model = AutoModelForCausalLM.from_pretrained(ckpt, quantization_config=bnb,
+                                                 trust_remote_code=False).eval()
+
+    schema = load_schema()
+    # schema เป็น Python class ตาม format ของ src/tasks/ace/prompts.py (RE: arg1/arg2) + template/prompt.txt
+    to_camel = lambda h: "".join(w.capitalize() for w in h.split())  # noqa: E731
+    rel_by_class = {to_camel(h): h for h in schema["relation_hints"]}
+    guideline = "\n".join(
+        f'@dataclass\n\nclass {cls}(Relation):\n    """The "{hint}" relation. Both spans must be '
+        f'extracted verbatim from the text."""\n\n    arg1: str  # head entity, verbatim span\n'
+        f'    arg2: str  # tail entity, verbatim span'
+        for cls, hint in rel_by_class.items())
+    prompt_head = ('from typing import List\n\nfrom ...utils_typing import Entity, Relation, dataclass\n\n'
+                   '"""Relation definitions derived from the user-provided schema."""\n\n'
+                   f'{guideline}\n\n# This is the text to analyze\n')
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        results = []
+        for s in sentences:  # ponytail: batch=1 ต่อประโยค ตาม pipeline จริง
+            prompt = (prompt_head + f'text = {s!r}\n\n'
+                      '# The annotation instances that take place in the text above are listed here\n'
+                      'result = [')
+            inputs = tok(prompt, return_tensors="pt").to("cuda")
+            with torch.inference_mode():
+                gen = model.generate(**inputs, do_sample=False, num_beams=1, max_new_tokens=512,
+                                     output_scores=True, return_dict_in_generate=True)
+            out_ids = gen.sequences[0][inputs["input_ids"].shape[1]:]
+            text, ranges = _tok_char_probs(tok, out_ids, gen.scores)
+            # output เป็น Python object literal: Rel(arg1='...', arg2='...') ต่อบรรทัด — ast หลัง normalize
+            results.append(_parse_gollie(text, ranges, rel_by_class))
+        return results
+
+    return Adapter("gollie", extract, paradigm="decoder")
+
+
+def _parse_gollie(text: str, ranges: list[tuple[int, int, float]], rel_by_class: dict[str, str]) -> list[Triple]:
+    out = []
+    for m in re.finditer(r"(\w+)\(\s*arg1=['\"](.+?)['\"]\s*,\s*arg2=['\"](.+?)['\"]", text, re.S):
+        rel = rel_by_class.get(m.group(1), m.group(1))  # นอก schema → เก็บชื่อ class เดิม (ไม่ทิ้ง)
+        ps = [p for s, e, p in ranges if e > m.start() and s < m.end()]
+        score = sum(ps) / len(ps) if ps else 0.0
+        out.append(Triple(m.group(2), rel, m.group(3), score))
+    return out
+
+
+ADAPTER_FACTORIES["gollie"] = make_gollie
+
+
 # จุด threshold ต่อ model — ตั้งตาม score scale ที่ตรวจด้วยตาจาก smoke (checkpoint Phase 2)
 THRESHOLDS: dict[str, list[float]] = {
     "gliner-relex": [0.3, 0.5, 0.7, 0.9],
@@ -309,6 +459,7 @@ THRESHOLDS: dict[str, list[float]] = {
     "gliner-pyrheads": [0.4, 0.55, 0.7, 0.85],
     "relik": [0.5, 0.7, 0.9],
     "nuextract": [0.85, 0.9, 0.94, 0.98],
+    "gollie": [0.7, 0.85, 0.95],  # ตั้งชั่วคราวก่อน smoke — ปรับตาม score scale จริง (checkpoint Phase 2)
 }
 
 
@@ -414,6 +565,99 @@ def write_reports(results: list[dict], sentences: list[dict], report_dir: Path |
     (report_dir / "distinct-relations.md").write_text("\n".join(out))
 
 
+# ผลตัดก่อน smoke — ตาม SPEC-bakeoff-r3.md (ห้ามตัดเองนอกเหนือจากนี้ ถ้าไม่ ask first)
+R3_EXCLUDED = [
+    ("InstructUIE", "T5-11B fp32 ~45GB — Q4 ≈ 6GB+ ไม่มี headroom (การ์ดใช้เป็นจอ)"),
+    ("CodeKGC", "ไม่มี public checkpoint (โค้ดใน zjunlp/DeepKE ต้อง fine-tune เอง) — Never: fine-tune CodeLlama"),
+    ("GoLLIE-13B", "VRAM 6GB — เหตุผลเดียวกับ InstructUIE"),
+]
+
+
+def ascii_map(points: list[dict]) -> list[str]:
+    """แผนที่ 2 มิติ precision × ms บน md — marker ตาม paradigm (E=encoder, D=decoder)
+    ponytail: ASCII grid แทน chart lib — md อ่านได้ทุกที่, ถ้าอยากได้ interactive ทำ artifact ทีหลัง"""
+    import math
+
+    W, H = 48, 21  # x = log scale ของ ms, y = precision 1.0 (บน) → 0.0 (ล่าง)
+    grid = [[" "] * W for _ in range(H)]
+    ms_min, ms_max = min(p["ms"] for p in points), max(p["ms"] for p in points)
+    for p in points:
+        col = min(W - 1, round((math.log2(p["ms"]) - math.log2(ms_min))
+                               / max(math.log2(ms_max) - math.log2(ms_min), 1e-9) * (W - 1)))
+        row = min(H - 1, round((1 - p["precision"]) * (H - 1)))
+        ch = "E" if p["paradigm"] == "encoder" else "D"
+        grid[row][col] = ch if grid[row][col] == " " else "*"  # * = สองจุดชนเซลล์เดียว
+    out = ["```", f"precision  (ms {ms_min:.0f}–{ms_max:.0f}, log scale)"]
+    for r, row in enumerate(grid):
+        out.append(f"{1 - r / (H - 1):.2f} │{''.join(row)}")
+    out += ["     └" + "─" * (W - 1), "      E = encoder   D = decoder   * = จุดชนกัน", "```"]
+    return out
+
+
+def write_report_r3() -> None:
+    """r3: แผนที่ 7 จุด (5 r2 จาก raw cache + 2 ใหม่) แยก paradigm + ตัดแล้วและเหตุผล — ไม่แตะ r2 report"""
+    raw_dir = ROOT / "report" / "raw"
+    points, sections = [], []
+    for name in MODELS:
+        raw_path = raw_dir / f"{name}.json"
+        if not raw_path.exists():
+            print(f"[r3] ข้าม {name} — ไม่มี raw cache")
+            continue
+        raw = json.loads(raw_path.read_text())
+        table = sweep_table(raw["triples"], THRESHOLDS[name], len(SENTENCES))
+        best = best_point(table)
+        points.append({"name": name, "paradigm": PARADIGM.get(name, "encoder"),
+                       "ms": raw["ms"], "best": best,
+                       "precision": best["precision"] if best else 0.0})
+        sections.append((name, raw, table, best))
+
+    out = ["# Bake-off r3 — ขยายแผนที่สู่ code/instruction-LLM dedicated IE", "",
+           "คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — ตัวใหม่ 2 ตัวเป็น decoder 7B Q4 nf4", "",
+           "## แผนที่ precision × ms (7 จุด)", ""]
+    out += ["| model | paradigm | precision ~ (best th) | ms/ประโยค | VRAM peak | schema |", "|---|---|---|---|---|---|"]
+    for name, raw, table, best in sections:
+        p = f"~{best['precision']:.2f} @ th {best['threshold']}" if best else "(รอ rate)"
+        schema = "ปิด (native NYT)" if name == "relik" and RELIK_CLOSED_SCHEMA else "seed schema"
+        out.append(f"| {name} | {PARADIGM.get(name, 'encoder')} | {p} | {raw['ms']:.1f} | "
+                   f"{raw['vram'].removeprefix('VRAM peak: ')} | {schema} |")
+    out += [""]
+    out += ascii_map([p for p in points if p["best"]])
+    out += ["", "precision = rate ด้วยตาทุก unique triple ครั้งเดียวแล้ว slice ทุก threshold จาก raw scores เดียว", ""]
+
+    # รายละเอียดเฉพาะตัวใหม่ (ตัว r2 ดูใน report รอบ 2)
+    for name, raw, table, best in sections:
+        if name not in ("knowcoder", "gollie"):
+            continue
+        out += [f"## {name}", "",
+                f"{sum(1 for u in raw['triples'] for _ in u['occ'])} triples ({len(raw['triples'])} unique) · "
+                f"{raw['ms']:.1f} ms/ประโยค (หลัง warm-up) · {raw['vram']}", "",
+                "| th | triples | precision ~ | ประโยคว่าง |", "|---|---|---|---|"]
+        for row in table:
+            p = f"~{row['precision']:.2f}" if row["precision"] is not None else ("–" if row["n"] == 0 else "(รอ rate)")
+            out.append(f"| {row['threshold']} | {row['n']} | {p} | {len(row['empty'])} |")
+        if best:
+            b = best
+            out += ["", f"**best:** th {b['threshold']} — precision ~{b['precision']:.2f} "
+                        f"({b['n']} triples, ว่าง {len(b['empty'])}/{len(SENTENCES)})"]
+        out += ["", *category_lines({"best": best, "table": table, "triples": raw["triples"]}, SENTENCES), ""]
+
+    # ตัดแล้วและเหตุผล — ครบ 3 รายการตัด + smoke ที่ตายถ้ามี
+    out += ["## ตัดแล้วและเหตุผล", ""]
+    for name, why in R3_EXCLUDED:
+        out.append(f"- **{name}** — {why}")
+    deaths_path = raw_dir / "deaths.json"
+    if deaths_path.exists():
+        for name, why in json.loads(deaths_path.read_text()).items():
+            out.append(f"- **{name}** — ตายตอน smoke: {why}")
+    else:
+        out.append("- (ไม่มี smoke ที่ตาย)")
+    out += ["", "- **ถ้า KnowCoder/GoLLIE ไม่ปรากฏในตาราง** = smoke ไม่ผ่านและบันทึกเหตุผลไว้ที่นี่ (ไม่มีตัวหายเงียบ)", ""]
+
+    path = ROOT / "report" / "bakeoff-r3-results.md"
+    path.write_text("\n".join(out))
+    print(f"report → {path}")
+
+
 def require_cuda() -> None:
     import torch
 
@@ -440,9 +684,11 @@ def timed_extract(adapter: Adapter, sentences: list[str]) -> tuple[list[list[Tri
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Bake-off r2: encoder zero-shot dedicated IE")
+    p = argparse.ArgumentParser(description="Bake-off r2/r3: zero-shot dedicated IE")
     p.add_argument("--smoke", choices=MODELS, metavar="MODEL", help="smoke 1 ประโยคเป้า ของ model เดียว")
     p.add_argument("--only", choices=MODELS, metavar="MODEL", help="รันเต็มเฉพาะ model เดียว (default: ทุก model)")
+    # r3: report เขียนเมื่อสั่งเท่านั้น — default ไม่แตะไฟล์ report กันทับ artifact เดิม
+    p.add_argument("--report", choices=["r2", "r3"], help="เขียน report ของรอบนั้นจาก raw cache")
     return p.parse_args()
 
 
@@ -492,6 +738,9 @@ def run_model(name: str, texts: list[str]) -> dict:
 
 def main() -> None:
     args = parse_args()
+    if args.report == "r3":  # อ่านจาก raw cache ล้วน — ไม่ต้องมี GPU
+        write_report_r3()
+        return
     _, sentences = load_data()
     require_cuda()
     if args.smoke:
@@ -500,8 +749,9 @@ def main() -> None:
     names = [args.only] if args.only else MODELS
     texts = [s["text"] for s in sentences]
     results = [run_model(name, texts) for name in names]
-    write_reports(results, sentences)
-    print(f"report → {(ROOT / 'report' / 'bakeoff-r2-results.md')}, distinct-relations.md")
+    if args.report == "r2":
+        write_reports(results, sentences)
+        print(f"report → {(ROOT / 'report' / 'bakeoff-r2-results.md')}, distinct-relations.md")
 
 
 if __name__ == "__main__":

@@ -39,6 +39,11 @@ gliner = [
     "peft",
     # NuExtract 2.0 โหลดผ่าน transformers ตรง ๆ ไม่ต้องมี lib แยก
     "typer-slim[standard]>=0.21.2",
+    # r3: decoder 7B Q4 nf4 — bitsandbytes + accelerate (load_in_4bit ของ transformers ต้องใช้)
+    "bitsandbytes",
+    "accelerate",
+    # ดาวน์โหลด checkpoint 7B (13GB) เร่งด้วย parallel chunks (เปิดด้วย HF_HUB_ENABLE_HF_TRANSFER=1)
+    "hf-transfer",
 ]
 relik = [
     "relik",
