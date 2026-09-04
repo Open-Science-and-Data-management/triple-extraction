@@ -114,15 +114,15 @@
 
 ### Phase 3: Sweep + Reports
 
-- [ ] **Task 8: threshold sweep (rate-once-slice-many)** — ต่อ model: รัน inference ครั้งเดียว เก็บ unique triples+scores, ตั้ง ≥3 threshold จุดต่อ model ตาม score scale ของมัน, นับ precision@threshold, เลือกจุด best
+- [x] **Task 8: threshold sweep (rate-once-slice-many)** — ต่อ model: รัน inference ครั้งเดียว เก็บ unique triples+scores, ตั้ง ≥3 threshold จุดต่อ model ตาม score scale ของมัน, นับ precision@threshold, เลือกจุด best
 
   **Acceptance criteria:**
-  - [ ] inference ต่อ model 1 ครั้ง (ไม่รันซ้ำต่อ threshold)
-  - [ ] sweep ≥3 จุด/model + จุด best ถูกเลือกด้วยมาตราของ model เอง
-  - [ ] triple ซ้ำเป๊ะในประโยคถูก dedupe ก่อนนับ
+  - [x] inference ต่อ model 1 ครั้ง (ไม่รันซ้ำต่อ threshold) *(cache ลง report/raw/<model>.json — รันซ้ำข้าม inference ทันที)*
+  - [x] sweep ≥3 จุด/model + จุด best ถูกเลือกด้วยมาตราของ model เอง *(4/4/4/3/4 จุดตาม score scale จาก smoke · best = precision สูงสุด เสมอกันเอา triple มากสุด (Step 6) · precision รอ rate ใน raw JSON (correct: true/false ต่อ unique triple) แล้ว rerun ได้เลย)*
+  - [x] triple ซ้ำเป๊ะในประโยคถูก dedupe ก่อนนับ *(233→232 unique)*
 
   **Verification:**
-  - [ ] `uv run bakeoff --only gliner-relex` → report มีตาราง sweep ≥3 แถว
+  - [x] `uv run bakeoff --only gliner-relex` → report มีตาราง sweep ≥3 แถว *(ตาราง sweep 4 แถวผ่าน stdout + report/raw/gliner-relex.json · ไฟล์ report/*.md มาที่ Task 9 ตามแผนเดิม)*
 
   **Dependencies:** Tasks 4–7 · **Files:** `scripts/bakeoff.py` · **Scope:** M
 

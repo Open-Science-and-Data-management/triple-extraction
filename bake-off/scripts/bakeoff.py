@@ -302,6 +302,60 @@ def make_relik() -> Adapter:
 ADAPTER_FACTORIES["relik"] = make_relik
 
 
+# จุด threshold ต่อ model — ตั้งตาม score scale ที่ตรวจด้วยตาจาก smoke (checkpoint Phase 2)
+THRESHOLDS: dict[str, list[float]] = {
+    "gliner-relex": [0.3, 0.5, 0.7, 0.9],
+    "glirel": [0.25, 0.3, 0.35, 0.45],
+    "gliner-pyrheads": [0.4, 0.55, 0.7, 0.85],
+    "relik": [0.5, 0.7, 0.9],
+    "nuextract": [0.85, 0.9, 0.94, 0.98],
+}
+
+
+def collect_rows(triples_per_sent: list[list[Triple]]) -> list[dict]:
+    """dedupe ในประโยคแล้วรวมเป็น unique triple + ตำแหน่งเกิด (occ) — rate ครั้งเดียว slice ได้ทุก threshold"""
+    rows: dict[tuple[str, str, str], dict] = {}
+    for i, ts in enumerate(triples_per_sent):
+        for t in dedupe(ts):
+            u = rows.setdefault((t.head, t.relation, t.tail),
+                                {"head": t.head, "relation": t.relation, "tail": t.tail,
+                                 "correct": None, "occ": []})
+            u["occ"].append([i, t.score])
+    return list(rows.values())
+
+
+def slice_at(rows: list[dict], t: float, n_sents: int) -> tuple[int, int | None, list[int]]:
+    """ที่ threshold t: (จำนวน triple, จำนวนที่ rate ว่าถูก, ประโยคว่าง) — นับหน่วยต่อประโยค"""
+    n = n_ok = 0
+    hit = [False] * n_sents
+    for u in rows:
+        for i, s in u["occ"]:
+            if s >= t:
+                n += 1
+                hit[i] = True
+                if u["correct"]:
+                    n_ok += 1
+    return n, n_ok, [i for i, h in enumerate(hit) if not h]
+
+
+def sweep_table(rows: list[dict], thresholds: list[float], n_sents: int) -> list[dict]:
+    """rate-once-slice-many: inference จบแล้ว แต่ละ threshold เป็นแค่การนับจาก raw scores"""
+    fully_rated = all(u["correct"] is not None for u in rows)
+    table = []
+    for t in thresholds:
+        n, n_ok, empty = slice_at(rows, t, n_sents)
+        table.append({"threshold": t, "n": n,
+                      "precision": (n_ok / n if n else None) if fully_rated else None,
+                      "empty": empty})
+    return table
+
+
+def best_point(table: list[dict]) -> dict | None:
+    """precision สูงสุดก่อน recall จะทลาย (Step 6) — เสมอกันเอาจุดที่เหลือ triple มากสุด; ยังไม่ rate = None"""
+    rated = [r for r in table if r["precision"] is not None]
+    return max(rated, key=lambda r: (r["precision"], r["n"])) if rated else None
+
+
 def require_cuda() -> None:
     import torch
 
@@ -351,10 +405,31 @@ def smoke(adapter: Adapter, sentences: list[dict]) -> None:
     print(f"  {vram_peak()}")
 
 
-def run_full(adapter: Adapter, sentences: list[str]) -> None:
-    triples_per_sent, ms = timed_extract(adapter, sentences)
-    n = sum(len(dedupe(t)) for t in triples_per_sent)
-    print(f"[run] {adapter.name}: {n} triples (dedupe แล้ว) · {ms:.1f} ms/ประโยค · {vram_peak()}")
+def run_model(name: str, texts: list[str]) -> dict:
+    """inference ครั้งเดียว/model (cache ลง report/raw/) → sweep + best — rate แล้วจะได้ precision ด้วย"""
+    raw_path = ROOT / "report" / "raw" / f"{name}.json"
+    if raw_path.exists():
+        raw = json.loads(raw_path.read_text())
+        print(f"[cache] {name}: มี raw แล้ว — ข้าม inference (inference ต่อ model 1 ครั้ง)")
+    else:
+        triples_per_sent, ms = timed_extract(ADAPTER_FACTORIES[name](), texts)
+        raw = {"ms": ms, "vram": vram_peak(), "triples": collect_rows(triples_per_sent)}
+        raw_path.parent.mkdir(parents=True, exist_ok=True)
+        raw_path.write_text(json.dumps(raw, ensure_ascii=False, indent=1))
+        n = sum(1 for u in raw["triples"] for _ in u["occ"])
+        print(f"[run] {name}: {n} triples ({len(raw['triples'])} unique) · {raw['ms']:.1f} ms/ประโยค · {raw['vram']}")
+
+    table = sweep_table(raw["triples"], THRESHOLDS[name], len(texts))
+    print(f"[sweep] {name}  th     triples  precision~  ประโยคว่าง")
+    for r in table:
+        p = f"{r['precision']:.2f}" if r["precision"] is not None else "(รอ rate)"
+        print(f"         {r['threshold']:<6} {r['n']:<8} {p:<11} {len(r['empty'])}")
+    best = best_point(table)
+    if best:
+        print(f"[best] {name}: th={best['threshold']} precision~{best['precision']:.2f} ({best['n']} triples, ว่าง {len(best['empty'])})")
+    else:
+        print(f"[best] {name}: รอ rate ใน report/raw/{name}.json (correct: true/false ต่อ unique triple)")
+    return {"name": name, **raw, "table": table, "best": best}
 
 
 def main() -> None:
@@ -367,7 +442,7 @@ def main() -> None:
     names = [args.only] if args.only else MODELS
     texts = [s["text"] for s in sentences]
     for name in names:
-        run_full(ADAPTER_FACTORIES[name](), texts)
+        run_model(name, texts)
 
 
 if __name__ == "__main__":
