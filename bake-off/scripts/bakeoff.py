@@ -98,6 +98,27 @@ def _stub_extract(sentences: list[str]) -> list[list[Triple]]:
 ADAPTER_FACTORIES: dict[str, Callable[[], Adapter]] = {m: (lambda m=m: Adapter(m, _stub_extract)) for m in MODELS}
 
 
+def make_gliner_relex() -> Adapter:
+    from gliner import GLiNER
+
+    schema = load_schema()
+    model = GLiNER.from_pretrained("knowledgator/gliner-relex-multi-v1.0").to("cuda").eval()
+    labels, relations = schema["entity_labels"], schema["relation_hints"]
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        # threshold ต่ำ ๆ ตาม r1 "lo" เพื่อเก็บ raw scores ไว้ slice ทีหลัง (rate-once-slice-many)
+        _, rels = model.inference(
+            sentences, labels, relations=relations, threshold=0.3, adjacency_threshold=0.3,
+            relation_threshold=0.3, batch_size=8, return_relations=True,
+        )
+        return [[Triple(r["head"]["text"], r["relation"], r["tail"]["text"], float(r["score"])) for r in rs] for rs in rels]
+
+    return Adapter("gliner-relex", extract)
+
+
+ADAPTER_FACTORIES["gliner-relex"] = make_gliner_relex
+
+
 def require_cuda() -> None:
     import torch
 

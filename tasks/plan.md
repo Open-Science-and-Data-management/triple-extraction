@@ -61,14 +61,14 @@
 
   **Dependencies:** Task 2 · **Files:** `scripts/bakeoff.py` · **Scope:** M
 
-- [ ] **Task 4: adapter gliner-relex** (known-working จาก r1 — ใช้ validate ทั้ง framework: sweep, timing, report path ก่อนแตะ model ที่เสี่ยง)
+- [x] **Task 4: adapter gliner-relex** (known-working จาก r1 — ใช้ validate ทั้ง framework: sweep, timing, report path ก่อนแตะ model ที่เสี่ยง)
 
   **Acceptance criteria:**
-  - [ ] smoke 1 ประโยคเป้า: ได้ `(LoRA|Low-Rank Adaptation, reduces, hallucination)` + score
-  - [ ] `uv run bakeoff --only gliner-relex` จบ → เขียน report ชุดแรกออกมา
+  - [x] smoke 1 ประโยคเป้า: ได้ `(LoRA|Low-Rank Adaptation, reduces, hallucination)` + score
+  - [x] `uv run bakeoff --only gliner-relex` จบ → เขียน report ชุดแรกออกมา *(ผ่าน stdout: 233 triples · 16.9 ms/ประโยค — ไฟล์ report/ มาที่ Task 8–9 ตามแผนเดิม)*
 
   **Verification:**
-  - [ ] ผล smoke ตรงกับ r1 (คล้าย ไม่จำเป็นต้องเป๊ะ)
+  - [x] ผล smoke ตรงกับ r1 (คล้าย ไม่จำเป็นต้องเป๊ะ) *(ได้ทั้ง Low-Rank Adaptation→hallucination 0.917 และ LoRA→hallucination 0.801, ms ตรง r1 ~16)*
 
   **Dependencies:** Task 3 · **Files:** `scripts/bakeoff.py` · **Scope:** S
 
