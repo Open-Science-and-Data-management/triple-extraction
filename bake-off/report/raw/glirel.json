@@ -1,0 +1,678 @@
+{
+ "ms": 31.191129107225738,
+ "vram": "VRAM peak: 3.32 GiB",
+ "triples": [
+  {
+   "head": "or LoRA",
+   "relation": "reduces",
+   "tail": "in large language models",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.4319640100002289
+    ]
+   ]
+  },
+  {
+   "head": "or LoRA",
+   "relation": "reduces",
+   "tail": "to low-rank matrices",
+   "correct": true,
+   "occ": [
+    [
+     0,
+     0.40072181820869446
+    ]
+   ]
+  },
+  {
+   "head": "in large language models",
+   "relation": "reduces",
+   "tail": "or LoRA",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.40087196230888367
+    ]
+   ]
+  },
+  {
+   "head": "to low-rank matrices",
+   "relation": "reduces",
+   "tail": "or LoRA",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.4002542197704315
+    ]
+   ]
+  },
+  {
+   "head": "fine-tune LLaMA-7B",
+   "relation": "evaluated on",
+   "tail": "on MMLU",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.7042546272277832
+    ]
+   ]
+  },
+  {
+   "head": "the Alpaca dataset",
+   "relation": "evaluated on",
+   "tail": "on MMLU",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.6508562564849854
+    ]
+   ]
+  },
+  {
+   "head": "using LoRA",
+   "relation": "evaluated on",
+   "tail": "on MMLU",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.6597059369087219
+    ]
+   ]
+  },
+  {
+   "head": "on MMLU",
+   "relation": "evaluated on",
+   "tail": "fine-tune LLaMA-7B",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.6659688353538513
+    ]
+   ]
+  },
+  {
+   "head": "on MMLU",
+   "relation": "evaluated on",
+   "tail": "the Alpaca dataset",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.5001078248023987
+    ]
+   ]
+  },
+  {
+   "head": "on MMLU",
+   "relation": "evaluated on",
+   "tail": "using LoRA",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.5582051277160645
+    ]
+   ]
+  },
+  {
+   "head": "on MMLU",
+   "relation": "achieves metric",
+   "tail": "achieving 86 . 4 %",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.30389201641082764
+    ]
+   ]
+  },
+  {
+   "head": "The attention mechanism",
+   "relation": "introduces",
+   "tail": "by Vaswani et al .",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.44024381041526794
+    ]
+   ]
+  },
+  {
+   "head": "by Vaswani et al .",
+   "relation": "introduces",
+   "tail": "The attention mechanism",
+   "correct": true,
+   "occ": [
+    [
+     4,
+     0.5366387963294983
+    ]
+   ]
+  },
+  {
+   "head": "by Vaswani et al .",
+   "relation": "introduces",
+   "tail": "replaces recurrence",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.4863549768924713
+    ]
+   ]
+  },
+  {
+   "head": "by Vaswani et al .",
+   "relation": "introduces",
+   "tail": "with self-attention",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.4933762550354004
+    ]
+   ]
+  },
+  {
+   "head": "replaces recurrence",
+   "relation": "introduces",
+   "tail": "by Vaswani et al .",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.44549238681793213
+    ]
+   ]
+  },
+  {
+   "head": "with self-attention",
+   "relation": "introduces",
+   "tail": "by Vaswani et al .",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.4343561828136444
+    ]
+   ]
+  },
+  {
+   "head": "the BookCorpus",
+   "relation": "pretrained on",
+   "tail": "and English Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.5202125310897827
+    ]
+   ]
+  },
+  {
+   "head": "the BookCorpus",
+   "relation": "pretrained on",
+   "tail": "using masked language modeling",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.5172712206840515
+    ]
+   ]
+  },
+  {
+   "head": "and English Wikipedia",
+   "relation": "pretrained on",
+   "tail": "the BookCorpus",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.5458903312683105
+    ]
+   ]
+  },
+  {
+   "head": "and English Wikipedia",
+   "relation": "pretrained on",
+   "tail": "using masked language modeling",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.47689977288246155
+    ]
+   ]
+  },
+  {
+   "head": "using masked language modeling",
+   "relation": "pretrained on",
+   "tail": "the BookCorpus",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.6068382859230042
+    ]
+   ]
+  },
+  {
+   "head": "using masked language modeling",
+   "relation": "pretrained on",
+   "tail": "and English Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.5418980717658997
+    ]
+   ]
+  },
+  {
+   "head": "that reinforcement learning",
+   "relation": "improves",
+   "tail": "of GPT-3",
+   "correct": true,
+   "occ": [
+    [
+     7,
+     0.38849982619285583
+    ]
+   ]
+  },
+  {
+   "head": "improves truthfulness",
+   "relation": "improves",
+   "tail": "of GPT-3",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.3506266474723816
+    ]
+   ]
+  },
+  {
+   "head": "of GPT-3",
+   "relation": "improves",
+   "tail": "that reinforcement learning",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.3660738170146942
+    ]
+   ]
+  },
+  {
+   "head": "using RoBERTa",
+   "relation": "achieves metric",
+   "tail": "achieve 94 . 8 F1",
+   "correct": true,
+   "occ": [
+    [
+     9,
+     0.312091201543808
+    ]
+   ]
+  },
+  {
+   "head": "in documents",
+   "relation": "uses dataset",
+   "tail": "from Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     12,
+     0.34686344861984253
+    ]
+   ]
+  },
+  {
+   "head": "by DPR",
+   "relation": "uses dataset",
+   "tail": "from Wikipedia",
+   "correct": true,
+   "occ": [
+    [
+     12,
+     0.37961816787719727
+    ]
+   ]
+  },
+  {
+   "head": "from Wikipedia",
+   "relation": "uses dataset",
+   "tail": "by DPR",
+   "correct": false,
+   "occ": [
+    [
+     12,
+     0.3230666518211365
+    ]
+   ]
+  },
+  {
+   "head": "uses sliding window attention",
+   "relation": "outperforms",
+   "tail": "outperforms Llama 2 13B",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.35017913579940796
+    ]
+   ]
+  },
+  {
+   "head": "outperforms Llama 2 13B",
+   "relation": "outperforms",
+   "tail": "uses sliding window attention",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.3379846513271332
+    ]
+   ]
+  },
+  {
+   "head": "on GSM8K",
+   "relation": "evaluated on",
+   "tail": ", HumanEval",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6505348682403564
+    ]
+   ]
+  },
+  {
+   "head": "on GSM8K",
+   "relation": "evaluated on",
+   "tail": "and MMLU",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6307622194290161
+    ]
+   ]
+  },
+  {
+   "head": "on GSM8K",
+   "relation": "evaluated on",
+   "tail": "surpassing Qwen2",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6812782883644104
+    ]
+   ]
+  },
+  {
+   "head": ", HumanEval",
+   "relation": "evaluated on",
+   "tail": "on GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6483986377716064
+    ]
+   ]
+  },
+  {
+   "head": ", HumanEval",
+   "relation": "evaluated on",
+   "tail": "and MMLU",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6340887546539307
+    ]
+   ]
+  },
+  {
+   "head": ", HumanEval",
+   "relation": "evaluated on",
+   "tail": "surpassing Qwen2",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6863714456558228
+    ]
+   ]
+  },
+  {
+   "head": "and MMLU",
+   "relation": "evaluated on",
+   "tail": "on GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6359447240829468
+    ]
+   ]
+  },
+  {
+   "head": "and MMLU",
+   "relation": "evaluated on",
+   "tail": ", HumanEval",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6402138471603394
+    ]
+   ]
+  },
+  {
+   "head": "and MMLU",
+   "relation": "evaluated on",
+   "tail": "surpassing Qwen2",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6533845067024231
+    ]
+   ]
+  },
+  {
+   "head": "surpassing Qwen2",
+   "relation": "evaluated on",
+   "tail": "on GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.7278385162353516
+    ]
+   ]
+  },
+  {
+   "head": "surpassing Qwen2",
+   "relation": "evaluated on",
+   "tail": ", HumanEval",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.7282918691635132
+    ]
+   ]
+  },
+  {
+   "head": "surpassing Qwen2",
+   "relation": "evaluated on",
+   "tail": "and MMLU",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.7053594589233398
+    ]
+   ]
+  },
+  {
+   "head": "that LoRA",
+   "relation": "outperforms",
+   "tail": "matches full fine-tuning performance",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.35425931215286255
+    ]
+   ]
+  },
+  {
+   "head": "that LoRA",
+   "relation": "outperforms",
+   "tail": "on GLUE",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.35671210289001465
+    ]
+   ]
+  },
+  {
+   "head": "that LoRA",
+   "relation": "outperforms",
+   "tail": "while training",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.33162054419517517
+    ]
+   ]
+  },
+  {
+   "head": "matches full fine-tuning performance",
+   "relation": "outperforms",
+   "tail": "that LoRA",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.3967987596988678
+    ]
+   ]
+  },
+  {
+   "head": "on GLUE",
+   "relation": "outperforms",
+   "tail": "that LoRA",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.35636740922927856
+    ]
+   ]
+  },
+  {
+   "head": "while training",
+   "relation": "outperforms",
+   "tail": "that LoRA",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.3815828859806061
+    ]
+   ]
+  },
+  {
+   "head": "upon RoBERTa",
+   "relation": "improves",
+   "tail": "using disentangled attention",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.4878382384777069
+    ]
+   ]
+  },
+  {
+   "head": "using disentangled attention",
+   "relation": "improves",
+   "tail": "upon RoBERTa",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.5897400975227356
+    ]
+   ]
+  },
+  {
+   "head": "achieves 88 . 8 % accuracy",
+   "relation": "improves",
+   "tail": "upon RoBERTa",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.3814839720726013
+    ]
+   ]
+  },
+  {
+   "head": "multiple reasoning paths",
+   "relation": "improves",
+   "tail": "of PaLM-540B",
+   "correct": true,
+   "occ": [
+    [
+     27,
+     0.30727481842041016
+    ]
+   ]
+  },
+  {
+   "head": "a majority vote",
+   "relation": "improves",
+   "tail": "of PaLM-540B",
+   "correct": true,
+   "occ": [
+    [
+     27,
+     0.31512171030044556
+    ]
+   ]
+  },
+  {
+   "head": "GSM8K accuracy",
+   "relation": "improves",
+   "tail": "of PaLM-540B",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.3078286051750183
+    ]
+   ]
+  }
+ ]
+}

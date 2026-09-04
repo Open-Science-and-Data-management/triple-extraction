@@ -1,0 +1,402 @@
+{
+ "ms": 150.97325899997875,
+ "vram": "VRAM peak: 1.79 GiB",
+ "triples": [
+  {
+   "head": "MMLU",
+   "relation": "company location",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.5199999809265137
+    ]
+   ]
+  },
+  {
+   "head": "Vaswani",
+   "relation": "place of birth",
+   "tail": "Vaswani",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.5099999904632568
+    ]
+   ]
+  },
+  {
+   "head": "Vaswani",
+   "relation": "company location",
+   "tail": "Vaswani",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.5400000214576721
+    ]
+   ]
+  },
+  {
+   "head": "Vaswani",
+   "relation": "industry",
+   "tail": "Vaswani",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.5199999809265137
+    ]
+   ]
+  },
+  {
+   "head": "English Wikipedia",
+   "relation": "company location",
+   "tail": "English Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.6700000166893005
+    ]
+   ]
+  },
+  {
+   "head": "English Wikipedia",
+   "relation": "country of origin",
+   "tail": "English Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.5600000023841858
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "country of origin",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6399999856948853
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "ethnic background",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5600000023841858
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "neighborhood",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6600000262260437
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "company",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5799999833106995
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "child",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5799999833106995
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "shareholders",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6299999952316284
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "shareholder of",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6299999952316284
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "company location",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.7099999785423279
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "industry",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6399999856948853
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "founded by",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5899999737739563
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "place of birth",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5799999833106995
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "religion",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5600000023841858
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "contains division",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6100000143051147
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "advisor",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5699999928474426
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "residence",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5699999928474426
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "division",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5799999833106995
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "occupation",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.6000000238418579
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "nationality",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5600000023841858
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "place of death",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5699999928474426
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "sports team location",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5699999928474426
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "sports team",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5699999928474426
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "capital",
+   "tail": "RLHF",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.5899999737739563
+    ]
+   ]
+  },
+  {
+   "head": "Wikipedia",
+   "relation": "company location",
+   "tail": "Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     12,
+     0.550000011920929
+    ]
+   ]
+  },
+  {
+   "head": "GPU",
+   "relation": "ethnicity",
+   "tail": "GPU",
+   "correct": false,
+   "occ": [
+    [
+     20,
+     0.5699999928474426
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "company location",
+   "tail": "BART",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.5799999833106995
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "contains",
+   "tail": "BART",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.5799999833106995
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "country of origin",
+   "tail": "BART",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.6600000262260437
+    ]
+   ]
+  }
+ ]
+}

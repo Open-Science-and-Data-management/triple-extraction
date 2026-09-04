@@ -1,0 +1,510 @@
+{
+ "ms": 976.5532873928221,
+ "vram": "VRAM peak: 4.39 GiB",
+ "triples": [
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "reduces",
+   "tail": "large language models",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.9481616066052363
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "uses dataset",
+   "tail": "matrix",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.8909738115642382
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "uses method",
+   "tail": "weight updates",
+   "correct": true,
+   "occ": [
+    [
+     0,
+     0.908941304932038
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "introduces",
+   "tail": "matrix",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.9212724963823954
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "pretrained on",
+   "tail": "matrix",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.9308145803709825
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "fine-tuned on",
+   "tail": "matrix",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.9750448846817017
+    ]
+   ]
+  },
+  {
+   "head": "Chain-of-thought prompting",
+   "relation": "uses method",
+   "tail": "large language models on multi-step problems",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.9561617271653537
+    ]
+   ]
+  },
+  {
+   "head": "We",
+   "relation": "fine-tuned",
+   "tail": "LLaMA-7B",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.9261789703369141
+    ]
+   ]
+  },
+  {
+   "head": "fine-tune",
+   "relation": "uses dataset",
+   "tail": "Alpaca",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.892814330432726
+    ]
+   ]
+  },
+  {
+   "head": "evaluate",
+   "relation": "evaluates on",
+   "tail": "MMLU",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.9298665868965063
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "outperforms",
+   "tail": "GPT-3.5",
+   "correct": true,
+   "occ": [
+    [
+     3,
+     0.9983388355800084
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "achieves",
+   "tail": "86.4% on MMLU",
+   "correct": true,
+   "occ": [
+    [
+     3,
+     0.9697069148222606
+    ]
+   ]
+  },
+  {
+   "head": "attention mechanism",
+   "relation": "introduces",
+   "tail": "Vaswani et al.",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.9421722359127469
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "pretrained on",
+   "tail": "BookCorpus and English Wikipedia using masked language modeling",
+   "correct": true,
+   "occ": [
+    [
+     5,
+     0.9388451494019607
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "uses method",
+   "tail": "learned reward model",
+   "correct": true,
+   "occ": [
+    [
+     6,
+     0.9218744557836781
+    ]
+   ]
+  },
+  {
+   "head": "InstructGPT",
+   "relation": "uses method",
+   "tail": "reinforcement learning from human feedback",
+   "correct": true,
+   "occ": [
+    [
+     7,
+     0.9546584380524499
+    ]
+   ]
+  },
+  {
+   "head": "truthfulness of GPT-3 outputs",
+   "relation": "improves",
+   "tail": "GPT-3 outputs",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.9125684836218434
+    ]
+   ]
+  },
+  {
+   "head": "SQuAD 2.0",
+   "relation": "uses dataset",
+   "tail": "RoBERTa with a span prediction head",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.940409142524004
+    ]
+   ]
+  },
+  {
+   "head": "94.8 F1",
+   "relation": "achieves metric",
+   "tail": "SQuAD 2.0",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.9367078110094993
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "reduces",
+   "tail": "memory usage of attention computation from quadratic to linear in sequence length",
+   "correct": true,
+   "occ": [
+    [
+     10,
+     0.9717140253633261
+    ]
+   ]
+  },
+  {
+   "head": "Llama 2",
+   "relation": "introduces",
+   "tail": "a family of models trained on 2 trillion tokens with grouped-query attention",
+   "correct": true,
+   "occ": [
+    [
+     11,
+     0.9681397643354204
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "uses method",
+   "tail": "uses sliding window attention",
+   "correct": true,
+   "occ": [
+    [
+     13,
+     0.9577756170873288
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "outperforms",
+   "tail": "Llama 2 13B",
+   "correct": true,
+   "occ": [
+    [
+     13,
+     0.965936791151762
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "uses dataset",
+   "tail": "None",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.9349409108576567
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "evaluated on",
+   "tail": "GSM8K, HumanEval, and MMLU",
+   "correct": true,
+   "occ": [
+    [
+     14,
+     0.9859243103436062
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2",
+   "relation": "outperforms",
+   "tail": "Qwen2.5",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.9559840124387008
+    ]
+   ]
+  },
+  {
+   "head": "Speculative decoding",
+   "relation": "uses method",
+   "tail": "drafting tokens with a smaller model and verifying them with the target model",
+   "correct": true,
+   "occ": [
+    [
+     15,
+     0.9494926087996539
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "uses method",
+   "tail": "dense models of 1.5B to 70B parameters",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.9480812549591064
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "matches full fine-tuning performance",
+   "tail": "GLUE",
+   "correct": true,
+   "occ": [
+    [
+     18,
+     0.9423678982257843
+    ]
+   ]
+  },
+  {
+   "head": "full fine-tuning performance",
+   "relation": "matches",
+   "tail": "GLUE",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.8943402210007543
+    ]
+   ]
+  },
+  {
+   "head": "training 10,000 times fewer parameters",
+   "relation": "fewer parameters",
+   "tail": "None",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.916143938385207
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "uses method",
+   "tail": "trainable rank decomposition matrices to each transformer layer",
+   "correct": true,
+   "occ": [
+    [
+     19,
+     0.9544515567166465
+    ]
+   ]
+  },
+  {
+   "head": "Quantization to 4-bit precision",
+   "relation": "reduces",
+   "tail": "GPU memory requirements of large language models with minimal accuracy loss",
+   "correct": true,
+   "occ": [
+    [
+     20,
+     0.9554204377863142
+    ]
+   ]
+  },
+  {
+   "head": "Direct preference optimization",
+   "relation": "uses method",
+   "tail": "policy directly on preference data without an explicit reward model",
+   "correct": true,
+   "occ": [
+    [
+     21,
+     0.9519427915414175
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "uses method",
+   "tail": "RoBERTa",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.956793505212535
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "improves upon",
+   "tail": "RoBERTa",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.9676425135135651
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "achieves",
+   "tail": "88.8% accuracy on MNLI",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.9702471227481447
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "uses method",
+   "tail": "text infilling objectives",
+   "correct": true,
+   "occ": [
+    [
+     24,
+     0.9489173267198645
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "pretrained on",
+   "tail": "text infilling objectives",
+   "correct": true,
+   "occ": [
+    [
+     24,
+     0.9432886553307375
+    ]
+   ]
+  },
+  {
+   "head": "Knowledge distillation",
+   "relation": "uses method",
+   "tail": "DistilBERT",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.9754422514334969
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "uses method",
+   "tail": "PaLM-540B",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.9683601193957858
+    ]
+   ]
+  },
+  {
+   "head": "GSM8K",
+   "relation": "achieves metric",
+   "tail": "accuracy",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.9018130185811416
+    ]
+   ]
+  }
+ ]
+}

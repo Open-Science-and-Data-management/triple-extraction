@@ -1,0 +1,2566 @@
+{
+ "ms": 46.651108071403414,
+ "vram": "VRAM peak: 2.09 GiB",
+ "triples": [
+  {
+   "head": "hallucination",
+   "relation": "evaluated on",
+   "tail": "large language models",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.40740084648132324
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "outperforms",
+   "tail": "hallucination",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.6582095772027969
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "uses dataset",
+   "tail": "low-rank matrices",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.5715058147907257
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "achieves metric",
+   "tail": "hallucination",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.3892625570297241
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "uses method",
+   "tail": "Low-Rank Adaptation",
+   "correct": true,
+   "occ": [
+    [
+     0,
+     0.5210054367780685
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "introduces",
+   "tail": "Low-Rank Adaptation",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.6459011733531952
+    ]
+   ]
+  },
+  {
+   "head": "weight updates",
+   "relation": "pretrained on",
+   "tail": "low-rank matrices",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.5353835225105286
+    ]
+   ]
+  },
+  {
+   "head": "weight updates",
+   "relation": "fine-tuned on",
+   "tail": "low-rank matrices",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.6878634393215179
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "reduces",
+   "tail": "hallucination",
+   "correct": true,
+   "occ": [
+    [
+     0,
+     0.9917239248752594
+    ]
+   ]
+  },
+  {
+   "head": "Low-Rank Adaptation",
+   "relation": "improves",
+   "tail": "hallucination",
+   "correct": false,
+   "occ": [
+    [
+     0,
+     0.9070726037025452
+    ]
+   ]
+  },
+  {
+   "head": "reasoning accuracy",
+   "relation": "evaluated on",
+   "tail": "multi-step problems",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.9710065722465515
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "outperforms",
+   "tail": "reasoning accuracy",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.6517767608165741
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "uses dataset",
+   "tail": "multi-step problems",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.7050211429595947
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "achieves metric",
+   "tail": "reasoning accuracy",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.8526568710803986
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "uses method",
+   "tail": "Chain-of-thought prompting",
+   "correct": true,
+   "occ": [
+    [
+     1,
+     0.629354864358902
+    ],
+    [
+     8,
+     0.8355681300163269
+    ]
+   ]
+  },
+  {
+   "head": "Chain-of-thought prompting",
+   "relation": "introduces",
+   "tail": "Chain-of-thought prompting",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.7426760494709015
+    ],
+    [
+     8,
+     0.736203134059906
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "pretrained on",
+   "tail": "multi-step problems",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.6141189336776733
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "fine-tuned on",
+   "tail": "multi-step problems",
+   "correct": false,
+   "occ": [
+    [
+     1,
+     0.43219709396362305
+    ]
+   ]
+  },
+  {
+   "head": "Chain-of-thought prompting",
+   "relation": "improves",
+   "tail": "reasoning accuracy",
+   "correct": true,
+   "occ": [
+    [
+     1,
+     0.9977578520774841
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "evaluated on",
+   "tail": "MMLU",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.962204098701477
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "outperforms",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.5345334112644196
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "uses dataset",
+   "tail": "Alpaca dataset",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.8432206809520721
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "achieves metric",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.8216775953769684
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "uses method",
+   "tail": "LoRA",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.944060355424881
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "introduces",
+   "tail": "LLaMA-7B",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.3755187839269638
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "pretrained on",
+   "tail": "Alpaca dataset",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.7846611440181732
+    ]
+   ]
+  },
+  {
+   "head": "LLaMA-7B",
+   "relation": "fine-tuned on",
+   "tail": "Alpaca dataset",
+   "correct": true,
+   "occ": [
+    [
+     2,
+     0.9936095476150513
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "improves",
+   "tail": "LLaMA-7B",
+   "correct": false,
+   "occ": [
+    [
+     2,
+     0.5529012531042099
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "evaluated on",
+   "tail": "MMLU",
+   "correct": true,
+   "occ": [
+    [
+     3,
+     0.8149071335792542
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "outperforms",
+   "tail": "GPT-3.5",
+   "correct": true,
+   "occ": [
+    [
+     3,
+     0.9993235766887665
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "uses dataset",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.7573295533657074
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "achieves metric",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.9891060888767242
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "uses method",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.5599171817302704
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "pretrained on",
+   "tail": "GPT-3.5",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.5884256213903427
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "fine-tuned on",
+   "tail": "GPT-3.5",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.5839080810546875
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "reduces",
+   "tail": "GPT-3.5",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.7116570174694061
+    ]
+   ]
+  },
+  {
+   "head": "GPT-4",
+   "relation": "improves",
+   "tail": "GPT-3.5",
+   "correct": false,
+   "occ": [
+    [
+     3,
+     0.887217253446579
+    ]
+   ]
+  },
+  {
+   "head": "self-attention",
+   "relation": "outperforms",
+   "tail": "recurrence",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.5586668252944946
+    ]
+   ]
+  },
+  {
+   "head": "attention mechanism",
+   "relation": "uses method",
+   "tail": "self-attention",
+   "correct": true,
+   "occ": [
+    [
+     4,
+     0.4062968045473099
+    ]
+   ]
+  },
+  {
+   "head": "Vaswani et al.",
+   "relation": "introduces",
+   "tail": "attention mechanism",
+   "correct": true,
+   "occ": [
+    [
+     4,
+     0.9993502199649811
+    ]
+   ]
+  },
+  {
+   "head": "attention mechanism",
+   "relation": "reduces",
+   "tail": "recurrence",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.9861599802970886
+    ]
+   ]
+  },
+  {
+   "head": "attention mechanism",
+   "relation": "improves",
+   "tail": "recurrence",
+   "correct": false,
+   "occ": [
+    [
+     4,
+     0.7358899712562561
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "evaluated on",
+   "tail": "English Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.739339292049408
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "uses dataset",
+   "tail": "BookCorpus",
+   "correct": true,
+   "occ": [
+    [
+     5,
+     0.9856066703796387
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "uses method",
+   "tail": "masked language modeling",
+   "correct": true,
+   "occ": [
+    [
+     5,
+     0.9767281413078308
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "introduces",
+   "tail": "masked language modeling",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.7008047997951508
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "pretrained on",
+   "tail": "BookCorpus",
+   "correct": true,
+   "occ": [
+    [
+     5,
+     0.998448371887207
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "pretrained on",
+   "tail": "English Wikipedia",
+   "correct": true,
+   "occ": [
+    [
+     5,
+     0.995467483997345
+    ]
+   ]
+  },
+  {
+   "head": "BERT",
+   "relation": "fine-tuned on",
+   "tail": "English Wikipedia",
+   "correct": false,
+   "occ": [
+    [
+     5,
+     0.9111247956752777
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "evaluated on",
+   "tail": "learned reward model",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.7478727698326111
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "outperforms",
+   "tail": "learned reward model",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.864962100982666
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "uses dataset",
+   "tail": "learned reward model",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.906566321849823
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "achieves metric",
+   "tail": "human preferences",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.9733383357524872
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "introduces",
+   "tail": "language model behavior",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.7431960701942444
+    ]
+   ]
+  },
+  {
+   "head": "language model",
+   "relation": "pretrained on",
+   "tail": "human preferences",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.3607397973537445
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "fine-tuned on",
+   "tail": "learned reward model",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.8174188435077667
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "reduces",
+   "tail": "human preferences",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.7122716307640076
+    ]
+   ]
+  },
+  {
+   "head": "RLHF",
+   "relation": "improves",
+   "tail": "human preferences",
+   "correct": false,
+   "occ": [
+    [
+     6,
+     0.730536162853241
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "outperforms",
+   "tail": "GPT-3 outputs",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.646942526102066
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "uses dataset",
+   "tail": "human feedback",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.8336802124977112
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "achieves metric",
+   "tail": "truthfulness",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.7644515931606293
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "uses method",
+   "tail": "human feedback",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.9191568195819855
+    ]
+   ]
+  },
+  {
+   "head": "InstructGPT",
+   "relation": "introduces",
+   "tail": "reinforcement learning",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.8307036459445953
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "pretrained on",
+   "tail": "human feedback",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.4241548925638199
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "fine-tuned on",
+   "tail": "human feedback",
+   "correct": false,
+   "occ": [
+    [
+     7,
+     0.421061635017395
+    ]
+   ]
+  },
+  {
+   "head": "reinforcement learning",
+   "relation": "improves",
+   "tail": "truthfulness of GPT-3 outputs",
+   "correct": true,
+   "occ": [
+    [
+     7,
+     0.8964365720748901
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "outperforms",
+   "tail": "arithmetic reasoning problems",
+   "correct": false,
+   "occ": [
+    [
+     8,
+     0.8161315023899078
+    ]
+   ]
+  },
+  {
+   "head": "Chain-of-thought prompting",
+   "relation": "reduces",
+   "tail": "arithmetic reasoning problems",
+   "correct": false,
+   "occ": [
+    [
+     8,
+     0.6604374498128891
+    ]
+   ]
+  },
+  {
+   "head": "Chain-of-thought prompting",
+   "relation": "improves",
+   "tail": "arithmetic reasoning problems",
+   "correct": false,
+   "occ": [
+    [
+     8,
+     0.8278168439865112
+    ]
+   ]
+  },
+  {
+   "head": "We",
+   "relation": "evaluated on",
+   "tail": "SQuAD 2.0",
+   "correct": true,
+   "occ": [
+    [
+     9,
+     0.8831358253955841
+    ]
+   ]
+  },
+  {
+   "head": "We",
+   "relation": "uses dataset",
+   "tail": "SQuAD 2.0",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.9362987577915192
+    ]
+   ]
+  },
+  {
+   "head": "We",
+   "relation": "achieves metric",
+   "tail": "94.8 F1",
+   "correct": true,
+   "occ": [
+    [
+     9,
+     0.9809041619300842
+    ]
+   ]
+  },
+  {
+   "head": "We",
+   "relation": "uses method",
+   "tail": "RoBERTa",
+   "correct": true,
+   "occ": [
+    [
+     9,
+     0.9551331698894501
+    ]
+   ]
+  },
+  {
+   "head": "We",
+   "relation": "introduces",
+   "tail": "span prediction head",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.5252721905708313
+    ]
+   ]
+  },
+  {
+   "head": "span prediction head",
+   "relation": "pretrained on",
+   "tail": "SQuAD 2.0",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.48193132877349854
+    ]
+   ]
+  },
+  {
+   "head": "span prediction head",
+   "relation": "fine-tuned on",
+   "tail": "SQuAD 2.0",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.44241608679294586
+    ]
+   ]
+  },
+  {
+   "head": "RoBERTa",
+   "relation": "improves",
+   "tail": "F1",
+   "correct": false,
+   "occ": [
+    [
+     9,
+     0.4586417227983475
+    ]
+   ]
+  },
+  {
+   "head": "memory usage",
+   "relation": "evaluated on",
+   "tail": "sequence length",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.7426064610481262
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "outperforms",
+   "tail": "memory usage",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.5806768387556076
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "uses dataset",
+   "tail": "sequence length",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.527231439948082
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "achieves metric",
+   "tail": "linear",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.8049714863300323
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "introduces",
+   "tail": "memory usage",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.788372129201889
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "pretrained on",
+   "tail": "sequence length",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.4467533677816391
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "fine-tuned on",
+   "tail": "sequence length",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.4688064157962799
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "reduces",
+   "tail": "memory usage",
+   "correct": true,
+   "occ": [
+    [
+     10,
+     0.9989489018917084
+    ]
+   ]
+  },
+  {
+   "head": "FlashAttention",
+   "relation": "improves",
+   "tail": "memory usage",
+   "correct": false,
+   "occ": [
+    [
+     10,
+     0.9016943275928497
+    ]
+   ]
+  },
+  {
+   "head": "models",
+   "relation": "evaluated on",
+   "tail": "2 trillion tokens",
+   "correct": false,
+   "occ": [
+    [
+     11,
+     0.6537623405456543
+    ]
+   ]
+  },
+  {
+   "head": "Llama 2",
+   "relation": "uses dataset",
+   "tail": "2 trillion tokens",
+   "correct": true,
+   "occ": [
+    [
+     11,
+     0.778406947851181
+    ]
+   ]
+  },
+  {
+   "head": "models",
+   "relation": "achieves metric",
+   "tail": "2 trillion tokens",
+   "correct": false,
+   "occ": [
+    [
+     11,
+     0.35517895221710205
+    ]
+   ]
+  },
+  {
+   "head": "models",
+   "relation": "uses method",
+   "tail": "grouped-query attention",
+   "correct": true,
+   "occ": [
+    [
+     11,
+     0.7106199562549591
+    ]
+   ]
+  },
+  {
+   "head": "Llama 2",
+   "relation": "introduces",
+   "tail": "family of models",
+   "correct": true,
+   "occ": [
+    [
+     11,
+     0.978963315486908
+    ]
+   ]
+  },
+  {
+   "head": "models",
+   "relation": "pretrained on",
+   "tail": "2 trillion tokens",
+   "correct": true,
+   "occ": [
+    [
+     11,
+     0.9883197247982025
+    ]
+   ]
+  },
+  {
+   "head": "models",
+   "relation": "fine-tuned on",
+   "tail": "2 trillion tokens",
+   "correct": false,
+   "occ": [
+    [
+     11,
+     0.7711718082427979
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "evaluated on",
+   "tail": "many tasks",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.9561436772346497
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "outperforms",
+   "tail": "Llama 2 13B",
+   "correct": true,
+   "occ": [
+    [
+     13,
+     0.9998206198215485
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "achieves metric",
+   "tail": "Llama 2 13B",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.8522554934024811
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "uses method",
+   "tail": "sliding window attention",
+   "correct": true,
+   "occ": [
+    [
+     13,
+     0.9983571767807007
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "introduces",
+   "tail": "sliding window attention",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.9317622482776642
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "pretrained on",
+   "tail": "Llama 2 13B",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.6382991671562195
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "fine-tuned on",
+   "tail": "Llama 2 13B",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.6194576025009155
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "reduces",
+   "tail": "Llama 2 13B",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.7547059655189514
+    ]
+   ]
+  },
+  {
+   "head": "Mistral-7B",
+   "relation": "improves",
+   "tail": "Llama 2 13B",
+   "correct": false,
+   "occ": [
+    [
+     13,
+     0.9336456954479218
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "evaluated on",
+   "tail": "GSM8K",
+   "correct": true,
+   "occ": [
+    [
+     14,
+     0.9864376187324524
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "evaluated on",
+   "tail": "HumanEval",
+   "correct": true,
+   "occ": [
+    [
+     14,
+     0.9723970592021942
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "evaluated on",
+   "tail": "MMLU",
+   "correct": true,
+   "occ": [
+    [
+     14,
+     0.9938043057918549
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "outperforms",
+   "tail": "Qwen2",
+   "correct": true,
+   "occ": [
+    [
+     14,
+     0.9992173910140991
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "uses dataset",
+   "tail": "GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.9505729973316193
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "uses dataset",
+   "tail": "HumanEval",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.9059768915176392
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "uses dataset",
+   "tail": "MMLU",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.9766584932804108
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "achieves metric",
+   "tail": "GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.6832631081342697
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "pretrained on",
+   "tail": "GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.7696166336536407
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "fine-tuned on",
+   "tail": "GSM8K",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.7541169226169586
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "reduces",
+   "tail": "Qwen2",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.9613322913646698
+    ]
+   ]
+  },
+  {
+   "head": "Qwen2.5",
+   "relation": "improves",
+   "tail": "Qwen2",
+   "correct": false,
+   "occ": [
+    [
+     14,
+     0.9831318259239197
+    ]
+   ]
+  },
+  {
+   "head": "Speculative decoding",
+   "relation": "outperforms",
+   "tail": "inference",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.9480981230735779
+    ]
+   ]
+  },
+  {
+   "head": "inference",
+   "relation": "uses dataset",
+   "tail": "smaller model",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.5195855051279068
+    ]
+   ]
+  },
+  {
+   "head": "Speculative decoding",
+   "relation": "uses method",
+   "tail": "Speculative decoding",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.4577685445547104
+    ]
+   ]
+  },
+  {
+   "head": "Speculative decoding",
+   "relation": "introduces",
+   "tail": "Speculative decoding",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.7247176766395569
+    ]
+   ]
+  },
+  {
+   "head": "tokens",
+   "relation": "pretrained on",
+   "tail": "smaller model",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.5289499163627625
+    ]
+   ]
+  },
+  {
+   "head": "tokens",
+   "relation": "fine-tuned on",
+   "tail": "target model",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.5050350427627563
+    ]
+   ]
+  },
+  {
+   "head": "smaller model",
+   "relation": "reduces",
+   "tail": "tokens",
+   "correct": false,
+   "occ": [
+    [
+     15,
+     0.4807169735431671
+    ]
+   ]
+  },
+  {
+   "head": "Speculative decoding",
+   "relation": "improves",
+   "tail": "inference",
+   "correct": true,
+   "occ": [
+    [
+     15,
+     0.9865629374980927
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "evaluated on",
+   "tail": "span corruption objective",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.5846666842699051
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "outperforms",
+   "tail": "NLP tasks",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.7570330500602722
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "uses dataset",
+   "tail": "NLP tasks",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.651959091424942
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "achieves metric",
+   "tail": "span corruption objective",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.6537424623966217
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "uses method",
+   "tail": "span corruption objective",
+   "correct": true,
+   "occ": [
+    [
+     16,
+     0.9634272456169128
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "introduces",
+   "tail": "text-to-text problems",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.7003092914819717
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "reduces",
+   "tail": "NLP tasks",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.9960678517818451
+    ]
+   ]
+  },
+  {
+   "head": "T5 model",
+   "relation": "improves",
+   "tail": "NLP tasks",
+   "correct": false,
+   "occ": [
+    [
+     16,
+     0.8614660203456879
+    ]
+   ]
+  },
+  {
+   "head": "reasoning ability",
+   "relation": "evaluated on",
+   "tail": "dense models",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.703587993979454
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "outperforms",
+   "tail": "reasoning ability",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.6447390913963318
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "uses dataset",
+   "tail": "reinforcement-learned models",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.6697007715702057
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "achieves metric",
+   "tail": "1.5B to 70B parameters",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.5993545949459076
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "introduces",
+   "tail": "reasoning ability",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.8453682959079742
+    ]
+   ]
+  },
+  {
+   "head": "reasoning ability",
+   "relation": "fine-tuned on",
+   "tail": "dense models",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.7992624640464783
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "reduces",
+   "tail": "reasoning ability",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.737749844789505
+    ]
+   ]
+  },
+  {
+   "head": "DeepSeek-R1",
+   "relation": "improves",
+   "tail": "reasoning ability",
+   "correct": false,
+   "occ": [
+    [
+     17,
+     0.7041276097297668
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "evaluated on",
+   "tail": "GLUE",
+   "correct": true,
+   "occ": [
+    [
+     18,
+     0.7385912835597992
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "outperforms",
+   "tail": "GLUE",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.8942566514015198
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "uses dataset",
+   "tail": "GLUE",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.9367251396179199
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "achieves metric",
+   "tail": "fine-tuning performance",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.6890246719121933
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "uses method",
+   "tail": "GLUE",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.6215199530124664
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "pretrained on",
+   "tail": "parameters",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.6105470359325409
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "fine-tuned on",
+   "tail": "GLUE",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.9372889995574951
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "reduces",
+   "tail": "parameters",
+   "correct": true,
+   "occ": [
+    [
+     18,
+     0.8342066407203674
+    ],
+    [
+     19,
+     0.920141339302063
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "improves",
+   "tail": "parameters",
+   "correct": false,
+   "occ": [
+    [
+     18,
+     0.7190680056810379
+    ],
+    [
+     19,
+     0.963321179151535
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "outperforms",
+   "tail": "parameters",
+   "correct": false,
+   "occ": [
+    [
+     19,
+     0.6269524395465851
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "uses dataset",
+   "tail": "rank decomposition matrices",
+   "correct": false,
+   "occ": [
+    [
+     19,
+     0.7389561235904694
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "achieves metric",
+   "tail": "parameters",
+   "correct": false,
+   "occ": [
+    [
+     19,
+     0.5123317092657089
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "introduces",
+   "tail": "rank decomposition matrices",
+   "correct": true,
+   "occ": [
+    [
+     19,
+     0.6553287506103516
+    ]
+   ]
+  },
+  {
+   "head": "transformer layer",
+   "relation": "pretrained on",
+   "tail": "rank decomposition matrices",
+   "correct": false,
+   "occ": [
+    [
+     19,
+     0.4601539820432663
+    ]
+   ]
+  },
+  {
+   "head": "LoRA",
+   "relation": "fine-tuned on",
+   "tail": "parameters",
+   "correct": false,
+   "occ": [
+    [
+     19,
+     0.9629235863685608
+    ]
+   ]
+  },
+  {
+   "head": "accuracy loss",
+   "relation": "evaluated on",
+   "tail": "accuracy loss",
+   "correct": false,
+   "occ": [
+    [
+     20,
+     0.3556063771247864
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "outperforms",
+   "tail": "accuracy loss",
+   "correct": false,
+   "occ": [
+    [
+     20,
+     0.4321999102830887
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "achieves metric",
+   "tail": "accuracy loss",
+   "correct": false,
+   "occ": [
+    [
+     20,
+     0.43177659809589386
+    ]
+   ]
+  },
+  {
+   "head": "large language models",
+   "relation": "uses method",
+   "tail": "Quantization",
+   "correct": true,
+   "occ": [
+    [
+     20,
+     0.6949046850204468
+    ]
+   ]
+  },
+  {
+   "head": "Quantization",
+   "relation": "introduces",
+   "tail": "Quantization",
+   "correct": false,
+   "occ": [
+    [
+     20,
+     0.6081874668598175
+    ]
+   ]
+  },
+  {
+   "head": "Quantization",
+   "relation": "reduces",
+   "tail": "GPU memory requirements",
+   "correct": true,
+   "occ": [
+    [
+     20,
+     0.9931290447711945
+    ]
+   ]
+  },
+  {
+   "head": "Quantization",
+   "relation": "improves",
+   "tail": "GPU memory requirements",
+   "correct": false,
+   "occ": [
+    [
+     20,
+     0.8210316300392151
+    ]
+   ]
+  },
+  {
+   "head": "policy",
+   "relation": "evaluated on",
+   "tail": "preference data",
+   "correct": false,
+   "occ": [
+    [
+     21,
+     0.47142912447452545
+    ]
+   ]
+  },
+  {
+   "head": "Direct preference optimization",
+   "relation": "uses dataset",
+   "tail": "preference data",
+   "correct": true,
+   "occ": [
+    [
+     21,
+     0.7001717835664749
+    ]
+   ]
+  },
+  {
+   "head": "Direct preference optimization",
+   "relation": "uses method",
+   "tail": "Direct preference optimization",
+   "correct": false,
+   "occ": [
+    [
+     21,
+     0.5060961991548538
+    ]
+   ]
+  },
+  {
+   "head": "Direct preference optimization",
+   "relation": "introduces",
+   "tail": "Direct preference optimization",
+   "correct": false,
+   "occ": [
+    [
+     21,
+     0.6300850510597229
+    ]
+   ]
+  },
+  {
+   "head": "policy",
+   "relation": "fine-tuned on",
+   "tail": "preference data",
+   "correct": true,
+   "occ": [
+    [
+     21,
+     0.9950750172138214
+    ]
+   ]
+  },
+  {
+   "head": "Direct preference optimization",
+   "relation": "reduces",
+   "tail": "policy",
+   "correct": false,
+   "occ": [
+    [
+     21,
+     0.6997991055250168
+    ]
+   ]
+  },
+  {
+   "head": "Direct preference optimization",
+   "relation": "improves",
+   "tail": "policy",
+   "correct": false,
+   "occ": [
+    [
+     21,
+     0.9635857045650482
+    ]
+   ]
+  },
+  {
+   "head": "loss",
+   "relation": "evaluated on",
+   "tail": "dataset size",
+   "correct": false,
+   "occ": [
+    [
+     22,
+     0.5796094834804535
+    ]
+   ]
+  },
+  {
+   "head": "Scaling laws",
+   "relation": "introduces",
+   "tail": "Scaling laws",
+   "correct": false,
+   "occ": [
+    [
+     22,
+     0.7651695609092712
+    ]
+   ]
+  },
+  {
+   "head": "model size",
+   "relation": "reduces",
+   "tail": "loss",
+   "correct": true,
+   "occ": [
+    [
+     22,
+     0.7700822353363037
+    ]
+   ]
+  },
+  {
+   "head": "model size",
+   "relation": "improves",
+   "tail": "loss",
+   "correct": false,
+   "occ": [
+    [
+     22,
+     0.5875330418348312
+    ]
+   ]
+  },
+  {
+   "head": "accuracy",
+   "relation": "evaluated on",
+   "tail": "MNLI",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.9267598688602448
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "outperforms",
+   "tail": "RoBERTa",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.9982765913009644
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "uses dataset",
+   "tail": "MNLI",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.9850262999534607
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "achieves metric",
+   "tail": "88.8% accuracy",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.9906105399131775
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "uses method",
+   "tail": "disentangled attention",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.9927984774112701
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "introduces",
+   "tail": "disentangled attention",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.8272170126438141
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "fine-tuned on",
+   "tail": "RoBERTa",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.6510174125432968
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "reduces",
+   "tail": "RoBERTa",
+   "correct": false,
+   "occ": [
+    [
+     23,
+     0.5415076613426208
+    ]
+   ]
+  },
+  {
+   "head": "DeBERTa",
+   "relation": "improves",
+   "tail": "RoBERTa",
+   "correct": true,
+   "occ": [
+    [
+     23,
+     0.999832034111023
+    ]
+   ]
+  },
+  {
+   "head": "autoregressive generation",
+   "relation": "evaluated on",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.7281912863254547
+    ]
+   ]
+  },
+  {
+   "head": "autoregressive generation",
+   "relation": "outperforms",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.4334311783313751
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "uses dataset",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.8193732500076294
+    ]
+   ]
+  },
+  {
+   "head": "autoregressive generation",
+   "relation": "achieves metric",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.5978223383426666
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "uses method",
+   "tail": "bidirectional encoding",
+   "correct": true,
+   "occ": [
+    [
+     24,
+     0.8959713280200958
+    ]
+   ]
+  },
+  {
+   "head": "BART",
+   "relation": "introduces",
+   "tail": "bidirectional encoding",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.9431984424591064
+    ]
+   ]
+  },
+  {
+   "head": "autoregressive generation",
+   "relation": "pretrained on",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.9300438165664673
+    ]
+   ]
+  },
+  {
+   "head": "autoregressive generation",
+   "relation": "fine-tuned on",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.8436006009578705
+    ]
+   ]
+  },
+  {
+   "head": "bidirectional encoding",
+   "relation": "reduces",
+   "tail": "text infilling objectives",
+   "correct": false,
+   "occ": [
+    [
+     24,
+     0.44212213158607483
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "evaluated on",
+   "tail": "780 billion tokens",
+   "correct": false,
+   "occ": [
+    [
+     25,
+     0.7471912205219269
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "uses dataset",
+   "tail": "780 billion tokens",
+   "correct": true,
+   "occ": [
+    [
+     25,
+     0.9420146644115448
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "uses method",
+   "tail": "Pathways system",
+   "correct": true,
+   "occ": [
+    [
+     25,
+     0.9845209717750549
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "introduces",
+   "tail": "Pathways system",
+   "correct": false,
+   "occ": [
+    [
+     25,
+     0.6322878450155258
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "pretrained on",
+   "tail": "780 billion tokens",
+   "correct": true,
+   "occ": [
+    [
+     25,
+     0.9925795197486877
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "fine-tuned on",
+   "tail": "780 billion tokens",
+   "correct": false,
+   "occ": [
+    [
+     25,
+     0.7958837151527405
+    ]
+   ]
+  },
+  {
+   "head": "PaLM",
+   "relation": "improves",
+   "tail": "text",
+   "correct": false,
+   "occ": [
+    [
+     25,
+     0.5598641932010651
+    ]
+   ]
+  },
+  {
+   "head": "DistilBERT",
+   "relation": "outperforms",
+   "tail": "smaller student model",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.5313365161418915
+    ]
+   ]
+  },
+  {
+   "head": "Knowledge distillation",
+   "relation": "uses dataset",
+   "tail": "large teacher model",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.5497199296951294
+    ]
+   ]
+  },
+  {
+   "head": "Knowledge distillation",
+   "relation": "uses method",
+   "tail": "Knowledge distillation",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.5914660096168518
+    ]
+   ]
+  },
+  {
+   "head": "Knowledge distillation",
+   "relation": "introduces",
+   "tail": "Knowledge distillation",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.6629040241241455
+    ]
+   ]
+  },
+  {
+   "head": "DistilBERT",
+   "relation": "pretrained on",
+   "tail": "large teacher model",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.39535029232501984
+    ]
+   ]
+  },
+  {
+   "head": "DistilBERT",
+   "relation": "fine-tuned on",
+   "tail": "large teacher model",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.3150782287120819
+    ]
+   ]
+  },
+  {
+   "head": "Knowledge distillation",
+   "relation": "reduces",
+   "tail": "smaller student model",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.810659259557724
+    ]
+   ]
+  },
+  {
+   "head": "Knowledge distillation",
+   "relation": "improves",
+   "tail": "smaller student model",
+   "correct": false,
+   "occ": [
+    [
+     26,
+     0.820425271987915
+    ]
+   ]
+  },
+  {
+   "head": "GSM8K accuracy",
+   "relation": "evaluated on",
+   "tail": "PaLM-540B",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.6446447670459747
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "outperforms",
+   "tail": "PaLM-540B",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.5613938868045807
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "uses dataset",
+   "tail": "PaLM-540B",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.7224921584129333
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "achieves metric",
+   "tail": "GSM8K accuracy",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.6042849719524384
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "uses method",
+   "tail": "majority vote",
+   "correct": true,
+   "occ": [
+    [
+     27,
+     0.7758796811103821
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "introduces",
+   "tail": "reasoning paths",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.6097352057695389
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "reduces",
+   "tail": "GSM8K accuracy",
+   "correct": false,
+   "occ": [
+    [
+     27,
+     0.5866850018501282
+    ]
+   ]
+  },
+  {
+   "head": "Self-consistency",
+   "relation": "improves",
+   "tail": "GSM8K accuracy",
+   "correct": true,
+   "occ": [
+    [
+     27,
+     0.8755616545677185
+    ]
+   ]
+  }
+ ]
+}

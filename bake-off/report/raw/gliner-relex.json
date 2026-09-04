@@ -6,7 +6,7 @@
    "head": "Low-Rank Adaptation",
    "relation": "uses method",
    "tail": "LoRA",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      0,
@@ -18,7 +18,7 @@
    "head": "Low-Rank Adaptation",
    "relation": "reduces",
    "tail": "hallucination",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      0,
@@ -30,7 +30,7 @@
    "head": "Low-Rank Adaptation",
    "relation": "improves",
    "tail": "hallucination",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -42,7 +42,7 @@
    "head": "Low-Rank Adaptation",
    "relation": "fine-tuned on",
    "tail": "large language models",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -54,7 +54,7 @@
    "head": "Low-Rank Adaptation",
    "relation": "pretrained on",
    "tail": "low-rank matrices",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -66,7 +66,7 @@
    "head": "Low-Rank Adaptation",
    "relation": "fine-tuned on",
    "tail": "low-rank matrices",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -78,7 +78,7 @@
    "head": "LoRA",
    "relation": "reduces",
    "tail": "hallucination",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      0,
@@ -90,7 +90,7 @@
    "head": "LoRA",
    "relation": "improves",
    "tail": "hallucination",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -102,7 +102,7 @@
    "head": "weight updates",
    "relation": "pretrained on",
    "tail": "large language models",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -114,7 +114,7 @@
    "head": "weight updates",
    "relation": "fine-tuned on",
    "tail": "large language models",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -126,7 +126,7 @@
    "head": "weight updates",
    "relation": "pretrained on",
    "tail": "low-rank matrices",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -138,7 +138,7 @@
    "head": "weight updates",
    "relation": "fine-tuned on",
    "tail": "low-rank matrices",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      0,
@@ -150,7 +150,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "uses method",
    "tail": "CoT",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -162,7 +162,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "introduces",
    "tail": "CoT",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -174,7 +174,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "achieves metric",
    "tail": "reasoning accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -186,7 +186,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "improves",
    "tail": "reasoning accuracy",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -198,7 +198,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "improves",
    "tail": "large language models",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -214,7 +214,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "evaluated on",
    "tail": "multi-step problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -226,7 +226,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "fine-tuned on",
    "tail": "multi-step problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -238,7 +238,7 @@
    "head": "CoT",
    "relation": "uses method",
    "tail": "Chain-of-thought prompting",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -250,7 +250,7 @@
    "head": "CoT",
    "relation": "achieves metric",
    "tail": "reasoning accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -262,7 +262,7 @@
    "head": "CoT",
    "relation": "improves",
    "tail": "reasoning accuracy",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -274,7 +274,7 @@
    "head": "CoT",
    "relation": "improves",
    "tail": "large language models",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -286,7 +286,7 @@
    "head": "CoT",
    "relation": "fine-tuned on",
    "tail": "multi-step problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -298,7 +298,7 @@
    "head": "reasoning accuracy",
    "relation": "evaluated on",
    "tail": "multi-step problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -310,7 +310,7 @@
    "head": "large language models",
    "relation": "achieves metric",
    "tail": "reasoning accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -322,7 +322,7 @@
    "head": "large language models",
    "relation": "evaluated on",
    "tail": "multi-step problems",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      1,
@@ -334,7 +334,7 @@
    "head": "large language models",
    "relation": "fine-tuned on",
    "tail": "multi-step problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      1,
@@ -346,7 +346,7 @@
    "head": "LLaMA-7B",
    "relation": "pretrained on",
    "tail": "Alpaca",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      2,
@@ -358,7 +358,7 @@
    "head": "LLaMA-7B",
    "relation": "fine-tuned on",
    "tail": "Alpaca",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      2,
@@ -370,7 +370,7 @@
    "head": "LLaMA-7B",
    "relation": "uses method",
    "tail": "LoRA",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      2,
@@ -382,7 +382,7 @@
    "head": "LLaMA-7B",
    "relation": "evaluated on",
    "tail": "MMLU",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      2,
@@ -394,7 +394,7 @@
    "head": "GPT-4",
    "relation": "outperforms",
    "tail": "GPT-3.5",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      3,
@@ -406,7 +406,7 @@
    "head": "GPT-4",
    "relation": "uses method",
    "tail": "GPT-3.5",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      3,
@@ -418,7 +418,7 @@
    "head": "GPT-4",
    "relation": "evaluated on",
    "tail": "most benchmarks",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      3,
@@ -430,7 +430,7 @@
    "head": "GPT-4",
    "relation": "achieves metric",
    "tail": "86.4%",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      3,
@@ -442,7 +442,7 @@
    "head": "GPT-4",
    "relation": "evaluated on",
    "tail": "MMLU",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      3,
@@ -454,7 +454,7 @@
    "head": "GPT-4",
    "relation": "fine-tuned on",
    "tail": "MMLU",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      3,
@@ -466,7 +466,7 @@
    "head": "GPT-3.5",
    "relation": "evaluated on",
    "tail": "most benchmarks",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      3,
@@ -478,7 +478,7 @@
    "head": "GPT-3.5",
    "relation": "achieves metric",
    "tail": "86.4%",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      3,
@@ -490,7 +490,7 @@
    "head": "GPT-3.5",
    "relation": "evaluated on",
    "tail": "MMLU",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      3,
@@ -502,7 +502,7 @@
    "head": "86.4%",
    "relation": "evaluated on",
    "tail": "MMLU",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      3,
@@ -514,7 +514,7 @@
    "head": "attention mechanism",
    "relation": "introduces",
    "tail": "recurrence",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -526,7 +526,7 @@
    "head": "attention mechanism",
    "relation": "reduces",
    "tail": "recurrence",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -538,7 +538,7 @@
    "head": "attention mechanism",
    "relation": "improves",
    "tail": "recurrence",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -550,7 +550,7 @@
    "head": "attention mechanism",
    "relation": "reduces",
    "tail": "self-attention",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -562,7 +562,7 @@
    "head": "attention mechanism",
    "relation": "improves",
    "tail": "self-attention",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -574,7 +574,7 @@
    "head": "Vaswani et al.",
    "relation": "uses method",
    "tail": "attention mechanism",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -586,7 +586,7 @@
    "head": "Vaswani et al.",
    "relation": "introduces",
    "tail": "attention mechanism",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      4,
@@ -598,7 +598,7 @@
    "head": "Vaswani et al.",
    "relation": "introduces",
    "tail": "recurrence",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      4,
@@ -610,7 +610,7 @@
    "head": "BERT",
    "relation": "pretrained on",
    "tail": "BookCorpus",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      5,
@@ -622,7 +622,7 @@
    "head": "BERT",
    "relation": "fine-tuned on",
    "tail": "BookCorpus",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      5,
@@ -634,7 +634,7 @@
    "head": "BERT",
    "relation": "evaluated on",
    "tail": "English Wikipedia",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      5,
@@ -646,7 +646,7 @@
    "head": "BERT",
    "relation": "uses dataset",
    "tail": "English Wikipedia",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      5,
@@ -658,7 +658,7 @@
    "head": "BERT",
    "relation": "pretrained on",
    "tail": "English Wikipedia",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      5,
@@ -670,7 +670,7 @@
    "head": "BERT",
    "relation": "fine-tuned on",
    "tail": "English Wikipedia",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      5,
@@ -682,7 +682,7 @@
    "head": "BERT",
    "relation": "uses method",
    "tail": "masked language modeling",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      5,
@@ -694,7 +694,7 @@
    "head": "RLHF",
    "relation": "improves",
    "tail": "language model behavior",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      6,
@@ -706,7 +706,7 @@
    "head": "RLHF",
    "relation": "achieves metric",
    "tail": "human preferences",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      6,
@@ -718,7 +718,7 @@
    "head": "RLHF",
    "relation": "reduces",
    "tail": "human preferences",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      6,
@@ -730,7 +730,7 @@
    "head": "RLHF",
    "relation": "improves",
    "tail": "human preferences",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      6,
@@ -742,7 +742,7 @@
    "head": "RLHF",
    "relation": "outperforms",
    "tail": "learned reward model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      6,
@@ -754,7 +754,7 @@
    "head": "RLHF",
    "relation": "uses dataset",
    "tail": "learned reward model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      6,
@@ -766,7 +766,7 @@
    "head": "RLHF",
    "relation": "fine-tuned on",
    "tail": "learned reward model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      6,
@@ -778,7 +778,7 @@
    "head": "InstructGPT",
    "relation": "uses method",
    "tail": "reinforcement learning",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      7,
@@ -790,7 +790,7 @@
    "head": "InstructGPT",
    "relation": "introduces",
    "tail": "reinforcement learning",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      7,
@@ -802,7 +802,7 @@
    "head": "InstructGPT",
    "relation": "uses method",
    "tail": "human feedback",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      7,
@@ -814,7 +814,7 @@
    "head": "InstructGPT",
    "relation": "introduces",
    "tail": "human feedback",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      7,
@@ -826,7 +826,7 @@
    "head": "reinforcement learning",
    "relation": "uses method",
    "tail": "human feedback",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      7,
@@ -838,7 +838,7 @@
    "head": "reinforcement learning",
    "relation": "achieves metric",
    "tail": "truthfulness",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      7,
@@ -850,7 +850,7 @@
    "head": "reinforcement learning",
    "relation": "improves",
    "tail": "truthfulness",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      7,
@@ -862,7 +862,7 @@
    "head": "reinforcement learning",
    "relation": "improves",
    "tail": "GPT-3 outputs",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      7,
@@ -874,7 +874,7 @@
    "head": "human feedback",
    "relation": "achieves metric",
    "tail": "truthfulness",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      7,
@@ -886,7 +886,7 @@
    "head": "human feedback",
    "relation": "improves",
    "tail": "truthfulness",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      7,
@@ -898,7 +898,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "uses method",
    "tail": "large language models",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      8,
@@ -910,7 +910,7 @@
    "head": "Chain-of-thought prompting",
    "relation": "improves",
    "tail": "multi-step arithmetic reasoning problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      8,
@@ -922,7 +922,7 @@
    "head": "large language models",
    "relation": "achieves metric",
    "tail": "multi-step arithmetic reasoning problems",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      8,
@@ -934,7 +934,7 @@
    "head": "94.8 F1",
    "relation": "evaluated on",
    "tail": "SQuAD 2.0",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      9,
@@ -946,7 +946,7 @@
    "head": "RoBERTa",
    "relation": "improves",
    "tail": "94.8 F1",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      9,
@@ -958,7 +958,7 @@
    "head": "RoBERTa",
    "relation": "fine-tuned on",
    "tail": "SQuAD 2.0",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      9,
@@ -970,7 +970,7 @@
    "head": "FlashAttention",
    "relation": "reduces",
    "tail": "memory usage",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      10,
@@ -982,7 +982,7 @@
    "head": "FlashAttention",
    "relation": "improves",
    "tail": "memory usage",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      10,
@@ -994,7 +994,7 @@
    "head": "FlashAttention",
    "relation": "uses method",
    "tail": "attention computation",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      10,
@@ -1006,7 +1006,7 @@
    "head": "FlashAttention",
    "relation": "improves",
    "tail": "attention computation",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      10,
@@ -1018,7 +1018,7 @@
    "head": "FlashAttention",
    "relation": "achieves metric",
    "tail": "sequence length",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      10,
@@ -1030,7 +1030,7 @@
    "head": "FlashAttention",
    "relation": "improves",
    "tail": "sequence length",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      10,
@@ -1042,7 +1042,7 @@
    "head": "attention computation",
    "relation": "achieves metric",
    "tail": "sequence length",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      10,
@@ -1054,7 +1054,7 @@
    "head": "Llama 2",
    "relation": "introduces",
    "tail": "family of models",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      11,
@@ -1066,7 +1066,7 @@
    "head": "Llama 2",
    "relation": "uses dataset",
    "tail": "2 trillion tokens",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      11,
@@ -1078,7 +1078,7 @@
    "head": "Llama 2",
    "relation": "pretrained on",
    "tail": "2 trillion tokens",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      11,
@@ -1090,7 +1090,7 @@
    "head": "Llama 2",
    "relation": "uses method",
    "tail": "grouped-query attention",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      11,
@@ -1102,7 +1102,7 @@
    "head": "Llama 2",
    "relation": "improves",
    "tail": "grouped-query attention",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      11,
@@ -1114,7 +1114,7 @@
    "head": "family of models",
    "relation": "pretrained on",
    "tail": "2 trillion tokens",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      11,
@@ -1126,7 +1126,7 @@
    "head": "family of models",
    "relation": "fine-tuned on",
    "tail": "2 trillion tokens",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      11,
@@ -1138,7 +1138,7 @@
    "head": "Retrieval-augmented generation grounds model",
    "relation": "introduces",
    "tail": "answers",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1150,7 +1150,7 @@
    "head": "Retrieval-augmented generation grounds model",
    "relation": "reduces",
    "tail": "answers",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1162,7 +1162,7 @@
    "head": "Retrieval-augmented generation grounds model",
    "relation": "improves",
    "tail": "answers",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1174,7 +1174,7 @@
    "head": "Retrieval-augmented generation grounds model",
    "relation": "evaluated on",
    "tail": "documents",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1186,7 +1186,7 @@
    "head": "Retrieval-augmented generation grounds model",
    "relation": "fine-tuned on",
    "tail": "documents",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1198,7 +1198,7 @@
    "head": "answers",
    "relation": "evaluated on",
    "tail": "documents",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1210,7 +1210,7 @@
    "head": "DPR",
    "relation": "uses method",
    "tail": "Retrieval-augmented generation grounds model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1222,7 +1222,7 @@
    "head": "DPR",
    "relation": "uses dataset",
    "tail": "documents",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      12,
@@ -1234,7 +1234,7 @@
    "head": "DPR",
    "relation": "uses dataset",
    "tail": "Wikipedia",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      12,
@@ -1246,7 +1246,7 @@
    "head": "Mistral-7B",
    "relation": "uses method",
    "tail": "sliding window",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      13,
@@ -1258,7 +1258,7 @@
    "head": "Mistral-7B",
    "relation": "achieves metric",
    "tail": "attention",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      13,
@@ -1270,7 +1270,7 @@
    "head": "Mistral-7B",
    "relation": "uses method",
    "tail": "attention",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      13,
@@ -1282,7 +1282,7 @@
    "head": "Mistral-7B",
    "relation": "improves",
    "tail": "attention",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      13,
@@ -1294,7 +1294,7 @@
    "head": "Mistral-7B",
    "relation": "outperforms",
    "tail": "Llama 2 13B",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      13,
@@ -1306,7 +1306,7 @@
    "head": "Mistral-7B",
    "relation": "evaluated on",
    "tail": "many tasks",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      13,
@@ -1318,7 +1318,7 @@
    "head": "Mistral-7B",
    "relation": "fine-tuned on",
    "tail": "many tasks",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      13,
@@ -1330,7 +1330,7 @@
    "head": "Llama 2 13B",
    "relation": "evaluated on",
    "tail": "many tasks",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      13,
@@ -1342,7 +1342,7 @@
    "head": "Llama 2 13B",
    "relation": "fine-tuned on",
    "tail": "many tasks",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      13,
@@ -1354,7 +1354,7 @@
    "head": "Qwen2.5",
    "relation": "evaluated on",
    "tail": "GSM8K",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      14,
@@ -1366,7 +1366,7 @@
    "head": "Qwen2.5",
    "relation": "evaluated on",
    "tail": "HumanEval",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      14,
@@ -1378,7 +1378,7 @@
    "head": "Qwen2.5",
    "relation": "evaluated on",
    "tail": "MMLU",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      14,
@@ -1390,7 +1390,7 @@
    "head": "Qwen2.5",
    "relation": "outperforms",
    "tail": "Qwen2",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      14,
@@ -1402,7 +1402,7 @@
    "head": "Qwen2.5",
    "relation": "achieves metric",
    "tail": "Qwen2",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      14,
@@ -1414,7 +1414,7 @@
    "head": "Qwen2.5",
    "relation": "improves",
    "tail": "Qwen2",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      14,
@@ -1426,7 +1426,7 @@
    "head": "MMLU",
    "relation": "outperforms",
    "tail": "Qwen2",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      14,
@@ -1438,7 +1438,7 @@
    "head": "Speculative decoding",
    "relation": "reduces",
    "tail": "inference",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      15,
@@ -1450,7 +1450,7 @@
    "head": "Speculative decoding",
    "relation": "improves",
    "tail": "inference",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      15,
@@ -1462,7 +1462,7 @@
    "head": "Speculative decoding",
    "relation": "improves",
    "tail": "tokens",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      15,
@@ -1474,7 +1474,7 @@
    "head": "inference",
    "relation": "evaluated on",
    "tail": "target model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      15,
@@ -1486,7 +1486,7 @@
    "head": "tokens",
    "relation": "evaluated on",
    "tail": "smaller model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      15,
@@ -1498,7 +1498,7 @@
    "head": "tokens",
    "relation": "outperforms",
    "tail": "smaller model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      15,
@@ -1510,7 +1510,7 @@
    "head": "tokens",
    "relation": "fine-tuned on",
    "tail": "smaller model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      15,
@@ -1522,7 +1522,7 @@
    "head": "T5 model",
    "relation": "uses method",
    "tail": "NLP tasks",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1534,7 +1534,7 @@
    "head": "T5 model",
    "relation": "introduces",
    "tail": "NLP tasks",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1546,7 +1546,7 @@
    "head": "T5 model",
    "relation": "improves",
    "tail": "NLP tasks",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1558,7 +1558,7 @@
    "head": "T5 model",
    "relation": "achieves metric",
    "tail": "span corruption objective",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1570,7 +1570,7 @@
    "head": "T5 model",
    "relation": "uses method",
    "tail": "span corruption objective",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      16,
@@ -1582,7 +1582,7 @@
    "head": "T5 model",
    "relation": "introduces",
    "tail": "span corruption objective",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1594,7 +1594,7 @@
    "head": "T5 model",
    "relation": "improves",
    "tail": "span corruption objective",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1606,7 +1606,7 @@
    "head": "span corruption objective",
    "relation": "evaluated on",
    "tail": "T5 model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1618,7 +1618,7 @@
    "head": "span corruption objective",
    "relation": "evaluated on",
    "tail": "NLP tasks",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      16,
@@ -1630,7 +1630,7 @@
    "head": "DeepSeek-R1",
    "relation": "reduces",
    "tail": "reasoning ability",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      17,
@@ -1642,7 +1642,7 @@
    "head": "DeepSeek-R1",
    "relation": "improves",
    "tail": "reasoning ability",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      17,
@@ -1654,7 +1654,7 @@
    "head": "DeepSeek-R1",
    "relation": "uses dataset",
    "tail": "large reinforcement-learned models",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      17,
@@ -1666,7 +1666,7 @@
    "head": "DeepSeek-R1",
    "relation": "introduces",
    "tail": "dense models",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      17,
@@ -1678,7 +1678,7 @@
    "head": "DeepSeek-R1",
    "relation": "improves",
    "tail": "dense models",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      17,
@@ -1690,7 +1690,7 @@
    "head": "large reinforcement-learned models",
    "relation": "uses dataset",
    "tail": "large reinforcement-learned models",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      17,
@@ -1702,7 +1702,7 @@
    "head": "dense models",
    "relation": "achieves metric",
    "tail": "1.5B to 70B",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      17,
@@ -1714,7 +1714,7 @@
    "head": "LoRA",
    "relation": "achieves metric",
    "tail": "performance",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      18,
@@ -1726,7 +1726,7 @@
    "head": "LoRA",
    "relation": "improves",
    "tail": "performance",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      18,
@@ -1738,7 +1738,7 @@
    "head": "LoRA",
    "relation": "fine-tuned on",
    "tail": "GLUE",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      18,
@@ -1750,7 +1750,7 @@
    "head": "LoRA",
    "relation": "reduces",
    "tail": "10,000 times fewer parameters",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      18,
@@ -1762,7 +1762,7 @@
    "head": "performance",
    "relation": "evaluated on",
    "tail": "GLUE",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      18,
@@ -1774,7 +1774,7 @@
    "head": "performance",
    "relation": "fine-tuned on",
    "tail": "GLUE",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      18,
@@ -1786,7 +1786,7 @@
    "head": "performance",
    "relation": "reduces",
    "tail": "10,000 times fewer parameters",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      18,
@@ -1798,7 +1798,7 @@
    "head": "training",
    "relation": "reduces",
    "tail": "10,000 times fewer parameters",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      18,
@@ -1810,7 +1810,7 @@
    "head": "LoRA",
    "relation": "uses method",
    "tail": "LoRA",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      19,
@@ -1822,7 +1822,7 @@
    "head": "LoRA",
    "relation": "reduces",
    "tail": "parameters",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      19,
@@ -1834,7 +1834,7 @@
    "head": "LoRA",
    "relation": "improves",
    "tail": "parameters",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      19,
@@ -1846,7 +1846,7 @@
    "head": "LoRA",
    "relation": "uses method",
    "tail": "trainable rank decomposition matrices",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      19,
@@ -1858,7 +1858,7 @@
    "head": "LoRA",
    "relation": "introduces",
    "tail": "trainable rank decomposition matrices",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      19,
@@ -1870,7 +1870,7 @@
    "head": "LoRA",
    "relation": "improves",
    "tail": "trainable rank decomposition matrices",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      19,
@@ -1882,7 +1882,7 @@
    "head": "LoRA",
    "relation": "uses dataset",
    "tail": "transformer layer",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      19,
@@ -1894,7 +1894,7 @@
    "head": "LoRA",
    "relation": "fine-tuned on",
    "tail": "transformer layer",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      19,
@@ -1906,7 +1906,7 @@
    "head": "parameters",
    "relation": "pretrained on",
    "tail": "transformer layer",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      19,
@@ -1918,7 +1918,7 @@
    "head": "parameters",
    "relation": "fine-tuned on",
    "tail": "transformer layer",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      19,
@@ -1930,7 +1930,7 @@
    "head": "trainable rank decomposition matrices",
    "relation": "pretrained on",
    "tail": "transformer layer",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      19,
@@ -1942,7 +1942,7 @@
    "head": "trainable rank decomposition matrices",
    "relation": "fine-tuned on",
    "tail": "transformer layer",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      19,
@@ -1954,7 +1954,7 @@
    "head": "Quantization",
    "relation": "reduces",
    "tail": "4-bit precision",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      20,
@@ -1966,7 +1966,7 @@
    "head": "Quantization",
    "relation": "reduces",
    "tail": "GPU memory requirements",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      20,
@@ -1978,7 +1978,7 @@
    "head": "Quantization",
    "relation": "improves",
    "tail": "GPU memory requirements",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      20,
@@ -1990,7 +1990,7 @@
    "head": "Quantization",
    "relation": "improves",
    "tail": "accuracy loss",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      20,
@@ -2002,7 +2002,7 @@
    "head": "large language models",
    "relation": "achieves metric",
    "tail": "accuracy loss",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      20,
@@ -2014,7 +2014,7 @@
    "head": "Direct preference optimization",
    "relation": "reduces",
    "tail": "policy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      21,
@@ -2026,7 +2026,7 @@
    "head": "Direct preference optimization",
    "relation": "improves",
    "tail": "policy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      21,
@@ -2038,7 +2038,7 @@
    "head": "Direct preference optimization",
    "relation": "uses dataset",
    "tail": "preference data",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      21,
@@ -2050,7 +2050,7 @@
    "head": "Direct preference optimization",
    "relation": "fine-tuned on",
    "tail": "preference data",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      21,
@@ -2062,7 +2062,7 @@
    "head": "policy",
    "relation": "evaluated on",
    "tail": "preference data",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      21,
@@ -2074,7 +2074,7 @@
    "head": "policy",
    "relation": "fine-tuned on",
    "tail": "preference data",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      21,
@@ -2086,7 +2086,7 @@
    "head": "Scaling laws",
    "relation": "introduces",
    "tail": "loss",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2098,7 +2098,7 @@
    "head": "Scaling laws",
    "relation": "reduces",
    "tail": "loss",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      22,
@@ -2110,7 +2110,7 @@
    "head": "Scaling laws",
    "relation": "introduces",
    "tail": "model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2122,7 +2122,7 @@
    "head": "Scaling laws",
    "relation": "improves",
    "tail": "dataset",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2134,7 +2134,7 @@
    "head": "Scaling laws",
    "relation": "improves",
    "tail": "compute",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2146,7 +2146,7 @@
    "head": "model",
    "relation": "achieves metric",
    "tail": "loss",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2158,7 +2158,7 @@
    "head": "model",
    "relation": "achieves metric",
    "tail": "size",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2170,7 +2170,7 @@
    "head": "model",
    "relation": "uses dataset",
    "tail": "dataset",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2182,7 +2182,7 @@
    "head": "dataset",
    "relation": "achieves metric",
    "tail": "loss",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2194,7 +2194,7 @@
    "head": "compute",
    "relation": "improves",
    "tail": "loss",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      22,
@@ -2206,7 +2206,7 @@
    "head": "DeBERTa",
    "relation": "outperforms",
    "tail": "RoBERTa",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2218,7 +2218,7 @@
    "head": "DeBERTa",
    "relation": "improves",
    "tail": "RoBERTa",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2230,7 +2230,7 @@
    "head": "DeBERTa",
    "relation": "uses method",
    "tail": "disentangled attention",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2242,7 +2242,7 @@
    "head": "DeBERTa",
    "relation": "achieves metric",
    "tail": "88.8% accuracy",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2254,7 +2254,7 @@
    "head": "DeBERTa",
    "relation": "evaluated on",
    "tail": "MNLI",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2266,7 +2266,7 @@
    "head": "DeBERTa",
    "relation": "uses dataset",
    "tail": "MNLI",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2278,7 +2278,7 @@
    "head": "DeBERTa",
    "relation": "fine-tuned on",
    "tail": "MNLI",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      23,
@@ -2290,7 +2290,7 @@
    "head": "RoBERTa",
    "relation": "uses method",
    "tail": "disentangled attention",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      23,
@@ -2302,7 +2302,7 @@
    "head": "RoBERTa",
    "relation": "achieves metric",
    "tail": "88.8% accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      23,
@@ -2314,7 +2314,7 @@
    "head": "88.8% accuracy",
    "relation": "evaluated on",
    "tail": "MNLI",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      23,
@@ -2326,7 +2326,7 @@
    "head": "88.8% accuracy",
    "relation": "fine-tuned on",
    "tail": "MNLI",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      23,
@@ -2338,7 +2338,7 @@
    "head": "BART",
    "relation": "uses method",
    "tail": "bidirectional encoding",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      24,
@@ -2350,7 +2350,7 @@
    "head": "BART",
    "relation": "introduces",
    "tail": "bidirectional encoding",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2362,7 +2362,7 @@
    "head": "BART",
    "relation": "uses method",
    "tail": "autoregressive generation",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      24,
@@ -2374,7 +2374,7 @@
    "head": "BART",
    "relation": "introduces",
    "tail": "autoregressive generation",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2386,7 +2386,7 @@
    "head": "BART",
    "relation": "improves",
    "tail": "autoregressive generation",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2398,7 +2398,7 @@
    "head": "BART",
    "relation": "pretrained on",
    "tail": "text infilling objectives",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      24,
@@ -2410,7 +2410,7 @@
    "head": "BART",
    "relation": "fine-tuned on",
    "tail": "text infilling objectives",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2422,7 +2422,7 @@
    "head": "bidirectional encoding",
    "relation": "pretrained on",
    "tail": "text infilling objectives",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2434,7 +2434,7 @@
    "head": "bidirectional encoding",
    "relation": "fine-tuned on",
    "tail": "text infilling objectives",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2446,7 +2446,7 @@
    "head": "autoregressive generation",
    "relation": "pretrained on",
    "tail": "text infilling objectives",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2458,7 +2458,7 @@
    "head": "autoregressive generation",
    "relation": "fine-tuned on",
    "tail": "text infilling objectives",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      24,
@@ -2470,7 +2470,7 @@
    "head": "PaLM",
    "relation": "achieves metric",
    "tail": "780 billion tokens",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      25,
@@ -2482,7 +2482,7 @@
    "head": "PaLM",
    "relation": "pretrained on",
    "tail": "780 billion tokens",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      25,
@@ -2494,7 +2494,7 @@
    "head": "PaLM",
    "relation": "evaluated on",
    "tail": "high-quality text",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      25,
@@ -2506,7 +2506,7 @@
    "head": "PaLM",
    "relation": "achieves metric",
    "tail": "high-quality text",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      25,
@@ -2518,7 +2518,7 @@
    "head": "PaLM",
    "relation": "pretrained on",
    "tail": "high-quality text",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      25,
@@ -2530,7 +2530,7 @@
    "head": "PaLM",
    "relation": "uses method",
    "tail": "Pathways system",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      25,
@@ -2542,7 +2542,7 @@
    "head": "PaLM",
    "relation": "uses dataset",
    "tail": "6144 TPU v4 chips",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      25,
@@ -2554,7 +2554,7 @@
    "head": "Knowledge distillation",
    "relation": "introduces",
    "tail": "behavior",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2566,7 +2566,7 @@
    "head": "Knowledge distillation",
    "relation": "reduces",
    "tail": "behavior",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2578,7 +2578,7 @@
    "head": "Knowledge distillation",
    "relation": "improves",
    "tail": "behavior",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2590,7 +2590,7 @@
    "head": "Knowledge distillation",
    "relation": "introduces",
    "tail": "large teacher model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2602,7 +2602,7 @@
    "head": "Knowledge distillation",
    "relation": "improves",
    "tail": "large teacher model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2614,7 +2614,7 @@
    "head": "Knowledge distillation",
    "relation": "introduces",
    "tail": "smaller student model",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      26,
@@ -2626,7 +2626,7 @@
    "head": "Knowledge distillation",
    "relation": "improves",
    "tail": "smaller student model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2638,7 +2638,7 @@
    "head": "smaller student model",
    "relation": "outperforms",
    "tail": "DistilBERT",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2650,7 +2650,7 @@
    "head": "DistilBERT",
    "relation": "outperforms",
    "tail": "smaller student model",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      26,
@@ -2662,7 +2662,7 @@
    "head": "Self-consistency",
    "relation": "uses method",
    "tail": "multiple reasoning paths",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      27,
@@ -2674,7 +2674,7 @@
    "head": "Self-consistency",
    "relation": "uses method",
    "tail": "majority vote",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      27,
@@ -2686,7 +2686,7 @@
    "head": "Self-consistency",
    "relation": "improves",
    "tail": "majority vote",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      27,
@@ -2698,7 +2698,7 @@
    "head": "Self-consistency",
    "relation": "improves",
    "tail": "GSM8K",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      27,
@@ -2710,7 +2710,7 @@
    "head": "Self-consistency",
    "relation": "achieves metric",
    "tail": "accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      27,
@@ -2722,7 +2722,7 @@
    "head": "GSM8K",
    "relation": "achieves metric",
    "tail": "accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      27,
@@ -2734,7 +2734,7 @@
    "head": "GSM8K",
    "relation": "improves",
    "tail": "accuracy",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      27,
@@ -2746,7 +2746,7 @@
    "head": "GSM8K",
    "relation": "outperforms",
    "tail": "PaLM-540B",
-   "correct": null,
+   "correct": false,
    "occ": [
     [
      27,
@@ -2758,7 +2758,7 @@
    "head": "PaLM-540B",
    "relation": "achieves metric",
    "tail": "accuracy",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      27,
@@ -2770,7 +2770,7 @@
    "head": "PaLM-540B",
    "relation": "achieves metric",
    "tail": "56%",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      27,
@@ -2782,7 +2782,7 @@
    "head": "PaLM-540B",
    "relation": "achieves metric",
    "tail": "74%",
-   "correct": null,
+   "correct": true,
    "occ": [
     [
      27,

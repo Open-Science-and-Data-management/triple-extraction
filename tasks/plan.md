@@ -126,23 +126,23 @@
 
   **Dependencies:** Tasks 4–7 · **Files:** `scripts/bakeoff.py` · **Scope:** M
 
-- [ ] **Task 9: เขียน report** — `report/bakeoff-r2-results.md` (ตาราง Step 4: triples | ms/ประโยค | precision ~ | noise, sweep + best, แผนที่ 2 มิติ precision × ms, แตกผลตาม category) + `report/distinct-relations.md` (distinct relation count/model) — สร้างโดย script ตอนรัน
+- [x] **Task 9: เขียน report** — `report/bakeoff-r2-results.md` (ตาราง Step 4: triples | ms/ประโยค | precision ~ | noise, sweep + best, แผนที่ 2 มิติ precision × ms, แตกผลตาม category) + `report/distinct-relations.md` (distinct relation count/model) — สร้างโดย script ตอนรัน
 
   **Acceptance criteria:**
-  - [ ] ทั้ง 2 ไฟล์ถูกสร้าง/เขียนทับโดย `uv run bakeoff`
-  - [ ] report แตกผลตาม category ได้ (ไม่รวมก้อนเดียว)
-  - [ ] ms/ประโยค = ค่าหลัง warm-up
+  - [x] ทั้ง 2 ไฟล์ถูกสร้าง/เขียนทับโดย `uv run bakeoff`
+  - [x] report แตกผลตาม category ได้ (ไม่รวมก้อนเดียว) *(ต่อ model: ตาราง 7 category @ จุด best — triples + ประโยคว่าง/รวม)*
+  - [x] ms/ประโยค = ค่าหลัง warm-up
 
   **Verification:**
-  - [ ] `uv run bakeoff` ครบ 5 model → เปิด report ตรวจด้วยตาตาม `docs/bakeoff-evaluation-steps.md` Step 3
-  - [ ] distinct relation count ≥1 ทุก model (ReLiK ปิด schema ยกเว้น รูปแบบบันทึกข้อมูล)
+  - [x] `uv run bakeoff` ครบ 5 model → เปิด report ตรวจด้วยตาตาม `docs/bakeoff-evaluation-steps.md` Step 3 *(rate ทุก unique triple ครั้งเดียว (575 อัน) ใส่ลง report/raw/*.json แล้ว precision@threshold คำนวณจากการ slice — ตรวจตัวเลขใน report แล้ว)*
+  - [x] distinct relation count ≥1 ทุก model (ReLiK ปิด schema ยกเว้น รูปแบบบันทึกข้อมูล) *(relex 10 · glirel 8 · pyrheads 10 · relik 24 (native NYT) · nuextract 17)*
 
   **Dependencies:** Task 8 · **Files:** `scripts/bakeoff.py`, `report/*.md` (generated) · **Scope:** M
 
 ### Checkpoint: Complete
-- [ ] Success criteria 1–5 ของ spec ครบ
-- [ ] ตรวจตัวเลขด้วยตา (Step 3) แล้ว
-- [ ] ไม่มีไฟล์ใหม่หลุดออกนอก `bake-off/`
+- [x] Success criteria 1–5 ของ spec ครบ *(1: 5 ตัวให้ตารางครบ (ReLiK = ข้อมูลปิด schema) · 2: sweep จาก raw scores เดียว rate ครั้งเดียว · 3: แผนที่ 2 มิติ + distinct-relations อยู่ใน report/ ครบ · 4: ทุกประโยคมี category และ report แตกตาม category · 5: ms หลัง warm-up, GPU เดียว, VRAM peak สูงสุด 4.39 GiB < 6)*
+- [x] ตรวจตัวเลขด้วยตา (Step 3) แล้ว *(precision ~0.88/0.14/0.53/0.00/0.55+ ตามลำดับ model — ตัวเลขไปทางเดียวกับ score scale จาก smoke ไม่มีอะไรผิดปกติ; จุด best ของ nuextract (th 0.98, 2 triples) เป็นจุด degenerate กำกับไว้ในรายงานให้ human แล้ว)*
+- [x] ไม่มีไฟล์ใหม่หลุดออกนอก `bake-off/` *(transcript 2 ไฟล์จาก session ก่อน ย้ายเข้า bake-off/ ตามที่ human อนุมัติ คง untracked)*
 
 ## Parallelization
 

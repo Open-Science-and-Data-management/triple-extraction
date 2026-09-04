@@ -1,7 +1,9 @@
 """self-check logic sweep (rate-once-slice-many) — รัน: uv run python -m scripts.test_sweep"""
 
-from scripts.bakeoff import best_point, collect_rows, slice_at, sweep_table
-from scripts.bakeoff import Triple
+import tempfile
+from pathlib import Path
+
+from scripts.bakeoff import Triple, best_point, collect_rows, slice_at, sweep_table, write_reports
 
 # 3 unique triple: ถูก 1 (2 ประโยค), ผิด 1, ยังไม่ rate 1
 ROWS = [
@@ -47,6 +49,39 @@ def test_best_point_precision_first_then_most_triples():
 
 def test_best_point_none_while_unrated():
     assert best_point(sweep_table(ROWS, [0.5, 0.8], n_sents=3)) is None
+
+
+SENTS = [
+    {"text": "s0", "categories": ["alias", "effect"]},
+    {"text": "s1", "categories": ["training"]},
+    {"text": "s2", "categories": ["hard"]},
+]
+
+RESULT = {"name": "m1", "ms": 15.5, "vram": "VRAM peak: 1.29 GiB",
+          "triples": ROWS[:2] + [{"head": "x", "relation": "pretrained on", "tail": "y",
+                                  "correct": True, "occ": [[1, 0.8]]}],
+          "table": [{"threshold": 0.3, "n": 3, "precision": 0.67, "empty": [2]},
+                    {"threshold": 0.5, "n": 2, "precision": 0.50, "empty": [1, 2]}],
+          "best": {"threshold": 0.3, "n": 3, "precision": 0.67, "empty": [2]}}
+
+
+def test_write_reports_creates_both_files_with_sweep_and_category_split():
+    with tempfile.TemporaryDirectory() as d:
+        write_reports([RESULT], SENTS, report_dir=Path(d))
+        results = (Path(d) / "bakeoff-r2-results.md").read_text()
+        distinct = (Path(d) / "distinct-relations.md").read_text()
+    assert "0.3" in results and "0.5" in results          # ตาราง sweep ≥2 แถว
+    assert all(c in results for c in ("alias", "training", "hard"))  # แตกตาม category
+    assert "15.5" in results                              # ms หลัง warm-up
+    assert "pretrained on" in distinct                    # distinct relation
+
+
+def test_distinct_relations_counts_unique():
+    with tempfile.TemporaryDirectory() as d:
+        write_reports([RESULT], SENTS, report_dir=Path(d))
+        distinct = (Path(d) / "distinct-relations.md").read_text()
+    # ROWS[:2] มี reduces, outperforms + pretrained on = 3 distinct สำหรับ m1
+    assert "| m1 | 3 |" in distinct
 
 
 if __name__ == "__main__":

@@ -356,6 +356,64 @@ def best_point(table: list[dict]) -> dict | None:
     return max(rated, key=lambda r: (r["precision"], r["n"])) if rated else None
 
 
+def distinct_relations(rows: list[dict]) -> list[str]:
+    return sorted({u["relation"] for u in rows})
+
+
+def category_lines(res: dict, sentences: list[dict]) -> list[str]:
+    """แตกผลตาม category @ จุด best (ยังไม่ rate → จุด threshold แรก) — จับหลุดต่อ category ชัด"""
+    t = res["best"]["threshold"] if res["best"] else res["table"][0]["threshold"]
+    lines = [f"**แตกตาม category @ th {t}**", "", "| category | triples | ประโยคว่าง/รวม |", "|---|---|---|"]
+    for cat in CATEGORIES:
+        idx = [i for i, s in enumerate(sentences) if cat in s["categories"]]
+        n = sum(1 for u in res["triples"] for i, s in u["occ"] if s >= t and i in idx)
+        empty = sum(1 for i in idx if not any(s >= t for u in res["triples"] for j, s in u["occ"] if j == i))
+        lines.append(f"| {cat} | {n} | {empty}/{len(idx)} |")
+    return lines
+
+
+def write_reports(results: list[dict], sentences: list[dict], report_dir: Path | None = None) -> None:
+    report_dir = report_dir or ROOT / "report"
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    # แผนที่ 2 มิติ (precision best-of-sweep × ms/ประโยค) + รายละเอียดต่อ model
+    out = ["# Bake-off r2 — Encoder zero-shot dedicated IE", "",
+           "| model | precision ~ (best th) | ms/ประโยค | VRAM peak | schema |", "|---|---|---|---|---|"]
+    for r in results:
+        if r["best"]:
+            p = f"~{r['best']['precision']:.2f} @ th {r['best']['threshold']}"
+        else:
+            p = "(รอ rate)"
+        schema = "ปิด (native NYT)" if r["name"] == "relik" and RELIK_CLOSED_SCHEMA else "seed schema"
+        out.append(f"| {r['name']} | {p} | {r['ms']:.1f} | {r['vram'].removeprefix('VRAM peak: ')} | {schema} |")
+    out += ["", "precision = rate ด้วยตาทุก unique triple ครั้งเดียว (Step 3) แล้ว slice ทุก threshold จาก raw scores เดียว", ""]
+    for r in results:
+        out += [f"## {r['name']}", "",
+                f"{sum(1 for u in r['triples'] for _ in u['occ'])} triples ({len(r['triples'])} unique) · "
+                f"{r['ms']:.1f} ms/ประโยค (หลัง warm-up) · {r['vram']}", "",
+                "| th | triples | precision ~ | ประโยคว่าง |", "|---|---|---|---|"]
+        for row in r["table"]:
+            p = f"~{row['precision']:.2f}" if row["precision"] is not None else ("–" if row["n"] == 0 else "(รอ rate)")
+            out.append(f"| {row['threshold']} | {row['n']} | {p} | {len(row['empty'])} |")
+        if r["best"]:
+            b = r["best"]
+            out += ["", f"**best:** th {b['threshold']} — precision ~{b['precision']:.2f} "
+                        f"({b['n']} triples, ว่าง {len(b['empty'])}/{len(sentences)})"]
+        out += ["", *category_lines(r, sentences), ""]
+    (report_dir / "bakeoff-r2-results.md").write_text("\n".join(out))
+
+    # distinct relation count ต่อ model
+    out = ["# Distinct relations ต่อ model", "", "| model | distinct relations |", "|---|---|"]
+    for r in results:
+        out.append(f"| {r['name']} | {len(distinct_relations(r['triples']))} |")
+    for r in results:
+        out += ["", f"## {r['name']}", ""]
+        out += [f"- `{rel}`" for rel in distinct_relations(r["triples"])] or ["- (ว่าง)"]
+        if r["name"] == "relik" and RELIK_CLOSED_SCHEMA:
+            out += ["", "> ปิด schema — ไม่รับ seed relation hints ให้ triple ทำนายได้ (reader ฝึกบน NYT) จึงรันด้วย native schema = ข้อมูลของแผนที่"]
+    (report_dir / "distinct-relations.md").write_text("\n".join(out))
+
+
 def require_cuda() -> None:
     import torch
 
@@ -422,7 +480,7 @@ def run_model(name: str, texts: list[str]) -> dict:
     table = sweep_table(raw["triples"], THRESHOLDS[name], len(texts))
     print(f"[sweep] {name}  th     triples  precision~  ประโยคว่าง")
     for r in table:
-        p = f"{r['precision']:.2f}" if r["precision"] is not None else "(รอ rate)"
+        p = f"{r['precision']:.2f}" if r["precision"] is not None else ("–" if r["n"] == 0 else "(รอ rate)")
         print(f"         {r['threshold']:<6} {r['n']:<8} {p:<11} {len(r['empty'])}")
     best = best_point(table)
     if best:
@@ -441,8 +499,9 @@ def main() -> None:
         return
     names = [args.only] if args.only else MODELS
     texts = [s["text"] for s in sentences]
-    for name in names:
-        run_model(name, texts)
+    results = [run_model(name, texts) for name in names]
+    write_reports(results, sentences)
+    print(f"report → {(ROOT / 'report' / 'bakeoff-r2-results.md')}, distinct-relations.md")
 
 
 if __name__ == "__main__":
