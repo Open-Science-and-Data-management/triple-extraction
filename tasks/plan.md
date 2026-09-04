@@ -32,21 +32,21 @@
 
   > ถ้า transformers pin ชนกับ relik/pyrheads → หยุดถามก่อน แล้วแยก dependency-groups ต่อ model ตาม spec
 
-- [ ] **Task 2: ประโยค + seed schema (data)** — `schema/seed.json` (relation hints 10 อัน + entity labels จาก r1) + ชุดประโยคจาก `docs/bakeoff-results.md` แมป category (`alias`/`comparison`/`training`/`benchmark`/`effect`/`multi-rel`/`hard`) ครบทุกประโยค แต่ละ category ≥2 (เติม/ตัดได้) — ประโยคเป้า `(LoRA, reduces, hallucination)` คงไว้เป็น `alias`+`effect`
+- [x] **Task 2: ประโยค + seed schema (data)** — `schema/seed.json` (relation hints 10 อัน + entity labels จาก r1) + ชุดประโยคจาก `docs/bakeoff-results.md` แมป category (`alias`/`comparison`/`training`/`benchmark`/`effect`/`multi-rel`/`hard`) ครบทุกประโยค แต่ละ category ≥2 (เติม/ตัดได้) — ประโยคเป้า `(LoRA, reduces, hallucination)` คงไว้เป็น `alias`+`effect`
 
   **Acceptance criteria:**
-  - [ ] ทุกประโยคมี category กำกับ
-  - [ ] ทุก category มี ≥2 ประโยค
-  - [ ] script โหลด seed.json ได้ (relation hints ครบ 10)
+  - [x] ทุกประโยคมี category กำกับ
+  - [x] ทุก category มี ≥2 ประโยค *(r1 มีประโยค alias แค่อันเดียว — เติม 1 ประโยค CoT/CoT alias รวม 28)*
+  - [x] script โหลด seed.json ได้ (relation hints ครบ 10) *(entity labels: เอกสาร r1 ไม่ได้บันทึกค่าเป๊ะ สคริปต์ r1 ไม่ได้กู้มา — derive จากผล r1 และกำกับ note ไว้ใน seed.json)*
 
   **Verification:**
-  - [ ] `uv run python -c "from scripts.bakeoff import load_data; ..."` พิมพ์นับ per-category แล้วครบเงื่อนไข
+  - [x] `uv run python -c "from scripts.bakeoff import load_data; ..."` พิมพ์นับ per-category แล้วครบเงื่อนไข
 
   **Dependencies:** Task 1 · **Files:** `bake-off/schema/seed.json`, ประโยคฝังใน `scripts/bakeoff.py` · **Scope:** S
 
 ### Checkpoint: Foundation
 - [x] `uv sync` + import ครบ + CUDA พร้อม
-- [ ] data โหลดได้, category ครบ
+- [x] data โหลดได้, category ครบ
 
 ### Phase 2: Framework + Smoke (fail fast ตัวเสี่ยงก่อน)
 

@@ -1,0 +1,25 @@
+{
+  "_comment": "Seed schema ชุดเดียวกับ r1 (docs/bakeoff-results.md หัวไฟล์) — ส่งให้โมเดลเป็น hint เท่านั้น ไม่มี mapper กรองผลลัพธ์",
+  "_entity_labels_note": "สคริปต์ r1 ไม่ได้ถูกกู้กลับมา และเอกสาร r1 ไม่ได้บันทึกรายชื่อ entity labels เป๊ะ ๆ — ชุดนี้ derive จาก entity ที่ปรากฏในผล r1 (model/dataset/method/metric/task/person) บวก concept สำหรับสิ่งนามธรรมอย่าง hallucination",
+  "relation_hints": [
+    "evaluated on",
+    "outperforms",
+    "uses dataset",
+    "achieves metric",
+    "uses method",
+    "introduces",
+    "pretrained on",
+    "fine-tuned on",
+    "reduces",
+    "improves"
+  ],
+  "entity_labels": [
+    "model",
+    "dataset",
+    "method",
+    "metric",
+    "task",
+    "person",
+    "concept"
+  ]
+}
