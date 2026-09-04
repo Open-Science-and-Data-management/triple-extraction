@@ -188,6 +188,88 @@ def make_nuextract() -> Adapter:
 ADAPTER_FACTORIES["nuextract"] = make_nuextract
 
 
+def make_gliner_pyrheads() -> Adapter:
+    from gliner2 import GLiNER2
+
+    # checkpoint ใน spec (gliner-pyrheads-large-v0.5) ไม่มีบน HF แล้ว —
+    # human อนุมัติ gliner2 + fastino/gliner2-large-v1
+    model = GLiNER2.from_pretrained("fastino/gliner2-large-v1").to("cuda")
+    schema = load_schema()
+    entities, relations = schema["entity_labels"], schema["relation_hints"]
+    gliner2_schema = model.create_schema().entities(entities).relations(relations, threshold=0.3)
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        out = model.batch_extract(sentences, gliner2_schema, threshold=0.3, include_confidence=True)
+        results = []
+        for o in out:
+            ts = []
+            for rel, heads_tails in o.get("relation_extraction", {}).items():
+                for ht in heads_tails:
+                    # gliner2 ไม่มี score ระดับ triple — ใช้ค่าเฉลี่ย confidence ของ head/tail
+                    score = (ht["head"]["confidence"] + ht["tail"]["confidence"]) / 2
+                    ts.append(Triple(ht["head"]["text"], rel, ht["tail"]["text"], score))
+            results.append(ts)
+        return results
+
+    return Adapter("gliner-pyrheads", extract)
+
+
+ADAPTER_FACTORIES["gliner-pyrheads"] = make_gliner_pyrheads
+
+
+def make_glirel() -> Adapter:
+    import re
+
+    from gliner import GLiNER
+    from glirel import GLiREL
+
+    schema = load_schema()
+    # NER จาก GLiNER checkpoint สายเดียวกับ Relex (ล็อกตั้งแต่ config) — GLiREL ไม่หา entity เอง
+    ner_model = GLiNER.from_pretrained("knowledgator/gliner-relex-multi-v1.0").to("cuda").eval()
+    model = GLiREL.from_pretrained("jackboyla/glirel-large-v0").to("cuda").eval()
+    labels, relations = schema["entity_labels"], schema["relation_hints"]
+
+    def _tokenize(text: str) -> list[str]:
+        # tokenizer เดียวกับ batch_predict_relations ของ glirel เพื่อ map ตำแหน่งให้ตรง
+        return [m.group() for m in re.finditer(r"\w+(?:[-_]\w+)*|\S", text)]
+
+    def _ner_token_spans(text: str) -> list[list]:
+        # NER char span → token span [start, end(inclusive), label, text]
+        ents = ner_model.inference([text], labels, threshold=0.3)[0]
+        # gliner คืน shape ไม่คงที่ — บน cuda มีการ wrap list ซ้อนอีกชั้น
+        while ents and isinstance(ents[0], list):
+            ents = ents[0]
+        toks = [(m.group(), m.start(), m.end()) for m in re.finditer(r"\w+(?:[-_]\w+)*|\S", text)]
+        out = []
+        for e in ents:
+            idx = [i for i, (_, s, t) in enumerate(toks) if s < e["end"] and e["start"] < t]
+            if idx:
+                out.append([idx[0], idx[-1], e["label"], text[e["start"]:e["end"]]])
+        return out
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        ners = [_ner_token_spans(s) for s in sentences]
+        # threshold ต่ำเก็บ raw scores ไว้ slice ทีหลัง (rate-once-slice-many)
+        rels = model.batch_predict_relations(sentences, relations, threshold=0.3, ner=ners, top_k=-1)
+        out = []
+        for sent, rs in zip(sentences, rels):
+            toks = _tokenize(sent)
+            ts = []
+            for r in rs:
+                # glirel บวก +1 ท้าย position เพื่อคุยกับ spaCy tokenization — ตัดกลับ
+                head = " ".join(toks[r["head_pos"][0] - 1:r["head_pos"][1]])
+                tail = " ".join(toks[r["tail_pos"][0] - 1:r["tail_pos"][1]])
+                if head and tail:  # span ชนขอบประโยคได้ entity ว่าง — ทิ้งเป็น noise
+                    ts.append(Triple(head, r["label"], tail, float(r["score"])))
+            out.append(ts)
+        return out
+
+    return Adapter("glirel", extract)
+
+
+ADAPTER_FACTORIES["glirel"] = make_glirel
+
+
 # ผล smoke (Task 6): ให้ seed relation เป็น candidates แล้ว reader ทำนาย 0 triple ทุกกรณี
 # (รวมลอง format <def>) — ReLiK ปิด schema ยืนยัน รันด้วย native NYT relations แทน = ข้อมูลของแผนที่
 RELIK_CLOSED_SCHEMA = True

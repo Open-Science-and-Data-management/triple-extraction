@@ -32,6 +32,11 @@ gliner = [
     "tiktoken",
     # glirel→seqeval ลาก scikit-learn 1.3.0 เก่าเกิน (พังกับ numpy 2.x) — force เวอร์ชันใหม่
     "scikit-learn>=1.6",
+    # GLiNER 2.x — checkpoint ใน spec (gliner-pyrheads-large-v0.5) ไม่มีบน HF แล้ว
+    # human อนุมัติ: gliner2 + fastino/gliner2-large-v1 (หลังมัน dry-run ไม่ขยับ transformers pin)
+    "gliner2==2.0.0",
+    # gliner2→training.trainer import peft ตอนโหลด module แต่ลืมประกาศ
+    "peft",
     # NuExtract 2.0 โหลดผ่าน transformers ตรง ๆ ไม่ต้องมี lib แยก
     "typer-slim[standard]>=0.21.2",
 ]

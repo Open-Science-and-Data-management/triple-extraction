@@ -96,21 +96,21 @@
 
   **Dependencies:** Task 3 · **Files:** `scripts/bakeoff.py` · **Scope:** S
 
-- [ ] **Task 7: smoke GLiNER→GLiREL + GLiNER 2.x** — GLiREL ใช้ GLiNER checkpoint สายเดียวกับ Relex (ล็อกตั้งแต่ config); pyrheads อาจต้อง lib/install ต่างจาก `gliner` — smoke เป็นตัวตัดสิน
+- [x] **Task 7: smoke GLiNER→GLiREL + GLiNER 2.x** — GLiREL ใช้ GLiNER checkpoint สายเดียวกับ Relex (ล็อกตั้งแต่ config); pyrheads อาจต้อง lib/install ต่างจาก `gliner` — smoke เป็นตัวตัดสิน
 
   **Acceptance criteria:**
-  - [ ] glirel smoke คืน triple + score (จาก NER ต้นทางเดียวกับ Relex)
-  - [ ] pyrheads smoke คืน triple + score หรือ error ชัดเจนว่าต้อง install อะไร → ถามก่อนเพิ่ม dependency
+  - [x] glirel smoke คืน triple + score (จาก NER ต้นทางเดียวกับ Relex) *(gliner-relex ทำ NER → char span → token span ตาม tokenizer ของ glirel · 0.3–0.43 @ th 0.3 · 31.9 ms/ประโยค · VRAM 3.32 GiB)*
+  - [x] pyrheads smoke คืน triple + score หรือ error ชัดเจนว่าต้อง install อะไร → ถามก่อนเพิ่ม dependency *(checkpoint ใน spec ไม่มีบน HF แล้ว → human อนุมัติ: เพิ่ม `gliner2==2.0.0` + `fastino/gliner2-large-v1`; smoke ได้ `(Low-Rank Adaptation, reduces, hallucination, 0.992)` · score = เฉลี่ย confidence head/tail 0.39–0.99 · 46.1 ms/ประโยค · VRAM 2.09 GiB · peft ต้องเพิ่มด้วยเพราะ gliner2 ลืมประกาศ)*
 
   **Verification:**
-  - [ ] `uv run bakeoff --smoke glirel && uv run bakeoff --smoke gliner-pyrheads`
+  - [x] `uv run bakeoff --smoke glirel && uv run bakeoff --smoke gliner-pyrheads` *(full run ผ่านทั้งคู่: 56 และ 216 triples)*
 
   **Dependencies:** Task 4 · **Files:** `scripts/bakeoff.py` · **Scope:** M
 
 ### Checkpoint: Smoke ครบ
-- [ ] 5 model ผ่าน smoke (ReLiK ปิด schema ถือว่าผ่านในรูป "บันทึกข้อมูล")
-- [ ] score scale ต่อ model ถูกตรวจด้วยตาแล้ว → ตั้งช่วง sweep ต่อ model
-- [ ] ถ้ามี model ที่ต้องเพิ่ม dependency / ตัดออก → ถาม human ก่อน Phase 3
+- [x] 5 model ผ่าน smoke (ReLiK ปิด schema ถือว่าผ่านในรูป "บันทึกข้อมูล")
+- [x] score scale ต่อ model ถูกตรวจด้วยตาแล้ว → ตั้งช่วง sweep ต่อ model *(glirel ~0.25–0.45 · pyrheads ~0.35–1.0 · relik native NYT confidence · nuextract 0.89–0.98 · gliner-relex 0.3–0.95)*
+- [x] ถ้ามี model ที่ต้องเพิ่ม dependency / ตัดออก → ถาม human ก่อน Phase 3 *(gliner2+peft: อนุมัติแล้ว — checkpoint เดิมไม่มีบน HF)*
 
 ### Phase 3: Sweep + Reports
 
