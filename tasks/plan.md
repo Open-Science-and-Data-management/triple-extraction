@@ -50,14 +50,14 @@
 
 ### Phase 2: Framework + Smoke (fail fast ตัวเสี่ยงก่อน)
 
-- [ ] **Task 3: skeleton + adapter contract** — `Triple` dataclass, `GPU guard` (fail ถ้าไม่มี CUDA), helper warm-up + จับเวลา ms/ประโยค, dedupe triple ซ้ำเป๊ะต่อประโยค, CLI (`--smoke <model>`, `--only <model>`, default ทุก model) — adapter 5 ตัวเป็น stub
+- [x] **Task 3: skeleton + adapter contract** — `Triple` dataclass, `GPU guard` (fail ถ้าไม่มี CUDA), helper warm-up + จับเวลา ms/ประโยค, dedupe triple ซ้ำเป๊ะต่อประโยค, CLI (`--smoke <model>`, `--only <model>`, default ทุก model) — adapter 5 ตัวเป็น stub
 
   **Acceptance criteria:**
-  - [ ] `uv run bakeoff` รัน stub ได้โดย fail ที่ GPU guard เมื่อไม่มี CUDA
-  - [ ] Triple บังคับมี score (dataclass field ไม่มี default)
+  - [x] `uv run bakeoff` รัน stub ได้โดย fail ที่ GPU guard เมื่อไม่มี CUDA
+  - [x] Triple บังคับมี score (dataclass field ไม่มี default)
 
   **Verification:**
-  - [ ] `uv run bakeoff --smoke gliner-relex` ไม่ crash (stub คืน [])
+  - [x] `uv run bakeoff --smoke gliner-relex` ไม่ crash (stub คืน [])
 
   **Dependencies:** Task 2 · **Files:** `scripts/bakeoff.py` · **Scope:** M
 

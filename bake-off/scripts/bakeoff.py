@@ -6,7 +6,12 @@
 
 from __future__ import annotations
 
+import argparse
 import json
+import sys
+import time
+from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -65,15 +70,93 @@ def load_data() -> tuple[dict, list[dict]]:
     return schema, SENTENCES
 
 
+MODELS = ["gliner-relex", "glirel", "gliner-pyrheads", "relik", "nuextract"]
+
+
+@dataclass
+class Triple:
+    """score บังคับไม่มี default — แกนของ rate-once-slice-many"""
+
+    head: str
+    relation: str
+    tail: str
+    score: float
+
+
+@dataclass
+class Adapter:
+    name: str
+    extract: Callable[[list[str]], list[list[Triple]]]
+
+
+# stub คืน [] ทุกประโยค — ทยอยแทนด้วย loader จริงใน Task 4–7
+# ponytail: dict ชื่อ → factory เพราะ model โหลด lazy ตอนถูกเลือกเท่านั้น
+def _stub_extract(sentences: list[str]) -> list[list[Triple]]:
+    return [[] for _ in sentences]
+
+
+ADAPTER_FACTORIES: dict[str, Callable[[], Adapter]] = {m: (lambda m=m: Adapter(m, _stub_extract)) for m in MODELS}
+
+
+def require_cuda() -> None:
+    import torch
+
+    if not torch.cuda.is_available():
+        sys.exit("ต้องรันบน GPU เท่านั้น — torch.cuda.is_available() == False")
+
+
+def dedupe(triples: list[Triple]) -> list[Triple]:
+    """ตัด triple ซ้ำเป๊ะในประโยคเดียวกัน เก็บตัว score สูงสุด"""
+    best: dict[tuple[str, str, str], Triple] = {}
+    for t in triples:
+        key = (t.head, t.relation, t.tail)
+        if key not in best or t.score > best[key].score:
+            best[key] = t
+    return list(best.values())
+
+
+def timed_extract(adapter: Adapter, sentences: list[str]) -> tuple[list[list[Triple]], float]:
+    """warm-up 1 ประโยคก่อน แล้วจับเวลารวม → ms/ประโยค"""
+    adapter.extract(sentences[:1])
+    t0 = time.perf_counter()
+    out = adapter.extract(sentences)
+    return out, (time.perf_counter() - t0) * 1000 / len(sentences)
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="Bake-off r2: encoder zero-shot dedicated IE")
+    p.add_argument("--smoke", choices=MODELS, metavar="MODEL", help="smoke 1 ประโยคเป้า ของ model เดียว")
+    p.add_argument("--only", choices=MODELS, metavar="MODEL", help="รันเต็มเฉพาะ model เดียว (default: ทุก model)")
+    return p.parse_args()
+
+
+def smoke(adapter: Adapter, sentences: list[dict]) -> None:
+    target = next((s for s in sentences if s.get("target")), sentences[0])
+    print(f"[smoke] {adapter.name}: {target['text'][:70]}...")
+    for triples in adapter.extract([target["text"]]):
+        for t in dedupe(triples):
+            print(f"  ({t.head!r}, {t.relation!r}, {t.tail!r}, {t.score:.3f})")
+        if not triples:
+            print("  (ไม่ได้ triple — stub หรือ model ว่าง)")
+
+
+def run_full(adapter: Adapter, sentences: list[str]) -> None:
+    triples_per_sent, ms = timed_extract(adapter, sentences)
+    n = sum(len(dedupe(t)) for t in triples_per_sent)
+    print(f"[run] {adapter.name}: {n} triples (dedupe แล้ว) · {ms:.1f} ms/ประโยค")
+
+
 def main() -> None:
+    args = parse_args()
     _, sentences = load_data()
-    print(f"ประโยครวม {len(sentences)}")
-    for cat in CATEGORIES:
-        n = sum(1 for s in sentences if cat in s["categories"])
-        status = "ok" if n >= 2 else "FAIL (<2)"
-        print(f"  {cat:10s} {n:2d}  {status}")
-    targets = [s["text"][:60] for s in sentences if s.get("target")]
-    print(f"ประโยคเป้า: {targets}")
+    require_cuda()
+    if args.smoke:
+        smoke(ADAPTER_FACTORIES[args.smoke](), sentences)
+        return
+    names = [args.only] if args.only else MODELS
+    texts = [s["text"] for s in sentences]
+    for name in names:
+        run_full(ADAPTER_FACTORIES[name](), texts)
 
 
 if __name__ == "__main__":
