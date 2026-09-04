@@ -71,8 +71,9 @@ def load_data() -> tuple[dict, list[dict]]:
     return schema, SENTENCES
 
 
-# r3 เติม decoder: gollie — knowcoder ตัดตอน smoke (ดาวน์โหลด 13GB ไม่เสร็จ — report/raw/deaths.json)
-MODELS = ["gliner-relex", "glirel", "gliner-pyrheads", "relik", "nuextract", "gollie"]
+# r3: knowcoder + gollie ตัดตอน smoke ทั้งคู่ (ดาวน์โหลด checkpoint ไม่เสร็จ — report/raw/deaths.json)
+# จุดใหม่บนแผนที่จึงไม่มี — แผนที่ r3 = 5 จุด r2 + หัวข้อตัดแล้วและเหตุผล
+MODELS = ["gliner-relex", "glirel", "gliner-pyrheads", "relik", "nuextract"]
 # static map สำหรับ report — ห้ามใช้ factory (โหลดโมเดลทั้งคันเพื่ออ่าน field เดียว)
 PARADIGM = {"nuextract": "decoder", "knowcoder": "decoder", "gollie": "decoder"}
 
@@ -395,6 +396,8 @@ ADAPTER_FACTORIES["knowcoder"] = make_knowcoder
 
 
 def make_gollie() -> Adapter:
+    """ตัดตอน smoke — checkpoint ดาวน์โหลดไม่เสร็จ บันทึกใน report/raw/deaths.json
+    เก็บโค้ดไว้เพราะ prompt format วิจัยแล้ว (guideline Python class ของ HiTZ) — รันต่อได้ถ้าเอา checkpoint มาครบ"""
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
@@ -459,7 +462,6 @@ THRESHOLDS: dict[str, list[float]] = {
     "gliner-pyrheads": [0.4, 0.55, 0.7, 0.85],
     "relik": [0.5, 0.7, 0.9],
     "nuextract": [0.85, 0.9, 0.94, 0.98],
-    "gollie": [0.7, 0.85, 0.95],  # ตั้งชั่วคราวก่อน smoke — ปรับตาม score scale จริง (checkpoint Phase 2)
 }
 
 
@@ -612,8 +614,9 @@ def write_report_r3() -> None:
         sections.append((name, raw, table, best))
 
     out = ["# Bake-off r3 — ขยายแผนที่สู่ code/instruction-LLM dedicated IE", "",
-           "คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — ตัวใหม่ 2 ตัวเป็น decoder 7B Q4 nf4", "",
-           "## แผนที่ precision × ms (7 จุด)", ""]
+           "คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — "
+           "KnowCoder/GoLLIE ตัดตอน smoke (ดูหัวข้อตัดแล้วและเหตุผล)", "",
+           f"## แผนที่ precision × ms ({len(points)} จุด)", ""]
     out += ["| model | paradigm | precision ~ (best th) | ms/ประโยค | VRAM peak | schema |", "|---|---|---|---|---|---|"]
     for name, raw, table, best in sections:
         p = f"~{best['precision']:.2f} @ th {best['threshold']}" if best else "(รอ rate)"
@@ -651,7 +654,7 @@ def write_report_r3() -> None:
             out.append(f"- **{name}** — ตายตอน smoke: {why}")
     else:
         out.append("- (ไม่มี smoke ที่ตาย)")
-    out += ["", "- **ถ้า KnowCoder/GoLLIE ไม่ปรากฏในตาราง** = smoke ไม่ผ่านและบันทึกเหตุผลไว้ที่นี่ (ไม่มีตัวหายเงียบ)", ""]
+    out += ["", "- KnowCoder/GoLLIE ไม่ปรากฏในตาราง = smoke ไม่ผ่านและบันทึกเหตุผลไว้ด้านบน (ไม่มีตัวหายเงียบ)", ""]
 
     path = ROOT / "report" / "bakeoff-r3-results.md"
     path.write_text("\n".join(out))

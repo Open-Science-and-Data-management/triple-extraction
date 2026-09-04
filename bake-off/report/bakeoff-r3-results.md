@@ -1,8 +1,8 @@
 # Bake-off r3 — ขยายแผนที่สู่ code/instruction-LLM dedicated IE
 
-คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — ตัวใหม่ 2 ตัวเป็น decoder 7B Q4 nf4
+คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — KnowCoder/GoLLIE ตัดตอน smoke (ดูหัวข้อตัดแล้วและเหตุผล)
 
-## แผนที่ precision × ms (7 จุด)
+## แผนที่ precision × ms (5 จุด)
 
 | model | paradigm | precision ~ (best th) | ms/ประโยค | VRAM peak | schema |
 |---|---|---|---|---|---|
@@ -47,5 +47,6 @@ precision = rate ด้วยตาทุก unique triple ครั้งเด
 - **CodeKGC** — ไม่มี public checkpoint (โค้ดใน zjunlp/DeepKE ต้อง fine-tune เอง) — Never: fine-tune CodeLlama
 - **GoLLIE-13B** — VRAM 6GB — เหตุผลเดียวกับ InstructUIE
 - **knowcoder** — ตายตอน smoke: checkpoint golaxy/KnowCoder-7B-IE 13GB ดาวน์โหลดไม่เสร็จ — สาย ~3.3MB/s (45 นาที ได้ 4.7GB) — smoke ไม่เคยเริ่ม load ที่ GPU เลย — human สั่งตัด 2026-09-05 ก่อนวัดผล hf-transfer
+- **gollie** — ตายตอน smoke: checkpoint HiTZ/GoLLIE-7B ดาวน์โหลดไม่เสร็จเช่นกัน — repo มีไฟล์ shard ซ้ำ 2 เซ็ต (ใช้จริง 12.5GB ตาม index.json, เซ็ตขยะ 25GB ทำเปลืองรอบแรก) + สายหลุด/ถูกสั่งหยุดซ้ำ — smoke ไม่เคยเริ่ม load ที่ GPU — human สั่งตัด 2026-09-05 · adapter + prompt format (guideline Python class, src/tasks/ace/prompts.py + templates/prompt.txt) เก็บไว้ใน bakeoff.py รันต่อได้เมื่อมี checkpoint
 
-- **ถ้า KnowCoder/GoLLIE ไม่ปรากฏในตาราง** = smoke ไม่ผ่านและบันทึกเหตุผลไว้ที่นี่ (ไม่มีตัวหายเงียบ)
+- KnowCoder/GoLLIE ไม่ปรากฏในตาราง = smoke ไม่ผ่านและบันทึกเหตุผลไว้ด้านบน (ไม่มีตัวหายเงียบ)

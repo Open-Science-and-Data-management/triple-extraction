@@ -1,3 +1,4 @@
 {
-  "knowcoder": "checkpoint golaxy/KnowCoder-7B-IE 13GB ดาวน์โหลดไม่เสร็จ — สาย ~3.3MB/s (45 นาที ได้ 4.7GB) — smoke ไม่เคยเริ่ม load ที่ GPU เลย — human สั่งตัด 2026-09-05 ก่อนวัดผล hf-transfer"
+  "knowcoder": "checkpoint golaxy/KnowCoder-7B-IE 13GB ดาวน์โหลดไม่เสร็จ — สาย ~3.3MB/s (45 นาที ได้ 4.7GB) — smoke ไม่เคยเริ่ม load ที่ GPU เลย — human สั่งตัด 2026-09-05 ก่อนวัดผล hf-transfer",
+  "gollie": "checkpoint HiTZ/GoLLIE-7B ดาวน์โหลดไม่เสร็จเช่นกัน — repo มีไฟล์ shard ซ้ำ 2 เซ็ต (ใช้จริง 12.5GB ตาม index.json, เซ็ตขยะ 25GB ทำเปลืองรอบแรก) + สายหลุด/ถูกสั่งหยุดซ้ำ — smoke ไม่เคยเริ่ม load ที่ GPU — human สั่งตัด 2026-09-05 · adapter + prompt format (guideline Python class, src/tasks/ace/prompts.py + templates/prompt.txt) เก็บไว้ใน bakeoff.py รันต่อได้เมื่อมี checkpoint"
 }
