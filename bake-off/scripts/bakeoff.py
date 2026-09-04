@@ -188,6 +188,38 @@ def make_nuextract() -> Adapter:
 ADAPTER_FACTORIES["nuextract"] = make_nuextract
 
 
+# ผล smoke (Task 6): ให้ seed relation เป็น candidates แล้ว reader ทำนาย 0 triple ทุกกรณี
+# (รวมลอง format <def>) — ReLiK ปิด schema ยืนยัน รันด้วย native NYT relations แทน = ข้อมูลของแผนที่
+RELIK_CLOSED_SCHEMA = True
+
+
+def make_relik() -> Adapter:
+    from relik import Relik
+
+    # transformers 4.52 init ทุก model บน meta device เสมอ (get_init_context) →
+    # relik resize embeddings ใน __init__ ก่อน weights โหลด ทำให้ embedding ว่างเป็นศูนย์
+    # → ปิด meta init ให้ init จริงบน CPU (RAM ~2GB ชั่วคราว ไม่กระทบ VRAM)
+    from transformers.modeling_utils import PreTrainedModel, no_init_weights
+
+    PreTrainedModel.get_init_context = classmethod(
+        lambda cls, *a, **kw: [no_init_weights()])
+
+    relik = Relik.from_pretrained("sapienzanlp/relik-relation-extraction-nyt-large", device="cuda")
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        results = []
+        for s in sentences:  # ponytail: batch list ชนบั๊ก candidates ของ relik (w._d) — ยิงทีละประโยค
+            # window_size="none": ประโยคสั้นไม่ต้อง window + กลบบั๊ก merge_windows ของ SpacySentenceSplitter
+            out = relik(s, top_k=24, window_size="none", progress_bar=False)
+            results.append([Triple(t.subject.text, t.label, t.object.text, float(t.confidence)) for t in out.triples])
+        return results
+
+    return Adapter("relik", extract)
+
+
+ADAPTER_FACTORIES["relik"] = make_relik
+
+
 def require_cuda() -> None:
     import torch
 

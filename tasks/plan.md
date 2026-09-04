@@ -83,14 +83,16 @@
 
   **Dependencies:** Task 4 · **Files:** `scripts/bakeoff.py` · **Scope:** S
 
-- [ ] **Task 6: smoke ReLiK** — ทดสอบว่ายัด seed schema เป็น custom relation ได้ไหม
+- [x] **Task 6: smoke ReLiK** — ทดสอบว่ายัด seed schema เป็น custom relation ได้ไหม
 
   **Acceptance criteria:**
-  - [ ] ถ้าได้ → smoke คืน triple ด้วย relation จาก seed schema + score
-  - [ ] ถ้าไม่ได้ → บันทึก "ปิด schema" ลง report เป็นข้อมูลของแผนที่ (ไม่ใช่ความล้มเหลว ไม่ต้องถาม)
+  - [ ] ถ้าได้ → smoke คืน triple ด้วย relation จาก seed schema + score *(ไม่ได้ — ด้านล่าง)*
+  - [x] ถ้าไม่ได้ → บันทึก "ปิด schema" ลง report เป็นข้อมูลของแผนที่ *(ยืนยัน: ให้ seed hints เป็น candidates แล้ว reader ทำนาย 0 triple; ลอง format `<def>` ตาม index metadata ก็ว่าง — reader ฝึกบน NYT relations เท่านั้น → รันด้วย native NYT schema, 25 triples · 148.6 ms/ประโยค · VRAM 1.79 GiB)*
 
   **Verification:**
-  - [ ] ผลสรุป custom-relation support ถูกเก็บในโครงสร้างที่ report อ่านได้
+  - [x] ผลสรุป custom-relation support ถูกเก็บในโครงสร้างที่ report อ่านได้ *(flag RELIK_CLOSED_SCHEMA ใน bakeoff.py)*
+
+  > หมายเหตุ env: relik รันได้บน default gliner group (transformers 4.52.4) โดยไม่ต้องสลับ env — patch get_init_context กัน meta-init ของ 4.52 ที่ทำ embedding ว่าง; bug relik `w._d` เลี่ยงด้วย `window_size="none"` + ยิงทีละประโยค
 
   **Dependencies:** Task 3 · **Files:** `scripts/bakeoff.py` · **Scope:** S
 
