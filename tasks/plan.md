@@ -72,14 +72,14 @@
 
   **Dependencies:** Task 3 · **Files:** `scripts/bakeoff.py` · **Scope:** S
 
-- [ ] **Task 5: smoke NuExtract 2.0** (ตัวเสี่ยงสุด — fp16 ~3GB บน 6GB ที่ใช้เป็นจอด้วย · ทำก่อนพวก encoder เพราะล้มได้ทั้งรอบ)
+- [x] **Task 5: smoke NuExtract 2.0** (ตัวเสี่ยงสุด — fp16 ~3GB บน 6GB ที่ใช้เป็นจอด้วย · ทำก่อนพวก encoder เพราะล้มได้ทั้งรอบ)
 
   **Acceptance criteria:**
-  - [ ] โหลด `numind/NuExtract-2.0-1.5B` fp16 บน GPU ได้ + จับ VRAM peak บันทึกไว้
-  - [ ] smoke คืน triple + score (หรือบันทึกว่าล้มด้วยเหตุใด → ถามก่อนตัด model)
+  - [x] โหลด `numind/NuExtract-2.0-1.5B` fp16 บน GPU ได้ + จับ VRAM peak บันทึกไว้ *(checkpoint เปลี่ยนเป็น NuExtract-2.0-2B — 1.5B ไม่มีบน HF, human อนุมัติ · VRAM peak 4.39 GiB)*
+  - [x] smoke คืน triple + score *(score = token prob เฉลี่ยเฉพาะ JSON object ของ triple, scale สูง 0.89–0.98)*
 
   **Verification:**
-  - [ ] `nvidia-smi` ระหว่างรัน — VRAM peak ไม่ชน headroom
+  - [x] `nvidia-smi` ระหว่างรัน — VRAM peak ไม่ชน headroom *(4.39 GiB / 6 GiB เหลือ ~1.6 GiB)*
 
   **Dependencies:** Task 4 · **Files:** `scripts/bakeoff.py` · **Scope:** S
 

@@ -119,6 +119,75 @@ def make_gliner_relex() -> Adapter:
 ADAPTER_FACTORIES["gliner-relex"] = make_gliner_relex
 
 
+def make_nuextract() -> Adapter:
+    import torch
+    from transformers import AutoModelForVision2Seq, AutoTokenizer
+
+    ckpt = "numind/NuExtract-2.0-2B"  # spec ระบุ 1.5B ซึ่งไม่มีบน HF — human อนุมัติใช้ 2B fp16
+    # ไม่ใช้ device_map (กันเพิ่ม accelerate) — โหลดแล้วค่อยย้ายขึ้น GPU
+    model = AutoModelForVision2Seq.from_pretrained(ckpt, torch_dtype=torch.float16).eval().to("cuda")
+    tok = AutoTokenizer.from_pretrained(ckpt)
+    schema = load_schema()
+    # "verbatim-string" ไม่งั้น model จะ nest tail เป็น object ตามราย type ในคำอธิบาย
+    template = json.dumps({"triples": [{
+        "head": "verbatim-string (short entity mention)",
+        "relation": "one of: " + " | ".join(schema["relation_hints"]),
+        "tail": "verbatim-string (short entity mention)",
+    }]})
+
+    def _token_char_probs(out_ids, scores) -> tuple[str, list[tuple[int, int, float]]]:
+        """map token → ช่วง char ใน output text + prob ของ token (greedy)"""
+        text = tok.decode(out_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+        tok_probs = torch.softmax(torch.stack(scores, 0), -1).max(-1).values
+        ranges, prev = [], 0
+        for i in range(len(out_ids)):
+            end = len(tok.decode(out_ids[:i + 1], skip_special_tokens=True, clean_up_tokenization_spaces=False))
+            ranges.append((prev, end, float(tok_probs[i])))  # ponytail: decode ซ้ำ O(n²) — output สั้นจึงช่างมัน
+            prev = end
+        return text, ranges
+
+    def _object_spans(text: str) -> list[tuple[int, int]]:
+        """ช่วง char ของ {...} ทุกชั้นใน output (brace matching ไม่ง้อ key order)"""
+        spans, stack = [], []
+        for i, ch in enumerate(text):
+            if ch == "{":
+                stack.append(i)
+            elif ch == "}" and stack:
+                spans.append((stack.pop(), i + 1))
+        return spans
+
+    def parse(out_ids, scores) -> list[Triple]:
+        text, ranges = _token_char_probs(out_ids, scores)
+        out = []
+        for a, b in _object_spans(text):
+            try:
+                obj = json.loads(text[a:b])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(obj, dict) and {"head", "relation", "tail"} <= obj.keys():
+                ps = [p for s, e, p in ranges if e > a and s < b]  # token ที่ overlap ช่วง object
+                score = sum(ps) / len(ps) if ps else 0.0
+                out.append(Triple(str(obj["head"]), str(obj["relation"]), str(obj["tail"]), score))
+        return out
+
+    def extract(sentences: list[str]) -> list[list[Triple]]:
+        results = []
+        for s in sentences:  # ponytail: batch=1 ต่อประโยค ตาม pipeline จริง (spaCy แบ่งแล้วยิงทีละประโยค)
+            with torch.inference_mode():
+                prompt = tok.apply_chat_template(
+                    [{"role": "user", "content": s}], template=template, tokenize=False, add_generation_prompt=True)
+                inputs = tok([prompt], return_tensors="pt").to("cuda")
+                gen = model.generate(**inputs, do_sample=False, num_beams=1, max_new_tokens=1024,
+                                     output_scores=True, return_dict_in_generate=True)
+                results.append(parse(gen.sequences[0][inputs["input_ids"].shape[1]:], gen.scores))
+        return results
+
+    return Adapter("nuextract", extract)
+
+
+ADAPTER_FACTORIES["nuextract"] = make_nuextract
+
+
 def require_cuda() -> None:
     import torch
 
@@ -151,6 +220,12 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def vram_peak() -> str:
+    import torch
+
+    return f"VRAM peak: {torch.cuda.max_memory_allocated() / 2**30:.2f} GiB"
+
+
 def smoke(adapter: Adapter, sentences: list[dict]) -> None:
     target = next((s for s in sentences if s.get("target")), sentences[0])
     print(f"[smoke] {adapter.name}: {target['text'][:70]}...")
@@ -159,12 +234,13 @@ def smoke(adapter: Adapter, sentences: list[dict]) -> None:
             print(f"  ({t.head!r}, {t.relation!r}, {t.tail!r}, {t.score:.3f})")
         if not triples:
             print("  (ไม่ได้ triple — stub หรือ model ว่าง)")
+    print(f"  {vram_peak()}")
 
 
 def run_full(adapter: Adapter, sentences: list[str]) -> None:
     triples_per_sent, ms = timed_extract(adapter, sentences)
     n = sum(len(dedupe(t)) for t in triples_per_sent)
-    print(f"[run] {adapter.name}: {n} triples (dedupe แล้ว) · {ms:.1f} ms/ประโยค")
+    print(f"[run] {adapter.name}: {n} triples (dedupe แล้ว) · {ms:.1f} ms/ประโยค · {vram_peak()}")
 
 
 def main() -> None:
