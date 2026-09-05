@@ -21,7 +21,7 @@ POST /jobs ตอนนี้รับได้แค่ `field="text"` (schemas
 
 ### Phase 1: Schema + wiring (foundation)
 
-- [ ] **Task 1: schemas.py — KnownField 6 แบบ + section** (S)
+- [x] **Task 1: schemas.py — KnownField 6 แบบ + section** (S)
   - `KnownField = Literal["text", "table", "figure_caption", "latex", "image", "section"]`
   - `Document.section: str | None = None`
   - `TripleOut.section: str | None = None`
@@ -30,7 +30,7 @@ POST /jobs ตอนนี้รับได้แค่ `field="text"` (schemas
   - **Verify:** `uv run pytest tests/test_schemas.py`
   - Files: `src/extraction_api/schemas.py`, `tests/test_schemas.py`
 
-- [ ] **Task 2: main.py — ส่ง section ลง DB** (S)
+- [x] **Task 2: main.py — ส่ง section ลง DB** (S)
   - `create_job` (main.py:73): `{"field": d.field, "content": d.content, "section": d.section}`
   - echo `documents` ใน result ตามอัตโนมัติ (worker.py:68 มีอยู่แล้ว — ไม่แก้ worker)
   - เพิ่ม `test_api.py`: POST ครบ 6 field → 201 ปกติ; body เดิม (text ไม่มี section) → 201 เหมือนเดิม (non-breaking)
@@ -38,11 +38,11 @@ POST /jobs ตอนนี้รับได้แค่ `field="text"` (schemas
   - Files: `src/extraction_api/main.py`, `tests/test_api.py`
 
 ### Checkpoint 1
-- [ ] `uv run pytest` ผ่านทั้งหมด, `uv run ruff check .` สะอาด
+- [x] `uv run pytest` ผ่านทั้งหมด, `uv run ruff check .` สะอาด
 
 ### Phase 2: Extraction (core)
 
-- [ ] **Task 3: extractor.py — filter 3 field + strip table + provenance section** (M)
+- [x] **Task 3: extractor.py — filter 3 field + strip table + provenance section** (M)
   - `_strip_table_rows(html: str) -> list[str]` — stdlib HTMLParser, 1 ประโยค/แถว, join cell ด้วยช่องว่าง (`# ponytail:` comment บอก ceiling: ไม่ prefix header — รอ GPU test)
   - `extract_raw`: สร้าง flat เฉพาะ field ใน `{"text", "table", "figure_caption"}`; table → `_strip_table_rows(doc["content"])` แทน `split_sentences`; tuple เป็น `(index, field, section, sentence)` — section จาก document แม่
   - dict ผลลัพธ์เพิ่ม `"section": section` (None ได้)
@@ -50,17 +50,17 @@ POST /jobs ตอนนี้รับได้แค่ `field="text"` (schemas
   - **Verify:** `uv run pytest tests/test_extractor.py`
   - Files: `src/extraction_api/extractor.py`, `tests/test_extractor.py` (ใหม่)
 
-- [ ] **Task 4: fake test end-to-end ครบ 6 field** (S)
+- [x] **Task 4: fake test end-to-end ครบ 6 field** (S)
   - ต่อยอด `test_worker.py` / `test_api.py`: job ที่มี document ครบ 6 field → result JSON echo `documents` ครบทั้ง 6 (รวมที่ไม่ extract) + triples เฉพาะจาก 3 field + ทุก triple มี field/section (section=null ได้)
   - **Verify:** `uv run pytest` (ทั้งชุด ไม่ติด GPU)
   - Files: `tests/test_worker.py` หรือ `tests/test_api.py` (ที่เดียวพอ)
 
 ### Checkpoint 2
-- [ ] Success criteria ข้อ 1–3, 5 ของ spec ครบ: 6 field → 201, body เก่าไม่พัง, GET /triples มี source_file+field+section, echo ครบ, pytest ผ่าน
+- [x] Success criteria ข้อ 1–3, 5 ของ spec ครบ: 6 field → 201, body เก่าไม่พัง, GET /triples มี source_file+field+section, echo ครบ, pytest ผ่าน
 
 ### Phase 3: GPU test (ตัดสิน open question)
 
-- [ ] **Task 5: GPU test ตารางจริง** (S)
+- [x] **Task 5: GPU test ตารางจริง** (S)
   - `tests/test_gpu_tables.py` (ใหม่) — `@pytest.mark.gpu` + skipif ไม่มี CUDA ตามแบบ `test_gpu_smoke.py`
   - ตาราง HTML จริง 2–3 อันจาก bake-off docs (`bake-off/report/bakeoff-r2-results.md` แปลงเป็น HTML แบบที่ PaddleOCR emit)
   - รัน extract_raw 2 variant: rows ล้วน vs rows prefix ชื่อ column — พิมพ์จำนวน relation ที่จับได้ต่อ variant (print สำหรับ `-s`)
@@ -70,7 +70,7 @@ POST /jobs ตอนนี้รับได้แค่ `field="text"` (schemas
   - Files: `tests/test_gpu_tables.py` (ใหม่)
 
 ### Checkpoint: Complete
-- [ ] `uv run pytest` (fake) + `uv run pytest -m gpu` ผ่าน
+- [x] `uv run pytest` (fake) + `uv run pytest -m gpu` ผ่าน
 - [ ] `uv run ruff check .` สะอาด
 - [ ] เสนอตัวเลข header prefix ให้ผู้ใช้ตัดสิน (แยกจาก task นี้)
 
