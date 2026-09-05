@@ -70,7 +70,7 @@ def create_app(settings: Settings | None = None, spawn_worker: bool = True) -> F
             validate_job_request(req, settings.max_files, settings.max_bytes)
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e)) from e
-        documents = [{"field": d.field, "content": d.content} for d in req.documents]
+        documents = [{"field": d.field, "content": d.content, "section": d.section} for d in req.documents]
         return {
             "job_id": db.enqueue(
                 callback_url=req.callback_url,

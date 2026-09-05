@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -11,14 +13,15 @@ from extraction_api.results import write_result
 from extraction_api.settings import Settings
 
 
-def make_settings(tmp_path) -> Settings:
-    return Settings(
-        db_path=tmp_path / "jobs.db",
-        results_dir=tmp_path / "results",
-        max_files=2,
-        max_bytes=1000,
-        default_threshold=0.9,
-    )
+def make_settings(tmp_path, **kw) -> Settings:
+    defaults = {
+        "db_path": tmp_path / "jobs.db",
+        "results_dir": tmp_path / "results",
+        "max_files": 2,
+        "max_bytes": 1000,
+        "default_threshold": 0.9,
+    }
+    return Settings(**{**defaults, **kw})
 
 
 def body(doc=None, **kw):
@@ -86,8 +89,32 @@ def test_post_valid_returns_job_id_immediately(client):
 
 def test_post_invalid_field_is_422(client):
     c, _, _ = client
-    r = c.post("/jobs", json=body(doc=[{"field": "table", "content": "x"}]))
+    r = c.post("/jobs", json=body(doc=[{"field": "code", "content": "x"}]))
     assert r.status_code == 422
+
+
+def test_post_accepts_all_six_fields(tmp_path):
+    settings = make_settings(tmp_path, max_files=10)  # fixture เดิม max_files=2 ไม่พอ 6 field
+    app = create_app(settings, spawn_worker=False)
+    with TestClient(app, raise_server_exceptions=False) as c:
+        docs = [{"field": f, "content": "x"} for f in
+                ("text", "table", "figure_caption", "latex", "image", "section")]
+        r = c.post("/jobs", json=body(doc=docs))
+        assert r.status_code == 201
+
+
+def test_post_accepts_section(client):
+    c, _, _ = client
+    r = c.post("/jobs", json=body(doc=[{"field": "text", "content": "x", "section": "3.1"}]))
+    assert r.status_code == 201
+
+
+def test_post_stores_section_in_db(client):
+    c, _app, settings = client
+    r = c.post("/jobs", json=body(doc=[{"field": "text", "content": "x", "section": "3.1"}]))
+    jid = r.json()["job_id"]
+    docs = json.loads(JobDB(settings.db_path).get(jid)["documents"])
+    assert docs[0]["section"] == "3.1"
 
 
 def test_post_empty_content_is_422(client):
