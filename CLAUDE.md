@@ -18,7 +18,7 @@ uvicorn extraction_api.main:app   # Swagger UI ที่ /docs
 - `main.py` — `create_app(settings, spawn_worker)` ผูก lifespan ทั้งหมด; endpoints 4 อัน; test inject `settings` กับ `spawn_worker=False` ได้
 - `db.py` — `JobDB` SQLite queue; `check_same_thread=False` + `threading.Lock` เดียว, `claim()` atomic (ต้องยังใช้ lock เสมอ)
 - `worker.py` — daemon thread: claim → run_job → webhook → prune หลังทุก job; `ExtractFn` type alias คือจุด inject fake
-- `extractor.py` — โหลด GLiNER-Relex จาก `models/`, rate-once slice-many
+- `extractor.py` — โหลด GLiNER-Relex จาก `models/`, rate-once slice-many; extract เฉพาะ field ใน `EXTRACTABLE_FIELDS` (text/table/figure_caption), table strip HTML → รายแถวผ่าน `_strip_table_rows` (model-free, ยูนิตได้)
 - `results.py` — ไฟล์ JSON ต่อ job (write atomic, read, filter_triples, prune ตาม age+size)
 - `schemas.py` / `settings.py` — pydantic; validation ที่ trust boundary ทำใน `validate_job_request` แล้วแปลงเป็น 422 ที่ endpoint
 
@@ -30,5 +30,8 @@ uvicorn extraction_api.main:app   # Swagger UI ที่ /docs
 - job ที่ claim แล้ว process ค้าง (crash/restart) = worker resume claim ต่อเองตอน startup — ไม่ต้องทำ reaper
 - pin ชุด `transformers==4.52.4`, `huggingface-hub<1.0`, torch จาก index `pytorch-cu128` — อย่าอัปเดตทั้งชุดพร้อมกัน (ดู memory glirel-setup)
 - threshold เก็บไว้ที่ GET /triples เท่านั้น — ห้าม re-extract เพื่อเปลี่ยน threshold, filter จากไฟล์ผลเดิม
+- document รับ 6 field ของ PaddleOCR (`KnownField` ใน schemas.py) — เพิ่ม field ใหม่ = แก้ Literal + ตัดสินว่าอยู่ใน `EXTRACTABLE_FIELDS` ไหม; triple ทุกตัวต้องแนบ provenance (source_file/field/section) จาก document แม่
+- table strip แบบแถวล้วน **ไม่ prefix ชื่อ column** — ตัดสินจาก GPU test แล้ว (prefix ได้ 2 เท่าแต่ noisy, ดู plan open question); แก้ strip logic ต้องรัน `pytest -m gpu tests/test_gpu_tables.py` วัดซ้ำ
+- `uv run pytest` deselect gpu โดย default (addopts ใน pyproject) — test ที่แตะ model ติด `@pytest.mark.gpu` + skipif ไม่มี CUDA เสมอ
 - เพิ่ม test เป็น pytest + fake (ไม่แตะ GPU); test ที่แตะ model จริงติด `@pytest.mark.gpu`
 - default schema มาจาก `bake-off/schema/seed.json`; `seed_relations` ต่อ job ทับเฉพาะ `relation_hints`

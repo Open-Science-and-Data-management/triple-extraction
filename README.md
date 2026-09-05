@@ -25,11 +25,26 @@ uv run uvicorn extraction_api.main:app          # device=cuda default
 
 ```bash
 curl -X POST localhost:8000/jobs -H 'content-type: application/json' -d '{
-  "documents": [{"field": "text", "content": "JanusGraph stores data in Cassandra."}]
+  "documents": [
+    {"field": "text", "content": "JanusGraph stores data in Cassandra.", "section": "2.1 Storage"},
+    {"field": "table", "content": "<table><tr><td>F1</td><td>58.3</td></tr></table>", "section": "3 Results"}
+  ]
 }'
 # → {"job_id": "…"}
 curl "localhost:8000/jobs/<id>/triples?threshold=0.9"
 ```
+
+### Document fields (output ของ PaddleOCR ครบ 6 แบบ)
+
+| field | GLiNER extract | หมายเหตุ |
+|---|---|---|
+| `text`, `figure_caption` | ✅ ผ่าน pysbd split_sentences | |
+| `table` | ✅ strip HTML → 1 ประโยค/แถว (cell join ด้วยช่องว่าง, ไม่มี tag → เก็บทั้งก้อน) | ไม่ prefix ชื่อ column (ดู plan open question) |
+| `latex`, `image`, `section` | ❌ pass-through | echo กลับในไฟล์ผล ไม่เสียข้อมูล |
+
+- ทุก triple ในผลลัพธ์แนบ provenance: `source_file` (index ของ document), `field`, `section` (จาก document แม่, null ได้)
+- `section` ใน document (optional) — ชื่อ section/หัวข้อที่ content นี้มาจาก
+- body เดิม (`text` ไม่มี section) ใช้ได้เหมือนเดิม — additive ไม่ breaking
 
 - `callback_url` (optional) — ยิง POST `{job_id, status}` เมื่อ job เสร็จ ไม่กระทบ status ถ้าพัง
 - `seed_relations` (optional) — ทับ `relation_hints` ใน `bake-off/schema/seed.json` เฉพาะ job นั้น
@@ -65,7 +80,7 @@ GET /triples ◀── ไฟล์ผล JSON (filter threshold ที่หน
 ## Test
 
 ```bash
-uv run pytest            # ยูนิต/API — fake extractor ไม่แตะ GPU
-uv run pytest -m gpu     # smoke แตะ model จริง (~1.5s/job / 10 ย่อหน้า)
+uv run pytest            # ยูนิต/API — fake extractor ไม่แตะ GPU (gpu deselect โดย default)
+uv run pytest -m gpu     # smoke + ตารางจริง แตะ model จริง (~1.5s/job / 10 ย่อหน้า)
 uv run ruff check .
 ```
