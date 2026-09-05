@@ -27,11 +27,26 @@ class CreateJobRequest(BaseModel):
                             "content": (
                                 "We evaluate GLiNER-Relex on the SciERC benchmark and find that "
                                 "joint entity–relation extraction outperforms the pipeline baseline, "
-                                "achieving an F1 score of 58.3. Our model is fine-tuned from DeBERTa-v3 "
-                                "using a contrastive learning objective, following the REBEL training "
-                                "recipe."
+                                "achieving an F1 score of 58.3."
                             ),
-                        }
+                            "section": "1 Introduction",
+                        },
+                        {
+                            "field": "table",
+                            "content": (
+                                "<table><tr><td>Model</td><td>F1</td></tr>"
+                                "<tr><td>GLiNER-Relex</td><td>58.3</td></tr></table>"
+                            ),
+                            "section": "4 Results",
+                        },
+                        {
+                            "field": "figure_caption",
+                            "content": "Figure 1: Architecture of the joint entity–relation model.",
+                            "section": "3 Method",
+                        },
+                        {"field": "latex", "content": r"\mathcal{L} = \mathcal{L}_{ent} + \mathcal{L}_{rel}", "section": None},
+                        {"field": "image", "content": "figures/architecture.png", "section": None},
+                        {"field": "section", "content": "5 Conclusion and Future Work", "section": None},
                     ],
                     "callback_url": None,
                     "seed_relations": None,
