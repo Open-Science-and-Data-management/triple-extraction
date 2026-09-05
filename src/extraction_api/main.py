@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Annotated, Any
@@ -17,6 +18,7 @@ from extraction_api.schemas import (
     validate_job_request,
 )
 from extraction_api.settings import Settings
+from extraction_api.worker import ExtractFn, start_worker
 
 
 def get_db(request: Request) -> JobDB:
@@ -32,14 +34,32 @@ DbDep = Annotated[JobDB, Depends(get_db)]
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def make_extract_fn() -> ExtractFn:
+    """โหลด model จาก models/ ครั้งเดียวตอน startup — คืน closure ที่ worker เรียกได้"""
+    from extraction_api.extractor import extract_raw, load_extractor
+
+    model = load_extractor()
+
+    def extract(documents: list[dict[str, str]], schema: dict[str, Any]) -> list[dict[str, Any]]:
+        return extract_raw(model, documents, schema)
+
+    return extract
+
+
+def create_app(settings: Settings | None = None, spawn_worker: bool = True) -> FastAPI:
     settings = settings or Settings()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.db = JobDB(settings.db_path)
         app.state.settings = settings
+        if spawn_worker:
+            stop = threading.Event()
+            app.state.worker = start_worker(app.state.db, make_extract_fn(), settings, stop)
+            app.state.worker_stop = stop
         yield
+        if spawn_worker:
+            app.state.worker_stop.set()
         app.state.db.close()
 
     app = FastAPI(title="extraction-api", lifespan=lifespan)

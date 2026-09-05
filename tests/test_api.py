@@ -28,7 +28,7 @@ def body(doc=None, **kw):
 @pytest.fixture()
 def client(tmp_path):
     settings = make_settings(tmp_path)
-    app = create_app(settings)
+    app = create_app(settings, spawn_worker=False)  # model-free — worker ไม่ spawn
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c, app, settings
 
