@@ -339,7 +339,7 @@ def make_knowcoder() -> Adapter:
 
     schema = load_schema()
     # class name ต้องเป็น identifier → camel จาก relation hint แล้ว map กลับตอน parse (แค่เปลี่ยนชื่อ ไม่กรองผล)
-    to_camel = lambda h: "".join(w.capitalize() for w in h.split())  # noqa: E731
+    to_camel = lambda h: "".join(w.capitalize() for w in h.split())
     rel_by_class = {to_camel(h): h for h in schema["relation_hints"]}
     class_defs = "\n".join(
         f"class {cls}(Relation):\n"
@@ -412,7 +412,7 @@ def make_gollie() -> Adapter:
 
     schema = load_schema()
     # schema เป็น Python class ตาม format ของ src/tasks/ace/prompts.py (RE: arg1/arg2) + template/prompt.txt
-    to_camel = lambda h: "".join(w.capitalize() for w in h.split())  # noqa: E731
+    to_camel = lambda h: "".join(w.capitalize() for w in h.split())
     rel_by_class = {to_camel(h): h for h in schema["relation_hints"]}
     guideline = "\n".join(
         f'@dataclass\n\nclass {cls}(Relation):\n    """The "{hint}" relation. Both spans must be '
@@ -444,7 +444,7 @@ def make_gollie() -> Adapter:
 
 def _parse_gollie(text: str, ranges: list[tuple[int, int, float]], rel_by_class: dict[str, str]) -> list[Triple]:
     out = []
-    for m in re.finditer(r"(\w+)\(\s*arg1=['\"](.+?)['\"]\s*,\s*arg2=['\"](.+?)['\"]", text, re.S):
+    for m in re.finditer(r"(\w+)\(\s*arg1=['\"](.+?)['\"]\s*,\s*arg2=['\"](.+?)['\"]", text, re.DOTALL):
         rel = rel_by_class.get(m.group(1), m.group(1))  # นอก schema → เก็บชื่อ class เดิม (ไม่ทิ้ง)
         ps = [p for s, e, p in ranges if e > m.start() and s < m.end()]
         score = sum(ps) / len(ps) if ps else 0.0
@@ -542,16 +542,16 @@ def write_reports(results: list[dict], sentences: list[dict], report_dir: Path |
     out += ["", "precision = rate ด้วยตาทุก unique triple ครั้งเดียว (Step 3) แล้ว slice ทุก threshold จาก raw scores เดียว", ""]
     for r in results:
         out += [f"## {r['name']}", "",
-                f"{sum(1 for u in r['triples'] for _ in u['occ'])} triples ({len(r['triples'])} unique) · "
-                f"{r['ms']:.1f} ms/ประโยค (หลัง warm-up) · {r['vram']}", "",
+                (f"{sum(1 for u in r['triples'] for _ in u['occ'])} triples ({len(r['triples'])} unique) · "
+                f"{r['ms']:.1f} ms/ประโยค (หลัง warm-up) · {r['vram']}"), "",
                 "| th | triples | precision ~ | ประโยคว่าง |", "|---|---|---|---|"]
         for row in r["table"]:
             p = f"~{row['precision']:.2f}" if row["precision"] is not None else ("–" if row["n"] == 0 else "(รอ rate)")
             out.append(f"| {row['threshold']} | {row['n']} | {p} | {len(row['empty'])} |")
         if r["best"]:
             b = r["best"]
-            out += ["", f"**best:** th {b['threshold']} — precision ~{b['precision']:.2f} "
-                        f"({b['n']} triples, ว่าง {len(b['empty'])}/{len(sentences)})"]
+            out += ["", (f"**best:** th {b['threshold']} — precision ~{b['precision']:.2f} "
+                        f"({b['n']} triples, ว่าง {len(b['empty'])}/{len(sentences)})")]
         out += ["", *category_lines(r, sentences), ""]
     (report_dir / "bakeoff-r2-results.md").write_text("\n".join(out))
 
@@ -614,8 +614,8 @@ def write_report_r3() -> None:
         sections.append((name, raw, table, best))
 
     out = ["# Bake-off r3 — ขยายแผนที่สู่ code/instruction-LLM dedicated IE", "",
-           "คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — "
-           "KnowCoder/GoLLIE ตัดตอน smoke (ดูหัวข้อตัดแล้วและเหตุผล)", "",
+           ("คุมตัวแปรกับ r2 ทุกอย่างยกเว้นตัวโมเดล (ประโยค/seed schema/GPU เดิม) — "
+           "KnowCoder/GoLLIE ตัดตอน smoke (ดูหัวข้อตัดแล้วและเหตุผล)"), "",
            f"## แผนที่ precision × ms ({len(points)} จุด)", ""]
     out += ["| model | paradigm | precision ~ (best th) | ms/ประโยค | VRAM peak | schema |", "|---|---|---|---|---|---|"]
     for name, raw, table, best in sections:
@@ -632,16 +632,16 @@ def write_report_r3() -> None:
         if name not in ("knowcoder", "gollie"):
             continue
         out += [f"## {name}", "",
-                f"{sum(1 for u in raw['triples'] for _ in u['occ'])} triples ({len(raw['triples'])} unique) · "
-                f"{raw['ms']:.1f} ms/ประโยค (หลัง warm-up) · {raw['vram']}", "",
+                (f"{sum(1 for u in raw['triples'] for _ in u['occ'])} triples ({len(raw['triples'])} unique) · "
+                f"{raw['ms']:.1f} ms/ประโยค (หลัง warm-up) · {raw['vram']}"), "",
                 "| th | triples | precision ~ | ประโยคว่าง |", "|---|---|---|---|"]
         for row in table:
             p = f"~{row['precision']:.2f}" if row["precision"] is not None else ("–" if row["n"] == 0 else "(รอ rate)")
             out.append(f"| {row['threshold']} | {row['n']} | {p} | {len(row['empty'])} |")
         if best:
             b = best
-            out += ["", f"**best:** th {b['threshold']} — precision ~{b['precision']:.2f} "
-                        f"({b['n']} triples, ว่าง {len(b['empty'])}/{len(SENTENCES)})"]
+            out += ["", (f"**best:** th {b['threshold']} — precision ~{b['precision']:.2f} "
+                        f"({b['n']} triples, ว่าง {len(b['empty'])}/{len(SENTENCES)})")]
         out += ["", *category_lines({"best": best, "table": table, "triples": raw["triples"]}, SENTENCES), ""]
 
     # ตัดแล้วและเหตุผล — ครบ 3 รายการตัด + smoke ที่ตายถ้ามี
