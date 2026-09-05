@@ -11,16 +11,12 @@ from huggingface_hub import snapshot_download
 
 from extraction_api.settings import Settings
 
-# ไฟล์ที่ from_pretrained ต้องมี — safetensors หรือ bin อย่างน้อยหนึ่ง
-REQUIRED = ["config.json"]
-
 
 def is_downloaded(model_dir) -> bool:
-    if not (model_dir / "config.json").exists():
-        return False
-    return any(
-        (model_dir / f).exists() for f in ("model.safetensors", "pytorch_model.bin")
-    )
+    # repo นี้ใช้ gliner_config.json (ไม่มี config.json)
+    has_config = any((model_dir / f).exists() for f in ("config.json", "gliner_config.json"))
+    has_weights = any((model_dir / f).exists() for f in ("model.safetensors", "pytorch_model.bin"))
+    return has_config and has_weights
 
 
 def main() -> int:
@@ -28,9 +24,7 @@ def main() -> int:
     if is_downloaded(settings.model_dir):
         print(f"มี checkpoint แล้ว ข้าม: {settings.model_dir}")
         return 0
-    path = snapshot_download(
-        "knowledgator/gliner-relex-multi-v1.0", local_dir=settings.model_dir
-    )
+    path = snapshot_download("knowledgator/gliner-relex-multi-v1.0", local_dir=settings.model_dir)
     if not is_downloaded(settings.model_dir):
         print(f"ดาวน์โหลดแล้วแต่ไฟล์จำเป็นไม่ครบ: {path}", file=sys.stderr)
         return 1
