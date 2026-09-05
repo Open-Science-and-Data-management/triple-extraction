@@ -50,7 +50,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             validate_job_request(req, settings.max_files, settings.max_bytes)
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e)) from e
-        return {"job_id": db.enqueue(callback_url=req.callback_url)}
+        documents = [{"field": d.field, "content": d.content} for d in req.documents]
+        return {
+            "job_id": db.enqueue(
+                callback_url=req.callback_url,
+                seed_relations=req.seed_relations,
+                documents=documents,
+            )
+        }
 
     @app.get("/jobs/{job_id}", response_model=JobStatusResponse)
     def job_status(job_id: str, db: DbDep) -> dict[str, Any]:
@@ -61,7 +68,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/jobs/{job_id}/triples", response_model=TriplesResponse)
     def job_triples(
-        job_id: str, db: DbDep, settings: SettingsDep,
+        job_id: str,
+        db: DbDep,
+        settings: SettingsDep,
         threshold: Annotated[float | None, Query(ge=0.0, le=1.0)] = None,
     ) -> dict[str, Any]:
         job = db.get(job_id)

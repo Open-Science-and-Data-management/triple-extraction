@@ -26,6 +26,15 @@ def test_claim_moves_pending_to_running(tmp_path):
     assert db.claim() is None  # ไม่มี pending เหลือ
 
 
+def test_seed_relations_persist_through_claim(tmp_path):
+    import json
+
+    db = JobDB(tmp_path / "jobs.db")
+    db.enqueue(seed_relations=["reduces", "improves"])
+    claimed = db.claim()
+    assert json.loads(claimed["seed_relations"]) == ["reduces", "improves"]
+
+
 def test_claim_from_two_threads_yields_each_job_once(tmp_path):
     db = JobDB(tmp_path / "jobs.db")
     ids = {db.enqueue() for _ in range(6)}

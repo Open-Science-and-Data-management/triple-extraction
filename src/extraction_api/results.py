@@ -55,9 +55,7 @@ def prune(
     removed: set[str] = set()
 
     if retention_days > 0:
-        cutoff = (
-            datetime.fromisoformat(now) - timedelta(days=retention_days)
-        ).isoformat()
+        cutoff = (datetime.fromisoformat(now) - timedelta(days=retention_days)).isoformat()
         for j in done:
             if j.get("finished_at") and j["finished_at"] < cutoff:
                 removed.add(j["id"])

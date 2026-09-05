@@ -24,9 +24,7 @@ def load_seed_schema(path: Path = SEED_SCHEMA_PATH) -> dict[str, Any]:
 
 
 def schema_hash(schema: dict[str, Any]) -> str:
-    return "sha256:" + hashlib.sha256(
-        json.dumps(schema, sort_keys=True).encode()
-    ).hexdigest()
+    return "sha256:" + hashlib.sha256(json.dumps(schema, sort_keys=True).encode()).hexdigest()
 
 
 def split_sentences(text: str) -> list[str]:
@@ -56,9 +54,7 @@ def extract_raw(
 
     # ประโยคทั้ง job ยัด batch เดียว — batch_size 8 ใน inference จัดการเอง
     flat: list[tuple[int, str, str]] = [
-        (i, doc["field"], sent)
-        for i, doc in enumerate(documents)
-        for sent in split_sentences(doc["content"])
+        (i, doc["field"], sent) for i, doc in enumerate(documents) for sent in split_sentences(doc["content"])
     ]
     if not flat:
         return []

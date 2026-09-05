@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS jobs (
   status TEXT NOT NULL DEFAULT 'pending',
   error TEXT,
   callback_url TEXT,
+  seed_relations TEXT,
+  documents TEXT,
   created_at TEXT NOT NULL,
   finished_at TEXT
 )
@@ -41,14 +43,26 @@ class JobDB:
     def _to_job(row: sqlite3.Row | None) -> dict[str, Any] | None:
         return dict(row) if row else None
 
-    def enqueue(self, callback_url: str | None = None) -> str:
+    def enqueue(
+        self,
+        callback_url: str | None = None,
+        seed_relations: list[str] | None = None,
+        documents: list[dict[str, str]] | None = None,
+    ) -> str:
+        import json
         import uuid
 
         job_id = str(uuid.uuid4())
         with self._lock:
             self._conn.execute(
-                "INSERT INTO jobs (id, callback_url, created_at) VALUES (?, ?, ?)",
-                (job_id, callback_url, _now()),
+                "INSERT INTO jobs (id, callback_url, seed_relations, documents, created_at) VALUES (?, ?, ?, ?, ?)",
+                (
+                    job_id,
+                    callback_url,
+                    json.dumps(seed_relations) if seed_relations else None,
+                    json.dumps(documents) if documents else None,
+                    _now(),
+                ),
             )
             self._conn.commit()
         return job_id
@@ -97,6 +111,12 @@ class JobDB:
                 (older_than,),
             ).fetchall()
         return [r["id"] for r in rows]
+
+    def list_done(self) -> list[dict[str, Any]]:
+        """ทุกแถว done — prune ใช้เป็น candidate list"""
+        with self._lock:
+            rows = self._conn.execute("SELECT * FROM jobs WHERE status = 'done'").fetchall()
+        return [dict(r) for r in rows]
 
     def close(self) -> None:
         self._conn.close()

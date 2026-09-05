@@ -40,7 +40,9 @@ def test_rejects_non_string_content():
 def test_rejects_too_many_files():
     docs = [{"field": "text", "content": "x"}] * 3
     with pytest.raises(ValueError, match="MAX_FILES"):
-        validate_job_request(CreateJobRequest.model_validate(body(documents=docs)), max_files=2, max_bytes=1000)
+        validate_job_request(
+            CreateJobRequest.model_validate(body(documents=docs)), max_files=2, max_bytes=1000
+        )
 
 
 def test_rejects_too_many_bytes():

@@ -45,10 +45,28 @@ def seed_done(settings, triples=None):
         "documents": [],
         "triples": triples
         or [
-            {"source_file": 0, "field": "text", "sentence": "s", "head": "a", "head_type": "m",
-             "tail": "b", "tail_type": "c", "relation": "r", "score": 0.95},
-            {"source_file": 0, "field": "text", "sentence": "s", "head": "c", "head_type": "m",
-             "tail": "d", "tail_type": "c", "relation": "r", "score": 0.55},
+            {
+                "source_file": 0,
+                "field": "text",
+                "sentence": "s",
+                "head": "a",
+                "head_type": "m",
+                "tail": "b",
+                "tail_type": "c",
+                "relation": "r",
+                "score": 0.95,
+            },
+            {
+                "source_file": 0,
+                "field": "text",
+                "sentence": "s",
+                "head": "c",
+                "head_type": "m",
+                "tail": "d",
+                "tail_type": "c",
+                "relation": "r",
+                "score": 0.55,
+            },
         ],
     }
     write_result(settings.results_dir, jid, payload)
@@ -130,7 +148,17 @@ def test_triples_threshold_slice_from_same_file(client):
     assert all(t["score"] >= 0.9 for t in hi["triples"])
     # provenance ครบ
     t = hi["triples"][0]
-    for k in ("source_file", "field", "sentence", "head", "head_type", "tail", "tail_type", "relation", "score"):
+    for k in (
+        "source_file",
+        "field",
+        "sentence",
+        "head",
+        "head_type",
+        "tail",
+        "tail_type",
+        "relation",
+        "score",
+    ):
         assert k in t
 
 
