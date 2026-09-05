@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # field enum — ตอนนี้มี text เดียว (spec: PDF/table รองรับภายหลังโดยไม่ breaking)
 KnownField = Literal["text"]
@@ -16,6 +16,29 @@ class Document(BaseModel):
 
 
 class CreateJobRequest(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "documents": [
+                        {
+                            "field": "text",
+                            "content": (
+                                "We evaluate GLiNER-Relex on the SciERC benchmark and find that "
+                                "joint entity–relation extraction outperforms the pipeline baseline, "
+                                "achieving an F1 score of 58.3. Our model is fine-tuned from DeBERTa-v3 "
+                                "using a contrastive learning objective, following the REBEL training "
+                                "recipe."
+                            ),
+                        }
+                    ],
+                    "callback_url": None,
+                    "seed_relations": None,
+                }
+            ]
+        }
+    )
+
     documents: list[Document]
     callback_url: str | None = None
     # ไม่ส่ง = ใช้ default schema จาก bake-off/schema/seed.json
