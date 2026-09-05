@@ -162,6 +162,26 @@ def test_triples_unknown_404_pending_409(client):
     assert c.get(f"/jobs/{jid}/triples").status_code == 409
 
 
+def test_triples_returns_section_provenance(client):
+    c, _, settings = client
+    triple = {
+        "source_file": 1,
+        "field": "table",
+        "section": "3.2 Results",
+        "sentence": "F1 58.3",
+        "head": "a",
+        "head_type": "m",
+        "tail": "b",
+        "tail_type": "c",
+        "relation": "r",
+        "score": 0.95,
+    }
+    jid = seed_done(settings, triples=[triple])
+    body_json = c.get(f"/jobs/{jid}/triples").json()
+    t = body_json["triples"][0]
+    assert t["field"] == "table" and t["section"] == "3.2 Results" and t["source_file"] == 1
+
+
 def test_triples_threshold_slice_from_same_file(client):
     c, _, settings = client
     jid = seed_done(settings)

@@ -8,6 +8,7 @@ from datetime import UTC, datetime, timedelta
 import httpx
 
 from extraction_api.db import JobDB
+from extraction_api.extractor import extract_raw
 from extraction_api.results import read_result
 from extraction_api.settings import Settings
 from extraction_api.worker import process_pending, send_webhook
@@ -43,6 +44,42 @@ def fake_extract(documents, schema):
 
 def failing_extract(documents, schema):
     raise RuntimeError("GPU หลุด")
+
+
+# --- end-to-end ครบ 6 field (stub model — ไม่แตะ GPU) ---
+SIX_DOCS = [
+    {"field": "text", "content": "LoRA reduces hallucination.", "section": "3.1 Setup"},
+    {"field": "table", "content": "<table><tr><td>F1</td><td>58.3</td></tr></table>", "section": "3.2 Results"},
+    {"field": "figure_caption", "content": "Figure 1: architecture.", "section": None},
+    {"field": "latex", "content": r"\frac{a}{b}", "section": None},
+    {"field": "image", "content": "fig1.png", "section": None},
+    {"field": "section", "content": "3 Results", "section": "3"},
+]
+
+
+def test_six_fields_echo_and_triples_only_extractable(tmp_path):
+    from test_extractor import StubModel
+
+    settings = make_settings(tmp_path)
+    db = JobDB(settings.db_path)
+    jid = db.enqueue(documents=SIX_DOCS)
+    extract = lambda docs, schema: extract_raw(StubModel(), docs, schema)
+    assert process_pending(db, extract, settings) == 1
+    assert db.get(jid)["status"] == "done"
+
+    payload = read_result(settings.results_dir, jid)
+    # echo documents ครบทั้ง 6 — รวม field ที่ไม่ extract
+    assert [d["field"] for d in payload["documents"]] == [d["field"] for d in SIX_DOCS]
+    # triples เฉพาะจาก 3 field ที่ extract
+    fields = {t["field"] for t in payload["triples"]}
+    assert fields == {"text", "table", "figure_caption"}
+    # ทุก triple มี provenance field + section (None ได้) ตรง document แม่
+    by_field = {t["field"]: t for t in payload["triples"]}
+    assert by_field["text"]["section"] == "3.1 Setup"
+    assert by_field["table"]["section"] == "3.2 Results"
+    assert by_field["table"]["sentence"] == "F1 58.3"
+    assert by_field["figure_caption"]["section"] is None
+    assert all("section" in t for t in payload["triples"])
 
 
 # --- lifecycle ---
