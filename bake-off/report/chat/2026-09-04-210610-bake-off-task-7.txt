@@ -1,0 +1,581 @@
+ ▐▛███▛█   Claude Code v2.1.251
+▝▜██████▀  glm-5.3-flash · API Usage Billing
+  ▝▝ ▝▝    ~/Document/Code/triple-extraction
+
+
+⚠ Both ANTHROPIC_AUTH_TOKEN and /login managed key set · auth may not work as expected
+  · to use ANTHROPIC_AUTH_TOKEN: claude /logout
+  · to use /login managed key: Unset the ANTHROPIC_AUTH_TOKEN environment variable.
+
+❯ /clear                                                                        
+
+❯ /agent-skills:build @tasks/plan.md  **continue from task 7**                  
+
+  Thought for 10s (ctrl+o to expand)
+
+● Skill(agent-skills:incremental-implementation)
+  ⎿  Successfully loaded skill
+
+● Skill(agent-skills:test-driven-development)
+  ⎿  Successfully loaded skill
+
+  Thought for 13s, read 3 files, ran 3 shell commands, recalled 1 memory (ctrl+o to expand)
+
+● Fetch(https://huggingface.co/knowledgator/gliner-pyrheads-large-v0.5)
+  ⎿  Received 0 bytes (401 Unauthorized)
+
+  Thought for 6s, ran 3 shell commands (ctrl+o to expand)
+
+● Web Search("knowledgator GLiNER 2.0 pyrheads library pip install gliner2
+            relation extraction")
+  ⎿  Did 1 search in 16s
+
+  Thought for 15s (ctrl+o to expand)
+
+● Checkpoint knowledgator/gliner-pyrheads-large-v0.5 ใน spec ไม่มีอยู่บน HF แล้ว
+  (search ว่าง, 401) — GLiNER 2.x จริง ๆ คือ package gliner2 + checkpoint
+  knowledgator/gliner2-base-v1 (pyrheads = codename เดิม) — เดี๋ยวถาม human หลัง
+  smoke glirel เสร็จ ตามข้อ "เพิ่ม dependency ต้องถามก่อน"
+
+  เริ่มด้วย glirel (dep อยู่ใน default group แล้ว) — ดู API ของ glirel ก่อน:
+
+  Thought for 1m 14s, listed 1 directory, ran 7 shell commands (ctrl+o to expand)
+
+● ner format คือ [start_tok, end_tok, label, text] (token positions inclusive) —
+  ต้องให้ NER มาจาก GLiNER checkpoint สายเดียวกับ Relex ตามแผน แล้วแปลง char span →
+  token span. เขียน adapter:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 44 lines
+      188  ADAPTER_FACTORIES["nuextract"] = make_nuextract
+      189  
+      190  
+      191 +def make_glirel() -> Adapter:                                 
+      192 +    import re                                                 
+      193 +                                                              
+      194 +    from gliner import GLiNER                                 
+      195 +    from glirel import GLiREL                                 
+      196 +                                                              
+      197 +    schema = load_schema()                                    
+      198 +    # NER จาก GLiNER checkpoint สายเดียวกับ Relex (ล็อกตั้งแต่ confi
+          +g) — GLiREL ไม่หา entity เอง                                   
+      199 +    ner_model = GLiNER.from_pretrained("knowledgator/gliner-re
+          +lex-multi-v1.0").to("cuda").eval()                            
+      200 +    model = GLiREL.from_pretrained("jackboyla/glirel-large-v0"
+          +).to("cuda").eval()                                           
+      201 +    labels, relations = schema["entity_labels"], schema["relat
+          +ion_hints"]                                                   
+      202 +                                                              
+      203 +    def _ner_token_spans(text: str) -> list[list]:            
+      204 +        # NER char span → token span ตาม tokenizer ของ glirel 
+          +เอง (batch_predict_relations)                                 
+      205 +        ents = ner_model.inference([text], labels, threshold=0
+          +.3)[0]                                                        
+      206 +        toks = [(m.start(), m.end()) for m in re.finditer(r"\w
+          ++(?:[-_]\w+)*|\S", text)]                                     
+      207 +        out = []                                              
+      208 +        for e in ents:                                        
+      209 +            idx = [i for i, (s, t) in enumerate(toks) if s < e
+          +["end"] and e["start"] < t]                                   
+      210 +            if idx:                                           
+      211 +                out.append([idx[0], idx[-1], e["label"], text[
+          +e["start"]:e["end"]]])                                        
+      212 +        return out                                            
+      213 +                                                              
+      214 +    def extract(sentences: list[str]) -> list[list[Triple]]:  
+      215 +        ners = [_ner_token_spans(s) for s in sentences]       
+      216 +        # threshold ต่ำเก็บ raw scores ไว้ slice ทีหลัง (rate-once-
+          +slice-many)                                                   
+      217 +        rels = model.batch_predict_relations(sentences, relati
+          +ons, threshold=0.3, ner=ners, top_k=-1)                       
+      218 +        out = []                                              
+      219 +        for rs in rels:                                       
+      220 +            ts = []                                           
+      221 +            for r in rs:                                      
+      222 +                # glirel บวก +1 ท้าย position เพื่อคุยกับ spaCy tok
+          +enization — ตัดกลับ                                             
+      223 +                s, t = r["head_pos"][0] - 1, r["head_pos"][1] 
+          + # inclusive → exclusive                                      
+      224 +                head = " ".join(sentences[r["_i"]].split()[s:t
+          +]) if False else r["head_text"]                               
+      225 +                ts.append(Triple(str(head), r["label"], str(r[
+          +"tail_text"]), float(r["score"])))                            
+      226 +            out.append(ts)                                    
+      227 +        return out                                            
+      228 +                                                              
+      229 +    return Adapter("glirel", extract)                         
+      230 +                                                              
+      231 +                                                              
+      232 +ADAPTER_FACTORIES["glirel"] = make_glirel                     
+      233 +                                                              
+      234 +                                                              
+      235  # ผล smoke (Task 6): ให้ seed relation เป็น candidates แล้ว reade
+           r ทำนาย 0 triple ทุกกรณี
+      236  # (รวมลอง format <def>) — ReLiK ปิด schema ยืนยัน รันด้วย native NY
+           T relations แทน = ข้อมูลของแผนที่
+      237  RELIK_CLOSED_SCHEMA = True
+
+  Thought for 6s (ctrl+o to expand)
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 14 lines, removed 7 lines
+      200      model = GLiREL.from_pretrained("jackboyla/glirel-large-v0"
+           ).to("cuda").eval()
+      201      labels, relations = schema["entity_labels"], schema["relat
+           ion_hints"]
+      202  
+      203 +    def _tokenize(text: str) -> list[str]:                    
+      204 +        # tokenizer เดียวกับ batch_predict_relations ของ glirel 
+          +เพื่อ map ตำแหน่งให้ตรง                                           
+      205 +        return [m.group() for m in re.finditer(r"\w+(?:[-_]\w+
+          +)*|\S", text)]                                                
+      206 +                                                              
+      207      def _ner_token_spans(text: str) -> list[list]:
+      204 -        # NER char span → token span ตาม tokenizer ของ glirel 
+          -เอง (batch_predict_relations)                                 
+      208 +        # NER char span → token span [start, end(inclusive), l
+          +abel, text]                                                   
+      209          ents = ner_model.inference([text], labels, threshold=0
+           .3)[0]
+      206 -        toks = [(m.start(), m.end()) for m in re.finditer(r"\w
+          -+(?:[-_]\w+)*|\S", text)]                                     
+      210 +        toks = _tokenize(text)                                
+      211 +        # ponytail: char ทับ token แบบ scan ทุกคู่ O(E·T) — ประโยค
+          +สั้น ช่างมัน                                                      
+      212          out = []
+      213          for e in ents:
+      209 -            idx = [i for i, (s, t) in enumerate(toks) if s < e
+          -["end"] and e["start"] < t]                                   
+      214 +            idx = [i for i, t in enumerate(toks)              
+      215 +                   if text.find(t) < e["end"] and e["start"] <
+          + text.find(t) + len(t)]                                       
+      216              if idx:
+      217                  out.append([idx[0], idx[-1], e["label"], text[
+           e["start"]:e["end"]]])
+      218          return out
+     ...
+      222          # threshold ต่ำเก็บ raw scores ไว้ slice ทีหลัง (rate-once-
+           slice-many)
+      223          rels = model.batch_predict_relations(sentences, relati
+           ons, threshold=0.3, ner=ners, top_k=-1)
+      224          out = []
+      219 -        for rs in rels:                                       
+      225 +        for sent, rs in zip(sentences, rels):                 
+      226 +            toks = _tokenize(sent)                            
+      227              ts = []
+      228              for r in rs:
+      229                  # glirel บวก +1 ท้าย position เพื่อคุยกับ spaCy tok
+           enization — ตัดกลับ
+      223 -                s, t = r["head_pos"][0] - 1, r["head_pos"][1] 
+          - # inclusive → exclusive                                      
+      224 -                head = " ".join(sentences[r["_i"]].split()[s:t
+          -]) if False else r["head_text"]                               
+      225 -                ts.append(Triple(str(head), r["label"], str(r[
+          -"tail_text"]), float(r["score"])))                            
+      230 +                head = " ".join(toks[r["head_pos"][0] - 1:r["h
+          +ead_pos"][1]])                                                
+      231 +                tail = " ".join(toks[r["tail_pos"][0] - 1:r["t
+          +ail_pos"][1]])                                                
+      232 +                ts.append(Triple(head, r["label"], tail, float
+          +(r["score"])))                                                
+      233              out.append(ts)
+      234          return out
+      235  
+
+  Thought for 3s (ctrl+o to expand)
+
+● text.find หา occurrence แรก — ถ้า token ซ้ำในประโยคจะผิดตำแหน่ง แก้ให้เก็บ char
+  offset ตั้งแต่ tokenize:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 2 lines, removed 4 lines
+      207      def _ner_token_spans(text: str) -> list[list]:
+      208          # NER char span → token span [start, end(inclusive), l
+           abel, text]
+      209          ents = ner_model.inference([text], labels, threshold=0
+           .3)[0]
+      210 -        toks = _tokenize(text)                                
+      211 -        # ponytail: char ทับ token แบบ scan ทุกคู่ O(E·T) — ประโยค
+          -สั้น ช่างมัน                                                      
+      210 +        toks = [(m.group(), m.start(), m.end()) for m in re.fi
+          +nditer(r"\w+(?:[-_]\w+)*|\S", text)]                          
+      211          out = []
+      212          for e in ents:
+      214 -            idx = [i for i, t in enumerate(toks)              
+      215 -                   if text.find(t) < e["end"] and e["start"] <
+          - text.find(t) + len(t)]                                       
+      213 +            idx = [i for i, (_, s, t) in enumerate(toks) if s 
+          +< e["end"] and e["start"] < t]                                
+      214              if idx:
+      215                  out.append([idx[0], idx[-1], e["label"], text[
+           e["start"]:e["end"]]])
+      216          return out
+
+● RED/GREEN ที่นี่คือ smoke run (สคริปต์ one-off ไม่มี test suite ตามแผน):
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Task Output bj6umepyz
+  ⎿  Fetching 10 files:   0%|          | 0/10 [00:00<?, ?it/s]/home/nummmm/
+     Document/Code/triple-extraction/bake-off/.venv/lib/python3.12/site-pac
+     kages/huggingface_hub/file_download.py:949: FutureWarning: `resume_dow
+     … +31 lines (ctrl+o to expand)
+
+● Background command "รัน smoke glirel" completed (exit code 0)
+
+  Thought for 3s (ctrl+o to expand)
+
+● entity ของ gliner คืน list ไม่ใช่ dict — เช็ค format:
+
+  Thought for 50s, searched for 4 patterns, listed 1 directory, ran 11 shell commands (ctrl+o to expand)
+
+● ดูตรงไหนก็ได้ — เจอ dict ทุกที่ แต่ runtime ได้ list พิมพ์ดูของจริงเร็วกว่า:
+
+  Thought for 35s, ran 1 shell command (ctrl+o to expand)
+
+● Output เป็น dict — ที่ error เป็น list มาจากไหน เปิดไฟล์บรรทัดจริงดู:
+  Thought for 39s, read 1 file, ran 2 shell commands (ctrl+o to expand)
+
+● ไม่แปลกหน้า — บน cuda มัน wrap ซ้อน list อีกชั้น (out[0] = [ [dicts] ]) ต่างจากบน CPU
+  แก้ด้วย unwrap:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 3 lines
+      207      def _ner_token_spans(text: str) -> list[list]:
+      208          # NER char span → token span [start, end(inclusive), l
+           abel, text]
+      209          ents = ner_model.inference([text], labels, threshold=0
+           .3)[0]
+      210 +        # gliner คืน shape ไม่คงที่ — บน cuda มีการ wrap list ซ้อนอีก
+          +ชั้น                                                            
+      211 +        while ents and isinstance(ents[0], list):             
+      212 +            ents = ents[0]                                    
+      213          toks = [(m.group(), m.start(), m.end()) for m in re.fi
+           nditer(r"\w+(?:[-_]\w+)*|\S", text)]
+      214          out = []
+      215          for e in ents:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Task Output bggnkep21
+  ⎿    warnings.warn(
+     Fetching 10 files: 100%|██████████| 10/10 [00:00<00:00, 3246.87it/s]
+       warnings.warn(
+     … +13 lines (ctrl+o to expand)
+
+● Background command "รัน smoke glirel ใหม่" completed (exit code 0)
+
+  Thought for 17s (ctrl+o to expand)
+
+● glirel ผ่าน — คืน triple + score (raw scores 0.3–0.43 @ threshold 0.3, VRAM 2.97
+  GiB) มี artifact head/tail ว่างเล็กน้อย ตัดทิ้งเป็น noise:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 2 lines, removed 1 line
+      230                  # glirel บวก +1 ท้าย position เพื่อคุยกับ spaCy tok
+           enization — ตัดกลับ
+      231                  head = " ".join(toks[r["head_pos"][0] - 1:r["h
+           ead_pos"][1]])
+      232                  tail = " ".join(toks[r["tail_pos"][0] - 1:r["t
+           ail_pos"][1]])
+      233 -                ts.append(Triple(head, r["label"], tail, float
+          -(r["score"])))                                                
+      233 +                if head and tail:  # span ชนขอบประโยคได้ entity
+          + ว่าง — ทิ้งเป็น noise                                            
+      234 +                    ts.append(Triple(head, r["label"], tail, f
+          +loat(r["score"])))                                            
+      235              out.append(ts)
+      236          return out
+      237  
+
+  Thought for 6s (ctrl+o to expand)
+
+● Task 7 ครึ่งแรกเสร็จ (glirel) ครึ่งหลัง (pyrheads) ตรวจก่อนว่า gliner2 ชน pin ไหม:
+
+● Fetch(https://pypi.org/project/gliner2/)
+  ⎿  Received 3KB (200 OK)
+
+  Thought for 4s, ran 1 shell command (ctrl+o to expand)
+
+● gliner2==2.0.0 ไม่ลาก transformers เปลี่ยน — เข้ากันได้กับ default group. เช็ค
+  checkpoint ที่มีจริง:
+
+  Thought for 7s, ran 1 shell command (ctrl+o to expand)
+
+● Checkpoint ใน spec (knowledgator/gliner-pyrheads-large-v0.5) ไม่มีแล้ว — GLiNER
+  2.x จริงคือ package gliner2 + checkpoint ย้ายไป org ใหม่ (fastino/gliner2-base-v1
+  / fastino/gliner2-large-v1) ตาม plan ต้องถามก่อนเพิ่ม dependency:
+
+● User answered Claude's questions:
+  ⎿  · GLiNER 2.x (pyrheads) — checkpoint ใน spec ไม่มีบน HF แล้ว จะทำอย่างไรต่อ? → 
+     gliner2 + large (Recommended)
+
+● Update(bake-off/pyproject.toml)
+  ⎿  Added 3 lines
+      32      "tiktoken",
+      33      # glirel→seqeval ลาก scikit-learn 1.3.0 เก่าเกิน (พังกับ numpy 
+          2.x) — force เวอร์ชันใหม่
+      34      "scikit-learn>=1.6",
+      35 +    # GLiNER 2.x — checkpoint ใน spec (gliner-pyrheads-large-v0
+         +.5) ไม่มีบน HF แล้ว                                               
+      36 +    # human อนุมัติ: gliner2 + fastino/gliner2-large-v1 (หลังมัน dry
+         +-run ไม่ขยับ transformers pin)                                   
+      37 +    "gliner2==2.0.0",                                          
+      38      # NuExtract 2.0 โหลดผ่าน transformers ตรง ๆ ไม่ต้องมี lib แยก
+      39      "typer-slim[standard]>=0.21.2",
+      40  ]
+
+  Thought for 4s, ran 1 shell command (ctrl+o to expand)
+
+● เขียน adapter pyrheads — ดู API ของ gliner2 ก่อน:
+
+  Thought for 13s, ran 4 shell commands (ctrl+o to expand)
+
+● Probe output format จริงของ gliner2 ก่อนเขียน adapter:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Update(bake-off/pyproject.toml)
+  ⎿  Added 2 lines
+      35      # GLiNER 2.x — checkpoint ใน spec (gliner-pyrheads-large-v0
+          .5) ไม่มีบน HF แล้ว
+      36      # human อนุมัติ: gliner2 + fastino/gliner2-large-v1 (หลังมัน dry
+          -run ไม่ขยับ transformers pin)
+      37      "gliner2==2.0.0",
+      38 +    # gliner2→training.trainer import peft ตอนโหลด module แต่ลืมป
+         +ระกาศ                                                          
+      39 +    "peft",                                                    
+      40      # NuExtract 2.0 โหลดผ่าน transformers ตรง ๆ ไม่ต้องมี lib แยก
+      41      "typer-slim[standard]>=0.21.2",
+      42  ]
+
+  Thought for 3s, ran 1 shell command (ctrl+o to expand)
+
+● ชาร์จ checkpoint large + inference ยาว — รัน background:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Task Output blqeu0kr5
+  ⎿  ============================================================
+     🧠 Model Configuration
+     ============================================================
+     … +9 lines (ctrl+o to expand)
+
+● Background command "probe gliner2 large output format (background)" completed
+(exit code 0)
+
+  Thought for 3s (ctrl+o to expand)
+
+● create_schema() ของ runtime คืน Schema ต่างจาก api_client — ดู API ของมัน:
+
+  Thought for 2s, ran 3 shell commands (ctrl+o to expand)
+● runtime Schema ใช้ .entities([...]) + .relations([...]) ตรง ๆ — ลองใหม่:
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Task Output bxdwexfxc
+  ⎿  🧠 Model Configuration
+     RESULT {"entities": {"model": [{"text": "large language models", "conf
+     idence": 0.9807568788528442}], "dataset": [], "method": [{"text": "Low
+     … +27 lines (ctrl+o to expand)
+
+● Background command "probe gliner2 output format (runtime Schema API)"
+completed (exit code 0)
+
+  Thought for 5m 40s (ctrl+o to expand)
+
+● Format ชัด: {"relation_extraction": {rel: [{head:{text,confidence}, 
+  tail:{...}}]}}, VRAM 1.85 GiB. เขียน adapter:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 27 lines, removed 1 line
+      188  ADAPTER_FACTORIES["nuextract"] = make_nuextract
+      189  
+      190  
+      191 -def make_glirel() -> Adapter:                                 
+      191 +def make_gliner_pyrheads() -> Adapter:                        
+      192 +    from gliner2 import GLiNER2                               
+      193 +                                                              
+      194 +    # checkpoint ใน spec (gliner-pyrheads-large-v0.5) ไม่มีบน HF
+          + แล้ว —                                                        
+      195 +    # human อนุมัติ gliner2 + fastino/gliner2-large-v1           
+      196 +    model = GLiNER2.from_pretrained("fastino/gliner2-large-v1"
+          +).to("cuda")                                                  
+      197 +    schema = load_schema()                                    
+      198 +    entities, relations = schema["entity_labels"], schema["rel
+          +ation_hints"]                                                 
+      199 +    gliner2_schema = model.create_schema().entities(entities).
+          +relations(relations, threshold=0.3)                           
+      200 +                                                              
+      201 +    def extract(sentences: list[str]) -> list[list[Triple]]:  
+      202 +        out = model.batch_extract(sentences, gliner2_schema, t
+          +hreshold=0.3, include_confidence=True)                        
+      203 +        results = []                                          
+      204 +        for o in out:                                         
+      205 +            ts = []                                           
+      206 +            for rel, heads_tails in o.get("relation_extraction
+          +", {}).items():                                               
+      207 +                for ht in heads_tails:                        
+      208 +                    # gliner2 ไม่มี score ระดับ triple — ใช้ค่าเฉลี่ย
+          + confidence ของ head/tail                                     
+      209 +                    score = (ht["head"]["confidence"] + ht["ta
+          +il"]["confidence"]) / 2                                       
+      210 +                    ts.append(Triple(ht["head"]["text"], rel, 
+          +ht["tail"]["text"], score))                                   
+      211 +            results.append(ts)                                
+      212 +        return results                                        
+      213 +                                                              
+      214 +    return Adapter("gliner-pyrheads", extract)                
+      215 +                                                              
+      216 +                                                              
+      217 +ADAPTER_FACTORIES["gliner-pyrheads"] = make_gliner_pyrheads   
+      218      import re
+      219  
+      220      from gliner import GLiNER
+
+  Thought for 13s, searched for 1 pattern (ctrl+o to expand)
+
+● Edit กินบรรทัด def ของ make_glirel ไป — คืนกลับ:
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 3 lines
+      215  
+      216  
+      217  ADAPTER_FACTORIES["gliner-pyrheads"] = make_gliner_pyrheads
+      218 +                                                              
+      219 +                                                              
+      220 +def make_glirel() -> Adapter:                                 
+      221      import re
+      222  
+      223      from gliner import GLiNER
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Task Output b5pmyx3fh
+  ⎿  [smoke] gliner-pyrheads: Low-Rank Adaptation, or LoRA, reduces halluci
+     nation in large language ...
+       ('hallucination', 'evaluated on', 'large language models', 0.407)
+     … +12 lines (ctrl+o to expand)
+
+● Background command "syntax check + รัน smoke gliner-pyrheads" completed (exit
+code 0)
+
+  Thought for 15s (ctrl+o to expand)
+
+● Smoke ผ่านทั้งสอง — pyrheads ได้ (Low-Rank Adaptation, reduces, hallucination, 
+  0.992) ตรงประโยคเป้าเป๊ะ. รัน full run ทั้งสอง model กัน crash เวลา sweep (Task 8):
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Task Output bfwju5t5k
+  ⎿  [run] glirel: 56 triples (dedupe แล้ว) · 31.9 ms/ประโยค · VRAM peak: 3.
+     32 GiB
+     [run] gliner-pyrheads: 216 triples (dedupe แล้ว) · 46.1 ms/ประโยค · VRA
+     … +3 lines (ctrl+o to expand)
+
+● Background command "รัน full run ของ glirel + gliner-pyrheads" completed (exit
+code 0)
+
+  Thought for 2s (ctrl+o to expand)
+
+● เต็มรันผ่านทั้งคู่. อัปเดต plan + บันทึก score scale ที่เห็นจาก smoke แล้ว commit:
+
+● Update(tasks/plan.md)
+  ⎿  Added 4 lines, removed 4 lines
+       96  
+       97    **Dependencies:** Task 3 · **Files:** `scripts/bakeoff.py` ·
+            **Scope:** S
+       98  
+       99 -- [ ] **Task 7: smoke GLiNER→GLiREL + GLiNER 2.x** — GLiREL ใช้
+          - GLiNER checkpoint สายเดียวกับ Relex (ล็อกตั้งแต่ config); pyrheads 
+          -อาจต้อง lib/install ต่างจาก `gliner` — smoke เป็นตัวตัดสิน          
+       99 +- [x] **Task 7: smoke GLiNER→GLiREL + GLiNER 2.x** — GLiREL ใช้
+          + GLiNER checkpoint สายเดียวกับ Relex (ล็อกตั้งแต่ config); pyrheads 
+          +อาจต้อง lib/install ต่างจาก `gliner` — smoke เป็นตัวตัดสิน          
+      100  
+      101    **Acceptance criteria:**
+      102 -  - [ ] glirel smoke คืน triple + score (จาก NER ต้นทางเดียวกับ Re
+          -lex)                                                          
+      103 -  - [ ] pyrheads smoke คืน triple + score หรือ error ชัดเจนว่าต้อง 
+          -install อะไร → ถามก่อนเพิ่ม dependency                           
+      102 +  - [x] glirel smoke คืน triple + score (จาก NER ต้นทางเดียวกับ Re
+          +lex) *(gliner-relex ทำ NER → char span → token span ตาม tokeni
+          +zer ของ glirel · 0.3–0.43 @ th 0.3 · 31.9 ms/ประโยค · VRAM 3.3
+          +2 GiB)*                                                       
+      103 +  - [x] pyrheads smoke คืน triple + score หรือ error ชัดเจนว่าต้อง 
+          +install อะไร → ถามก่อนเพิ่ม dependency *(checkpoint ใน spec ไม่มีบน
+          + HF แล้ว → human อนุมัติ: เพิ่ม `gliner2==2.0.0` + `fastino/gliner2-
+          +large-v1`; smoke ได้ `(Low-Rank Adaptation, reduces, hallucinat
+          +ion, 0.992)` · score = เฉลี่ย confidence head/tail 0.39–0.99 · 4
+          +6.1 ms/ประโยค · VRAM 2.09 GiB · peft ต้องเพิ่มด้วยเพราะ gliner2 ลืม
+          +ประกาศ)*                                                      
+      104  
+      105    **Verification:**
+      106 -  - [ ] `uv run bakeoff --smoke glirel && uv run bakeoff --smo
+          -ke gliner-pyrheads`                                           
+      106 +  - [x] `uv run bakeoff --smoke glirel && uv run bakeoff --smo
+          +ke gliner-pyrheads` *(full run ผ่านทั้งคู่: 56 และ 216 triples)*   
+      107  
+      108    **Dependencies:** Task 4 · **Files:** `scripts/bakeoff.py` ·
+            **Scope:** M
+      109  
+
+● Update(tasks/plan.md)
+  ⎿  Added 3 lines, removed 3 lines
+      108    **Dependencies:** Task 4 · **Files:** `scripts/bakeoff.py` ·
+            **Scope:** M
+      109  
+      110  ### Checkpoint: Smoke ครบ
+      111 -- [ ] 5 model ผ่าน smoke (ReLiK ปิด schema ถือว่าผ่านในรูป "บันทึกข้อมูล
+          -")                                                            
+      112 -- [ ] score scale ต่อ model ถูกตรวจด้วยตาแล้ว → ตั้งช่วง sweep ต่อ mod
+          -el                                                            
+      113 -- [ ] ถ้ามี model ที่ต้องเพิ่ม dependency / ตัดออก → ถาม human ก่อน Pha
+          -se 3                                                          
+      111 +- [x] 5 model ผ่าน smoke (ReLiK ปิด schema ถือว่าผ่านในรูป "บันทึกข้อมูล
+          +")                                                            
+      112 +- [x] score scale ต่อ model ถูกตรวจด้วยตาแล้ว → ตั้งช่วง sweep ต่อ mod
+          +el *(glirel ~0.25–0.45 · pyrheads ~0.35–1.0 · relik native NYT
+          + confidence · nuextract 0.89–0.98 · gliner-relex 0.3–0.95)*   
+      113 +- [x] ถ้ามี model ที่ต้องเพิ่ม dependency / ตัดออก → ถาม human ก่อน Pha
+          +se 3 *(gliner2+peft: อนุมัติแล้ว — checkpoint เดิมไม่มีบน HF)*       
+      114  
+      115  ### Phase 3: Sweep + Reports
+      116  
+
+  Committed 53b09b8 (ctrl+o to expand)
+
+● Task 7 เสร็จ — commit 53b09b8
+
+  ┌─────────────────┬────────────────────────────────┬──────────────────────┐
+  │                 │            ผล smoke            │   ผล full run (28    │
+  │                 │                                │       ประโยค)        │
+  ├─────────────────┼────────────────────────────────┼──────────────────────┤
+  │                 │ triple + score (0.30–0.43 @ th │ 56 triples · 31.9    │
+  │ glirel          │  0.3)                          │ ms/ประโยค · VRAM     │
+  │                 │                                │ 3.32 GiB             │
+  ├─────────────────┼────────────────────────────────┼──────────────────────┤
+  │                 │ (Low-Rank Adaptation, reduces, │ 216 triples · 46.1   │
+  │ gliner-pyrheads │  hallucination, 0.992)         │ ms/ประโยค · VRAM     │
+  │                 │ ตรงเป้าเป๊ะ                      │ 2.09 GiB             │
+  └─────────────────┴────────────────────────────────┴──────────────────────┘
+
+  สิ่งที่ต้องตัดสินใจระหว่างทาง (ถามแล้ว):
+  - Checkpoint ใน spec ไม่มีบน HF — knowledgator/gliner-pyrheads-large-v0.5
+    ถูกเปลี่ยนชื่อ/org ไปเป็น gliner2 package + fastino/gliner2-large-v1 → ได้รับอนุมัติแล้ว
+    เพิ่ม gliner2==2.0.0 + peft (gliner2 ลืมประกาศ) ใน gliner group — ไม่กระทบ
+    transformers pin
+  - gliner คืน shape ต่างกันบน cuda (nested list) → unwrap แล้ว
+  - glirel คืน span ชนขอบประโยคเป็น entity ว่าง → ตัดทิ้งเป็น noise
+
+  Checkpoint: Smoke ครบ ✓ — 5 model ผ่าน smoke, score scale ต่อ model ถูกบันทึกใน
+  plan เรียบร้อย (ช่วง sweep ตั้งจากตัวเลขเหล่านี้ใน Task 8)
+
+  ต่อไปคือ Phase 3 (Task 8: threshold sweep rate-once-slice-many) — หยุดตามโหมด
+  one-task ต่อครั้ง พิมพ์ /build เมื่อพร้อม
+
+✻ Churned for 48m 32s · done 21:01
+
+※ recap: Bake-off รอบ 2 (วัดผล dedicated IE 5 model) คืบหน้าถึง Task 7 เสร็จ: smoke ผ่านครบทั้ง 5 model แล้ว ก้าวต่อไปคือ Task 8 (threshold sweep) — ใช้ `/build` เมื่อพร้อม

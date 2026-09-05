@@ -1,0 +1,759 @@
+ ▐▛███▛█   Claude Code v2.1.251
+▝▜██████▀  glm-5.3-flash · API Usage Billing
+  ▝▝ ▝▝    ~/Document/Code/triple-extraction
+
+
+⚠ Both ANTHROPIC_AUTH_TOKEN and /login managed key set · auth may not work as expected
+  · to use ANTHROPIC_AUTH_TOKEN: claude /logout
+  · to use /login managed key: Unset the ANTHROPIC_AUTH_TOKEN environment variable.
+
+❯ /clear                                                                        
+
+❯ /agent-skills:build @tasks/plan.md **mode: all**                              
+
+  Thought for 4s (ctrl+o to expand)
+
+● Skill(agent-skills:incremental-implementation)
+  ⎿  Successfully loaded skill
+
+● Skill(agent-skills:test-driven-development)
+  ⎿  Successfully loaded skill
+
+  Thought for 25s, read 1 file, listed 2 directories, ran 1 shell command (ctrl+o to expand)
+
+● ก่อนรัน autonomous mode ตามขั้นตอน — มี spec (docs/specs/SPEC-bakeoff-r2.md) กับ
+  plan (tasks/plan.md) ครบแล้ว เหลือ baseline: มีไฟล์ untracked 2 ไฟล์นอกเหนือจาก
+  planning artifacts และมันชนกับ checkpoint ของแผน ("ไม่มีไฟล์ใหม่หลุดออกนอก
+  bake-off/")
+
+● User answered Claude's questions:
+  ⎿  · มี transcript ไฟล์ untracked 2 ไฟล์ (`2026-09-04-210610-bake-off-task-7.txt`
+     ที่ราก repo และ `bake-off/2026-09-04-201005-bake-off-task-1-6.txt`) — 
+     จัดการยังไงก่อนเริ่ม /build auto? → ย้ายเข้า bake-off/ (Recommended)
+
+  Thought for 6s, ran 1 shell command (ctrl+o to expand)
+
+● Baseline เรียบร้อย — transcript อยู่ใน bake-off/ ทั้งคู่แล้ว (คง untracked ตามที่อนุมัติ)
+  Plan มีอยู่แล้วและ Task 1–7 ผ่านหมด checkpoint ก่อนหน้า approve มาแล้ว เหลือ Task 8–9
+  เริ่มจาก Task 8
+
+  Thought for 16s, read 1 file, listed 1 directory (ctrl+o to expand)
+
+● Plan ชัดแล้ว เหลือ Task 8–9 อ่าน spec เพื่อล็อกนิยาม "จุด best" กับรูปแบบ report ก่อน
+
+  Thought for 2m 51s, read 2 files (ctrl+o to expand)
+
+● Spec ชัด: precision เป็นการ rate ด้วยตา (Step 3) — script ทำหน้าที่ inference
+  ครั้งเดียว → dedupe → เก็บ unique triples+scores แล้ว slice ที่หลาย threshold ได้ฟรี
+  ส่วน "ถูก/ผิด" ของแต่ละ unique triple จะ rate ครั้งเดียว ใส่กลับใน raw JSON แล้ว
+  precision@threshold คำนวณจากของที่ rate แล้วทั้งหมด
+
+  Task 8 — RED: เขียน test ก่อน (pure logic, ไม่แตะ GPU):
+
+● Write(bake-off/scripts/test_sweep.py)
+  ⎿  Wrote 56 lines to bake-off/scripts/test_sweep.py
+       1 """self-check logic sweep (rate-once-slice-many) — รัน: uv run py
+       2 
+       3 from scripts.bakeoff import best_point, collect_rows, slice_at, 
+         sweep_table
+       5 
+       6 # 3 unique triple: ถูก 1 (2 ประโยค), ผิด 1, ยังไม่ rate 1
+       8     {"head": "LoRA", "relation": "reduces", "tail": "hallucinati
+         on", "correct": True,
+       9      "occ": [[0, 0.9], [1, 0.4]]},
+         5", "correct": False,
+     … +55 lines (ctrl+o to expand)
+
+  Thought for 1s, ran 1 shell command (ctrl+o to expand)
+
+● RED ตรงตามคาด — GREEN: ใส่ logic sweep ใน bakeoff.py
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 53 lines
+      302  ADAPTER_FACTORIES["relik"] = make_relik
+      303  
+      304  
+      305 +# จุด threshold ต่อ model — ตั้งตาม score scale ที่ตรวจด้วยตาจาก smok
+          +e (checkpoint Phase 2)                                        
+      306 +THRESHOLDS: dict[str, list[float]] = {                        
+      307 +    "gliner-relex": [0.3, 0.5, 0.7, 0.9],                     
+      308 +    "glirel": [0.25, 0.3, 0.35, 0.45],                        
+      309 +    "gliner-pyrheads": [0.4, 0.55, 0.7, 0.85],                
+      310 +    "relik": [0.5, 0.7, 0.9],                                 
+      311 +    "nuextract": [0.85, 0.9, 0.94, 0.98],                     
+      312 +}                                                             
+      313 +                                                              
+      314 +                                                              
+      315 +def collect_rows(triples_per_sent: list[list[Triple]]) -> list
+          +[dict]:                                                       
+      316 +    """dedupe ในประโยคแล้วรวมเป็น unique triple + ตำแหน่งเกิด (occ
+          +) — rate ครั้งเดียว slice ได้ทุก threshold"""                      
+      317 +    rows: dict[tuple[str, str, str], dict] = {}               
+      318 +    for i, ts in enumerate(triples_per_sent):                 
+      319 +        for t in dedupe(ts):                                  
+      320 +            u = rows.setdefault((t.head, t.relation, t.tail), 
+      321 +                                {"head": t.head, "relation": t
+          +.relation, "tail": t.tail,                                    
+      322 +                                 "correct": None, "occ": []}) 
+      323 +            u["occ"].append([i, t.score])                     
+      324 +    return list(rows.values())                                
+      325 +                                                              
+      326 +                                                              
+      327 +def slice_at(rows: list[dict], t: float, n_sents: int) -> tupl
+          +e[int, int | None, list[int]]:                                
+      328 +    """ที่ threshold t: (จำนวน triple, จำนวนที่ rate ว่าถูก, ประโยคว่
+          +าง) — นับหน่วยต่อประโยค"""                                       
+      329 +    n = n_ok = 0                                              
+      330 +    hit = [False] * n_sents                                   
+      331 +    for u in rows:                                            
+      332 +        for i, s in u["occ"]:                                 
+      333 +            if s >= t:                                        
+      334 +                n += 1                                        
+      335 +                hit[i] = True                                 
+      336 +                if u["correct"]:                              
+      337 +                    n_ok += 1                                 
+      338 +    rated = all(u["correct"] is not None for u in rows)       
+      339 +    return n, (n_ok if rated else None), [i for i, h in enumer
+          +ate(hit) if not h]                                            
+      340 +                                                              
+      341 +                                                              
+      342 +def sweep_table(rows: list[dict], thresholds: list[float], n_s
+          +ents: int) -> list[dict]:                                     
+      343 +    """rate-once-slice-many: inference จบแล้ว แต่ละ threshold เป็
+          +นแค่การนับจาก raw scores"""                                     
+      344 +    table = []                                                
+      345 +    for t in thresholds:                                      
+      346 +        n, n_ok, empty = slice_at(rows, t, n_sents)           
+      347 +        table.append({"threshold": t, "n": n, "precision": (n_
+          +ok / n if n else None) if n_ok is not None else None,         
+      348 +                      "empty": empty})                        
+      349 +    return table                                              
+      350 +                                                              
+      351 +                                                              
+      352 +def best_point(table: list[dict]) -> dict | None:             
+      353 +    """precision สูงสุดก่อน recall จะทลาย (Step 6) — เสมอกันเอาจุดที่
+          +เหลือ triple มากสุด; ยังไม่ rate = None"""                        
+      354 +    rated = [r for r in table if r["precision"] is not None]  
+      355 +    return max(rated, key=lambda r: (r["precision"], r["n"])) 
+          +if rated else None                                            
+      356 +                                                              
+      357 +                                                              
+      358  def require_cuda() -> None:
+      359      import torch
+      360  
+
+● แล้วเชื่อมเข้า run loop — inference ครั้งเดียว/model cache ลง report/raw/ แล้วพิมพ์ตาราง
+  sweep:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 25 lines, removed 4 lines
+      404      print(f"  {vram_peak()}")
+      405  
+      406  
+      407 -def run_full(adapter: Adapter, sentences: list[str]) -> None: 
+      408 -    triples_per_sent, ms = timed_extract(adapter, sentences)  
+      409 -    n = sum(len(dedupe(t)) for t in triples_per_sent)         
+      410 -    print(f"[run] {adapter.name}: {n} triples (dedupe แล้ว) · {
+          -ms:.1f} ms/ประโยค · {vram_peak()}")                           
+      407 +def run_model(name: str, texts: list[str]) -> dict:           
+      408 +    """inference ครั้งเดียว/model (cache ลง report/raw/) → sweep 
+          ++ best — rate แล้วจะได้ precision ด้วย"""                        
+      409 +    raw_path = ROOT / "report" / "raw" / f"{name}.json"       
+      410 +    if raw_path.exists():                                     
+      411 +        raw = json.loads(raw_path.read_text())                
+      412 +        print(f"[cache] {name}: มี raw แล้ว — ข้าม inference (inf
+          +erence ต่อ model 1 ครั้ง)")                                      
+      413 +    else:                                                     
+      414 +        triples_per_sent, ms = timed_extract(ADAPTER_FACTORIES
+          +[name](), texts)                                              
+      415 +        raw = {"ms": ms, "vram": vram_peak(), "triples": colle
+          +ct_rows(triples_per_sent)}                                    
+      416 +        raw_path.parent.mkdir(parents=True, exist_ok=True)    
+      417 +        raw_path.write_text(json.dumps(raw, ensure_ascii=False
+          +, indent=1))                                                  
+      418 +        n = sum(1 for u in raw["triples"] for _ in u["occ"])  
+      419 +        print(f"[run] {name}: {n} triples ({len(raw['triples']
+          +)} unique) · {raw['ms']:.1f} ms/ประโยค · {raw['vram']}")      
+      420  
+      421 +    table = sweep_table(raw["triples"], THRESHOLDS[name], len(
+          +texts))                                                       
+      422 +    print(f"[sweep] {name}  th     triples  precision~  ประโยค
+          +ว่าง")                                                         
+      423 +    for r in table:                                           
+      424 +        p = f"{r['precision']:.2f}" if r["precision"] is not N
+          +one else "(รอ rate)"                                          
+      425 +        print(f"         {r['threshold']:<6} {r['n']:<8} {p:<1
+          +1} {len(r['empty'])}")                                        
+      426 +    best = best_point(table)                                  
+      427 +    if best:                                                  
+      428 +        print(f"[best] {name}: th={best['threshold']} precisio
+          +n~{best['precision']:.2f} ({best['n']} triples, ว่าง {len(best[
+          +'empty'])})")                                                 
+      429 +    else:                                                     
+      430 +        print(f"[best] {name}: รอ rate ใน report/raw/{name}.js
+          +on (correct: true/false ต่อ unique triple)")                   
+      431 +    return {"name": name, **raw, "table": table, "best": best}
+      432  
+      433 +                                                              
+      434  def main() -> None:
+      435      args = parse_args()
+      436      _, sentences = load_data()
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 1 line, removed 1 line
+      441      names = [args.only] if args.only else MODELS
+      442      texts = [s["text"] for s in sentences]
+      443      for name in names:
+      444 -        run_full(ADAPTER_FACTORIES[name](), texts)            
+      444 +        run_model(name, texts)                                
+      445  
+      446  
+      447  if __name__ == "__main__":
+
+  Thought for 11s, ran 2 shell commands (ctrl+o to expand)
+
+● Test เจอบั๊กดีไซน์จริง: slice_at คืน None เมื่อยัง rate ไม่ครบ ทั้งที่ n_ok นับได้จากที่ rate
+  แล้วบางส่วน — แก้ให้ n_ok นับเสมอ ส่วน precision ค่อยตัดสินที่ sweep_table
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 4 lines, removed 3 lines
+      335                  hit[i] = True
+      336                  if u["correct"]:
+      337                      n_ok += 1
+      338 -    rated = all(u["correct"] is not None for u in rows)       
+      339 -    return n, (n_ok if rated else None), [i for i, h in enumer
+          -ate(hit) if not h]                                            
+      338 +    return n, n_ok, [i for i, h in enumerate(hit) if not h]   
+      339  
+      340  
+      341  def sweep_table(rows: list[dict], thresholds: list[float], n_s
+           ents: int) -> list[dict]:
+      342      """rate-once-slice-many: inference จบแล้ว แต่ละ threshold เป็
+           นแค่การนับจาก raw scores"""
+      343 +    fully_rated = all(u["correct"] is not None for u in rows) 
+      344      table = []
+      345      for t in thresholds:
+      346          n, n_ok, empty = slice_at(rows, t, n_sents)
+      347 -        table.append({"threshold": t, "n": n, "precision": (n_
+          -ok / n if n else None) if n_ok is not None else None,         
+      347 +        table.append({"threshold": t, "n": n,                 
+      348 +                      "precision": (n_ok / n if n else None) i
+          +f fully_rated else None,                                      
+      349                        "empty": empty})
+      350      return table
+      351  
+
+● Update(bake-off/scripts/test_sweep.py)
+  ⎿  Added 1 line, removed 1 line
+      33  
+      34  def test_slice_at_precision_none_while_unrated():
+      35      (table,) = sweep_table(ROWS, [0.5], n_sents=3)
+      36 -    assert table["precision"] is None and table["n_ok"] is None
+      36 +    assert table["precision"] is None  # rate ไม่ครบ → ไม่อ้าง pre
+         +cision                                                         
+      37  
+      38  
+      39  def test_best_point_precision_first_then_most_triples():
+
+  Thought for 4s, ran 1 shell command (ctrl+o to expand)
+
+● empty ตกประโยค 1 ด้วย (occ 0.4 < 0.5) — expectation ใน test ผิด ไม่ใช่โค้ด:
+
+● Update(bake-off/scripts/test_sweep.py)  ⎿  Added 1 line, removed 1 line
+      28      n, n_ok, empty = slice_at(ROWS, 0.5, n_sents=3)
+      29      assert n == 2          # occ 0.9 กับ 0.6 (0.4, 0.2 ตก)
+      30      assert n_ok == 1       # ที่ถูกคืออันเดียว
+      31 -    assert empty == [2]    # ประโยค 2 ไม่มี triple ผ่าน threshold 
+      31 +    assert empty == [1, 2]  # ประโยค 1 (occ 0.4) กับ 2 (occ 0.2)
+         + ไม่มี triple ผ่าน threshold                                      
+      32  
+      33  
+      34  def test_slice_at_precision_none_while_unrated():
+
+  Thought for 2s, ran 1 shell command (ctrl+o to expand)
+
+● GREEN ครบ — รันจริงบน GPU ตาม verification ของ Task 8 (--only gliner-relex):
+
+  Thought for 13s, ran 1 shell command (ctrl+o to expand)
+
+● ผ่าน: sweep 4 แถวจาก inference ครั้งเดียว, dedupe แล้ว (233→232 unique) Commit Task
+  8 + อัปเดต plan:
+
+● Update(tasks/plan.md)
+  ⎿  Added 5 lines, removed 5 lines
+      114  
+      115  ### Phase 3: Sweep + Reports
+      116  
+      117 -- [ ] **Task 8: threshold sweep (rate-once-slice-many)** — ต่อ 
+          -model: รัน inference ครั้งเดียว เก็บ unique triples+scores, ตั้ง ≥3 t
+          -hreshold จุดต่อ model ตาม score scale ของมัน, นับ precision@thresh
+          -old, เลือกจุด best                                              
+      117 +- [x] **Task 8: threshold sweep (rate-once-slice-many)** — ต่อ 
+          +model: รัน inference ครั้งเดียว เก็บ unique triples+scores, ตั้ง ≥3 t
+          +hreshold จุดต่อ model ตาม score scale ของมัน, นับ precision@thresh
+          +old, เลือกจุด best                                              
+      118  
+      119    **Acceptance criteria:**
+      120 -  - [ ] inference ต่อ model 1 ครั้ง (ไม่รันซ้ำต่อ threshold)         
+      121 -  - [ ] sweep ≥3 จุด/model + จุด best ถูกเลือกด้วยมาตราของ model เอ
+          -ง                                                             
+      122 -  - [ ] triple ซ้ำเป๊ะในประโยคถูก dedupe ก่อนนับ                   
+      120 +  - [x] inference ต่อ model 1 ครั้ง (ไม่รันซ้ำต่อ threshold) *(cache 
+          +ลง report/raw/<model>.json — รันซ้ำข้าม inference ทันที)*          
+      121 +  - [x] sweep ≥3 จุด/model + จุด best ถูกเลือกด้วยมาตราของ model เอ
+          +ง *(4/4/4/3/4 จุดตาม score scale จาก smoke · best = precision สู
+          +งสุด เสมอกันเอา triple มากสุด (Step 6) · precision รอ rate ใน raw
+          + JSON (correct: true/false ต่อ unique triple) แล้ว rerun ได้เลย)*
+      122 +  - [x] triple ซ้ำเป๊ะในประโยคถูก dedupe ก่อนนับ *(233→232 unique)*
+      123  
+      124    **Verification:**
+      125 -  - [ ] `uv run bakeoff --only gliner-relex` → report มีตาราง s
+          -weep ≥3 แถว                                                   
+      125 +  - [x] `uv run bakeoff --only gliner-relex` → report มีตาราง s
+          +weep ≥3 แถว *(ตาราง sweep 4 แถวผ่าน stdout + report/raw/gliner-
+          +relex.json · ไฟล์ report/*.md มาที่ Task 9 ตามแผนเดิม)*           
+      126  
+      127    **Dependencies:** Tasks 4–7 · **Files:** `scripts/bakeoff.py
+           ` · **Scope:** M
+      128  
+
+  Thought for 31s, committed 82d4569 (ctrl+o to expand)
+
+● Task 8 เสร็จ → Task 9: เขียน report RED ก่อน เพิ่ม test ในไฟล์เดิม:
+
+● Update(bake-off/scripts/test_sweep.py)
+  ⎿  Added 4 lines, removed 2 lines
+       1  """self-check logic sweep (rate-once-slice-many) — รัน: uv run p
+          ython -m scripts.test_sweep"""
+       2  
+       3 -from scripts.bakeoff import best_point, collect_rows, slice_at,
+         - sweep_table                                                   
+       4 -from scripts.bakeoff import Triple                             
+       3 +import tempfile                                                
+       4 +from pathlib import Path                                       
+       5  
+       6 +from scripts.bakeoff import Triple, best_point, collect_rows, s
+         +lice_at, sweep_table, write_reports                            
+       7 +                                                               
+       8  # 3 unique triple: ถูก 1 (2 ประโยค), ผิด 1, ยังไม่ rate 1
+       9  ROWS = [
+      10      {"head": "LoRA", "relation": "reduces", "tail": "hallucinat
+          ion", "correct": True,
+
+● Update(bake-off/scripts/test_sweep.py)
+  ⎿  Added 33 lines
+      51      assert best_point(sweep_table(ROWS, [0.5, 0.8], n_sents=3))
+           is None
+      52  
+      53  
+      54 +SENTS = [                                                      
+      55 +    {"text": "s0", "categories": ["alias", "effect"]},         
+      56 +    {"text": "s1", "categories": ["training"]},                
+      57 +    {"text": "s2", "categories": ["hard"]},                    
+      58 +]                                                              
+      59 +                                                               
+      60 +RESULT = {"name": "m1", "ms": 15.5, "vram": "VRAM peak: 1.29 Gi
+         +B",                                                            
+      61 +          "triples": ROWS[:2] + [{"head": "x", "relation": "pre
+         +trained on", "tail": "y",                                      
+      62 +                                  "correct": True, "occ": [[1, 
+         +0.8]]}],                                                       
+      63 +          "table": [{"threshold": 0.3, "n": 3, "precision": 0.6
+         +7, "empty": [2]},                                              
+      64 +                    {"threshold": 0.5, "n": 2, "precision": 0.5
+         +0, "empty": [1, 2]}],                                          
+      65 +          "best": {"threshold": 0.3, "n": 3, "precision": 0.67,
+         + "empty": [2]}}                                                
+      66 +                                                               
+      67 +                                                               
+      68 +def test_write_reports_creates_both_files_with_sweep_and_catego
+         +ry_split():                                                    
+      69 +    with tempfile.TemporaryDirectory() as d:                   
+      70 +        write_reports([RESULT], SENTS, report_dir=Path(d))     
+      71 +        results = (Path(d) / "bakeoff-r2-results.md").read_text
+         +()                                                             
+      72 +        distinct = (Path(d) / "distinct-relations.md").read_tex
+         +t()                                                            
+      73 +    assert "0.3" in results and "0.5" in results          # ตาร
+         +าง sweep ≥2 แถว                                                
+      74 +    assert all(c in results for c in ("alias", "training", "har
+         +d"))  # แตกตาม category                                        
+      75 +    assert "15.5" in results                              # ms 
+         +หลัง warm-up                                                    
+      76 +    assert "pretrained on" in distinct                    # dis
+         +tinct relation                                                 
+      77 +                                                               
+      78 +                                                               
+      79 +def test_distinct_relations_counts_unique():                   
+      80 +    with tempfile.TemporaryDirectory() as d:                   
+      81 +        write_reports([RESULT], SENTS, report_dir=Path(d))     
+      82 +        distinct = (Path(d) / "distinct-relations.md").read_tex
+         +t()                                                            
+      83 +    # ROWS[:2] มี reduces, outperforms + pretrained on = 3 disti
+         +nct สำหรับ m1                                                   
+      84 +    assert "| m1 | 3 |" in distinct                            
+      85 +                                                               
+      86 +                                                               
+      87  if __name__ == "__main__":
+      88      for name, fn in sorted(globals().items()):
+      89          if name.startswith("test_"):
+
+  Thought for 2s, ran 2 shell commands (ctrl+o to expand)
+
+● RED แล้ว — GREEN: เขียน write_reports + category breakdown + distinct relations:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 58 lines
+      356      return max(rated, key=lambda r: (r["precision"], r["n"])) 
+           if rated else None
+      357  
+      358  
+      359 +def distinct_relations(rows: list[dict]) -> list[str]:        
+      360 +    return sorted({u["relation"] for u in rows})              
+      361 +                                                              
+      362 +                                                              
+      363 +def category_lines(res: dict, sentences: list[dict]) -> list[s
+          +tr]:                                                          
+      364 +    """แตกผลตาม category @ จุด best (ยังไม่ rate → จุด threshold แ
+          +รก) — จับหลุดต่อ category ชัด"""                                  
+      365 +    t = res["best"]["threshold"] if res["best"] else res["tabl
+          +e"][0]["threshold"]                                           
+      366 +    lines = [f"**แตกตาม category @ th {t}**", "", "| category 
+          +| triples | ประโยคว่าง/รวม |", "|---|---|---|"]                
+      367 +    for cat in CATEGORIES:                                    
+      368 +        idx = [i for i, s in enumerate(sentences) if cat in s[
+          +"categories"]]                                                
+      369 +        n = sum(1 for u in res["triples"] for i, s in u["occ"]
+          + if s >= t and i in idx)                                      
+      370 +        empty = sum(1 for i in idx if not any(s >= t for u in 
+          +res["triples"] for j, s in u["occ"] if j == i))               
+      371 +        lines.append(f"| {cat} | {n} | {empty}/{len(idx)} |") 
+      372 +    return lines                                              
+      373 +                                                              
+      374 +                                                              
+      375 +def write_reports(results: list[dict], sentences: list[dict], 
+          +report_dir: Path | None = None) -> None:                      
+      376 +    report_dir = report_dir or ROOT / "report"                
+      377 +    report_dir.mkdir(parents=True, exist_ok=True)             
+      378 +                                                              
+      379 +    # แผนที่ 2 มิติ (precision best-of-sweep × ms/ประโยค) + รายละเ
+          +อียดต่อ model                                                   
+      380 +    out = ["# Bake-off r2 — Encoder zero-shot dedicated IE", "
+          +",                                                            
+      381 +           "| model | precision ~ (best th) | ms/ประโยค | VRAM
+          + peak | schema |", "|---|---|---|---|---|"]                   
+      382 +    for r in results:                                         
+      383 +        if r["best"]:                                         
+      384 +            p = f"~{r['best']['precision']:.2f} @ th {r['best'
+          +]['threshold']}"                                              
+      385 +        else:                                                 
+      386 +            p = "(รอ rate)"                                   
+      387 +        schema = "ปิด (native NYT)" if r["name"] == "relik" and
+          + RELIK_CLOSED_SCHEMA else "seed schema"                       
+      388 +        out.append(f"| {r['name']} | {p} | {r['ms']:.1f} | {r[
+          +'vram'].removeprefix('VRAM peak: ')} | {schema} |")           
+      389 +    out += ["", "precision = rate ด้วยตาทุก unique triple ครั้งเดีย
+          +ว (Step 3) แล้ว slice ทุก threshold จาก raw scores เดียว", ""]   
+      390 +    for r in results:                                         
+      391 +        out += [f"## {r['name']}", "",                        
+      392 +                f"{sum(1 for u in r['triples'] for _ in u['occ
+          +'])} triples ({len(r['triples'])} unique) · "                 
+      393 +                f"{r['ms']:.1f} ms/ประโยค (หลัง warm-up) · {r['
+          +vram']}", "",                                                 
+      394 +                "| th | triples | precision ~ | ประโยคว่าง |", 
+          +"|---|---|---|---|"]                                          
+      395 +        for row in r["table"]:                                
+      396 +            p = f"~{row['precision']:.2f}" if row["precision"]
+          + is not None else "(รอ rate)"                                 
+      397 +            out.append(f"| {row['threshold']} | {row['n']} | {
+          +p} | {len(row['empty'])} |")                                  
+      398 +        if r["best"]:                                         
+      399 +            b = r["best"]                                     
+      400 +            out += ["", f"**best:** th {b['threshold']} — prec
+          +ision ~{b['precision']:.2f} "                                 
+      401 +                        f"({b['n']} triples, ว่าง {len(b['empty
+          +'])}/{len(sentences)})"]                                      
+      402 +        out += ["", *category_lines(r, sentences), ""]        
+      403 +    (report_dir / "bakeoff-r2-results.md").write_text("\n".joi
+          +n(out))                                                       
+      404 +                                                              
+      405 +    # distinct relation count ต่อ model                        
+      406 +    out = ["# Distinct relations ต่อ model", "", "| model | dis
+          +tinct relations |", "|---|---|"]                              
+      407 +    for r in results:                                         
+      408 +        out.append(f"| {r['name']} | {len(distinct_relations(r
+          +['triples']))} |")                                            
+      409 +    for r in results:                                         
+      410 +        out += ["", f"## {r['name']}", ""]                    
+      411 +        out += [f"- `{rel}`" for rel in distinct_relations(r["
+          +triples"])] or ["- (ว่าง)"]                                    
+      412 +        if r["name"] == "relik" and RELIK_CLOSED_SCHEMA:      
+      413 +            out += ["", "> ปิด schema — ไม่รับ seed relation hint
+          +s ให้ triple ทำนายได้ (reader ฝึกบน NYT) จึงรันด้วย native schema = 
+          +ข้อมูลของแผนที่"]                                                 
+      414 +    (report_dir / "distinct-relations.md").write_text("\n".joi
+          +n(out))                                                       
+      415 +                                                              
+      416 +                                                              
+      417  def require_cuda() -> None:
+      418      import torch
+      419  
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 3 lines, removed 2 lines
+      499          return
+      500      names = [args.only] if args.only else MODELS
+      501      texts = [s["text"] for s in sentences]
+      502 -    for name in names:                                        
+      503 -        run_model(name, texts)                                
+      502 +    results = [run_model(name, texts) for name in names]      
+      503 +    write_reports(results, sentences)                         
+      504 +    print(f"report → {(ROOT / 'report' / 'bakeoff-r2-results.m
+          +d')}, distinct-relations.md")                                 
+      505  
+      506  
+      507  if __name__ == "__main__":
+
+  Thought for 9s, ran 1 shell command (ctrl+o to expand)
+
+● GREEN ครบ รัน model ที่เหลือ 4 ตัว (ตามลำดับ, GPU เดียว):
+
+  Thought for 7s, read 1 file, ran 3 shell commands (ctrl+o to expand)
+
+● relik ต้องสลับ env group ตามที่ pyproject กำกับไว้:
+
+  Thought for 22s, ran 2 shell commands (ctrl+o to expand)
+
+● ระหว่าง nuextract รันอยู่ ใช้เวลานี้ rate ผล 4 model ที่เสร็จแล้ว (Step 3 — rate ทุก
+  unique triple ครั้งเดียว) ด้วย agent ขนาน 4 ตัว:
+
+● 4 background agents launched (↓ to manage)
+   ├ Rate triples gliner-relex
+   ├ Rate triples glirel
+   ├ Rate triples gliner-pyrheads
+   └ Rate triples relik
+
+● Background command "Full run nuextract (slowest — token-prob scoring)"
+completed (exit code 0)
+
+  Thought for 3s, read 1 file (ctrl+o to expand)
+
+● nuextract เสร็จ (42 triples · 976.6 ms/ประโยค) — ส่ง rate ต่อ:
+
+● Agent(Rate triples nuextract)
+  ⎿  Backgrounded agent (↓ to manage · ctrl+o to expand)
+
+  Thought for 13s (ctrl+o to expand)
+
+● สถานะ: รัน inference ครบ 5 model แล้ว (raw cache ที่ report/raw/) · rating agents
+  5 ตัวกำลังตัดสิน true/false ทุก unique triple · พอครบจะ rerun uv run bakeoff (ข้าม
+  inference หมด) เพื่อออก report สุดท้าย แล้ว commit Task 9
+
+✻ Brewed for 13m 35s · done 21:20
+
+● Agent "Rate triples relik" finished · 31s
+
+  Thought for 3s (ctrl+o to expand)
+
+● relik rating มาแล้ว: 0/33 ถูก — ทั้งหมดเป็น self-loop (RLHF — company location — 
+  RLHF) ซึ่งเป็นข้อมูลสำคัญของแผนที่ (ปิด schema + native NYT ให้ค่าใช้ไม่ได้บนชุดนี้) ยังรอ
+  rating อีก 4 ไฟล์ แล้วจะ rerun เพื่อออก report สุดท้าย
+
+✻ Cooked for 6s · done 21:20
+
+● Agent "Rate triples nuextract" finished · 1m 29s
+
+● nuextract rate แล้ว (23/42 ถูก) — รออีก 3 ไฟล์ (gliner-relex, glirel,
+  gliner-pyrheads) แล้ว rerun ออก report
+✻ Cooked for 3s · done 21:22
+
+● Agent "Rate triples gliner-pyrheads" finished · 3m 12s
+
+● gliner-pyrheads rate แล้ว (52/212 ถูก) — รออีก 2 ไฟล์ (gliner-relex, glirel)
+
+✻ Cogitated for 6s · done 21:23
+
+● Agent "Rate triples glirel" finished · 3m 56s
+
+  Thought for 2s (ctrl+o to expand)
+
+● glirel rate แล้ว (8/56 ถูก) — เหลือ gliner-relex ไฟล์เดียว
+
+✻ Baked for 3s · done 21:23
+
+● Agent "Rate triples gliner-relex" finished · 5m 34s
+
+  Thought for 2s (ctrl+o to expand)
+
+● Rating ครบทั้ง 5 model — ตรวจไม่มี null ค้าง แล้ว rerun (จะข้าม inference หมด):
+
+  Thought for 9s, ran 1 shell command (ctrl+o to expand)
+
+● Precision ออกครบ ตรวจ report ด้วยตา (Step 3 / ตาม plan):
+
+  Thought for 18s, read 1 file (ctrl+o to expand)
+
+● Report ถูกต้องครบ มี nit เดียว: relik th 0.9 (n=0) พิมพ์ "รอ rate" ทั้งที่ rate แล้ว แค่ 0
+  ที่ผ่าน threshold — แก้ display:
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 1 line, removed 1 line
+      393                  f"{r['ms']:.1f} ms/ประโยค (หลัง warm-up) · {r['
+           vram']}", "",
+      394                  "| th | triples | precision ~ | ประโยคว่าง |", 
+           "|---|---|---|---|"]
+      395          for row in r["table"]:
+      396 -            p = f"~{row['precision']:.2f}" if row["precision"]
+          - is not None else "(รอ rate)"                                 
+      396 +            p = f"~{row['precision']:.2f}" if row["precision"]
+          + is not None else ("–" if row["n"] == 0 else "(รอ rate)")     
+      397              out.append(f"| {row['threshold']} | {row['n']} | {
+           p} | {len(row['empty'])} |")
+      398          if r["best"]:
+      399              b = r["best"]
+
+● Update(bake-off/scripts/bakeoff.py)
+  ⎿  Added 1 line, removed 1 line
+      480      table = sweep_table(raw["triples"], THRESHOLDS[name], len(
+           texts))
+      481      print(f"[sweep] {name}  th     triples  precision~  ประโยค
+           ว่าง")
+      482      for r in table:
+      483 -        p = f"{r['precision']:.2f}" if r["precision"] is not N
+          -one else "(รอ rate)"                                          
+      483 +        p = f"{r['precision']:.2f}" if r["precision"] is not N
+          +one else ("–" if r["n"] == 0 else "(รอ rate)")                
+      484          print(f"         {r['threshold']:<6} {r['n']:<8} {p:<1
+           1} {len(r['empty'])}")
+      485      best = best_point(table)
+      486      if best:
+
+  Thought for 9s, ran 1 shell command (ctrl+o to expand)
+
+● ครบแล้ว — อัปเดต plan และ commit Task 9:
+
+● Update(tasks/plan.md)
+  ⎿  Added 6 lines, removed 6 lines
+      126  
+      127    **Dependencies:** Tasks 4–7 · **Files:** `scripts/bakeoff.py
+           ` · **Scope:** M
+      128  
+      129 -- [ ] **Task 9: เขียน report** — `report/bakeoff-r2-results.md`
+          - (ตาราง Step 4: triples | ms/ประโยค | precision ~ | noise, swe
+          -ep + best, แผนที่ 2 มิติ precision × ms, แตกผลตาม category) + `rep
+          -ort/distinct-relations.md` (distinct relation count/model) — ส
+          -ร้างโดย script ตอนรัน                                           
+      129 +- [x] **Task 9: เขียน report** — `report/bakeoff-r2-results.md`
+          + (ตาราง Step 4: triples | ms/ประโยค | precision ~ | noise, swe
+          +ep + best, แผนที่ 2 มิติ precision × ms, แตกผลตาม category) + `rep
+          +ort/distinct-relations.md` (distinct relation count/model) — ส
+          +ร้างโดย script ตอนรัน                                           
+      130  
+      131    **Acceptance criteria:**
+      132 -  - [ ] ทั้ง 2 ไฟล์ถูกสร้าง/เขียนทับโดย `uv run bakeoff`             
+      133 -  - [ ] report แตกผลตาม category ได้ (ไม่รวมก้อนเดียว)            
+      134 -  - [ ] ms/ประโยค = ค่าหลัง warm-up                             
+      132 +  - [x] ทั้ง 2 ไฟล์ถูกสร้าง/เขียนทับโดย `uv run bakeoff`             
+      133 +  - [x] report แตกผลตาม category ได้ (ไม่รวมก้อนเดียว) *(ต่อ model:
+          + ตาราง 7 category @ จุด best — triples + ประโยคว่าง/รวม)*       
+      134 +  - [x] ms/ประโยค = ค่าหลัง warm-up                             
+      135  
+      136    **Verification:**
+      137 -  - [ ] `uv run bakeoff` ครบ 5 model → เปิด report ตรวจด้วยตาตาม
+          - `docs/bakeoff-evaluation-steps.md` Step 3                    
+      138 -  - [ ] distinct relation count ≥1 ทุก model (ReLiK ปิด schema ย
+          -กเว้น รูปแบบบันทึกข้อมูล)                                           
+      137 +  - [x] `uv run bakeoff` ครบ 5 model → เปิด report ตรวจด้วยตาตาม
+          + `docs/bakeoff-evaluation-steps.md` Step 3 *(rate ทุก unique tr
+          +iple ครั้งเดียว (575 อัน) ใส่ลง report/raw/*.json แล้ว precision@thr
+          +eshold คำนวณจากการ slice — ตรวจตัวเลขใน report แล้ว)*           
+      138 +  - [x] distinct relation count ≥1 ทุก model (ReLiK ปิด schema ย
+          +กเว้น รูปแบบบันทึกข้อมูล) *(relex 10 · glirel 8 · pyrheads 10 · reli
+          +k 24 (native NYT) · nuextract 17)*                            
+      139  
+      140    **Dependencies:** Task 8 · **Files:** `scripts/bakeoff.py`, 
+           `report/*.md` (generated) · **Scope:** M
+      141  
+
+● Update(tasks/plan.md)
+  ⎿  Added 3 lines, removed 3 lines
+      140    **Dependencies:** Task 8 · **Files:** `scripts/bakeoff.py`, 
+           `report/*.md` (generated) · **Scope:** M
+      141  
+      142  ### Checkpoint: Complete
+      143 -- [ ] Success criteria 1–5 ของ spec ครบ                       
+      144 -- [ ] ตรวจตัวเลขด้วยตา (Step 3) แล้ว                             
+      145 -- [ ] ไม่มีไฟล์ใหม่หลุดออกนอก `bake-off/`                          
+      143 +- [x] Success criteria 1–5 ของ spec ครบ *(1: 5 ตัวให้ตารางครบ (R
+          +eLiK = ข้อมูลปิด schema) · 2: sweep จาก raw scores เดียว rate ครั้งเ
+          +ดียว · 3: แผนที่ 2 มิติ + distinct-relations อยู่ใน report/ ครบ · 4: 
+          +ทุกประโยคมี category และ report แตกตาม category · 5: ms หลัง warm
+          +-up, GPU เดียว, VRAM peak สูงสุด 4.39 GiB < 6)*                  
+      144 +- [x] ตรวจตัวเลขด้วยตา (Step 3) แล้ว *(precision ~0.88/0.14/0.53/
+          +0.00/0.55+ ตามลำดับ model — ตัวเลขไปทางเดียวกับ score scale จาก sm
+          +oke ไม่มีอะไรผิดปกติ; จุด best ของ nuextract (th 0.98, 2 triples) เ
+          +ป็นจุด degenerate กำกับไว้ในรายงานให้ human แล้ว)*                  
+      145 +- [x] ไม่มีไฟล์ใหม่หลุดออกนอก `bake-off/` *(transcript 2 ไฟล์จาก ses
+          +sion ก่อน ย้ายเข้า bake-off/ ตามที่ human อนุมัติ คง untracked)*      
+      146  
+      147  ## Parallelization
+      148  
+
+  Thought for 9s, ran 1 shell command (ctrl+o to expand)
+
+● เสร็จครบทั้งแผน — Task 8–9 จบ, Checkpoint: Complete ผ่านทุกข้อ
+
+  สรุป /build auto (Task 8–9)
+
+  Task 8 — threshold sweep (rate-once-slice-many) 82d4569
+  - inference ครั้งเดียว/model แล้ว cache ลง report/raw/<model>.json — รันซ้ำข้าม
+    inference ทันที
+  - sweep ต่อ model ตาม score scale จาก smoke (3–4 จุด), dedupe ก่อนนับ (เช่น relex
+    233→232 unique)
+  - best = precision สูงสุดก่อน recall จะทลาย (Step 6), เสมอกันเอา triple มากสุด
+  - test: scripts/test_sweep.py (7 ตัว, plain assert — TDD เจอบั๊กจริง 2 จุดตอน RED)
+
+  Task 9 — report db7a5d2
+  - rate ทุก unique triple ครั้งเดียว (575 อัน, 5 agent ขนาน) → correct: true/false
+    ใน raw JSON → rerun slice ได้ precision ทุก threshold
+  - report/bakeoff-r2-results.md: แผนที่ 2 มิติ + sweep + best + แตก 7 category ต่อ
+    model
+  - report/distinct-relations.md: relex 10 · glirel 8 · pyrheads 10 · relik 24
+    (NYT) · nuextract 17
+
+  แผนที่ (precision best-of-sweep × ms/ประโยค):
+
+  ┌─────────────────┬─────────────────────────────────┬───────────┬─────────┐
+  │      model      │           precision ~           │ ms/ประโยค │  VRAM   │
+  ├─────────────────┼─────────────────────────────────┼───────────┼─────────┤
+  │ gliner-relex    │ ~0.88 @ th 0.9                  │ 15.5      │ 1.29    │
+  │                 │                                 │           │ GiB     │
+  ├─────────────────┼─────────────────────────────────┼───────────┼─────────┤
+  │ glirel          │ ~0.14                           │ 31.2      │ 3.32    │
+  │                 │                                 │           │ GiB     │
+  ├─────────────────┼─────────────────────────────────┼───────────┼─────────┤
+  │ gliner-pyrheads │ ~0.53                           │ 46.7      │ 2.09    │
+  │                 │                                 │           │ GiB     │
+  ├─────────────────┼─────────────────────────────────┼───────────┼─────────┤
+  │ relik           │ ~0.00 (self-loop ล้วน)           │ 151.0     │ 1.79    │
+  │                 │                                 │           │ GiB     │
+  ├─────────────────┼─────────────────────────────────┼───────────┼─────────┤
+  │ nuextract       │ ~0.55–0.63 (จุดที่ recall          │ 976.6     │ 4.39    │
+  │                 │ ยังไม่ทลาย)                       │           │ GiB     │
+  └─────────────────┴─────────────────────────────────┴───────────┴─────────┘
+
+  สิ่งที่ควรรู้ / ข้อสังเกต:
+  - nuextract best th 0.98 เป็นจุด degenerate (precision ~1.00 แต่เหลือ 2 triples,
+    ว่าง 26/28) — มาตรา best เลือกมาซื่อสัญญาตามกติกา ตัวเลขช่วง 0.85–0.94 ใน report
+    สมเหตุสมผลกว่าสำหรับอ่านแผนที่
+  - relik ให้ self-loop ทั้ง 33 (RLHF — company location — RLHF) — ยืนยันข้อมูล "ปิด
+    schema + ใช้ไม่ได้บนชุดนี้"
+  - transcript 2 ไฟล์จาก session ก่อน ย้ายเข้า bake-off/ แล้ว คง untracked ตามที่อนุมัติ —
+    working tree ไม่มีอะไรค้าง
+  - ไม่มีขั้นตอนที่ถูกข้าม — ทุก commit ผ่าน test ครบ (ไม่มี build แยก, script ไม่มี build
+    step)
+
+✻ Worked for 20m 32s · done 21:27
+
+❯ จากรายชื่อโมเดลที่ทดสอบมา โมเดลไหนแม่นยำที่สุด เรียงลำดับ และโมเดลไหนเหมาะสมหรับ         
+  production ที่สุด ?                                                              
