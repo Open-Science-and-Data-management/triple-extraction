@@ -6,13 +6,14 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-# field enum — ตอนนี้มี text เดียว (spec: PDF/table รองรับภายหลังโดยไม่ breaking)
-KnownField = Literal["text"]
+# field enum — output ของ PaddleOCR ครบ 6 field; GLiNER extract เฉพาะ 3 แรก ที่เหลือ pass-through
+KnownField = Literal["text", "table", "figure_caption", "latex", "image", "section"]
 
 
 class Document(BaseModel):
     field: KnownField
     content: str = Field(min_length=1)
+    section: str | None = None
 
 
 class CreateJobRequest(BaseModel):
@@ -54,6 +55,7 @@ class JobStatusResponse(BaseModel):
 class TripleOut(BaseModel):
     source_file: int
     field: str
+    section: str | None = None
     sentence: str
     head: str
     head_type: str

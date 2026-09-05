@@ -23,7 +23,19 @@ def test_accepts_valid_body():
 
 def test_rejects_unknown_field():
     with pytest.raises(ValidationError):
-        CreateJobRequest.model_validate(body(documents=[{"field": "table", "content": "x"}]))
+        CreateJobRequest.model_validate(body(documents=[{"field": "code", "content": "x"}]))
+
+
+def test_accepts_all_six_fields():
+    for field in ("text", "table", "figure_caption", "latex", "image", "section"):
+        req = CreateJobRequest.model_validate(body(documents=[{"field": field, "content": "x"}]))
+        assert req.documents[0].field == field
+
+
+def test_section_defaults_to_none():
+    req = CreateJobRequest.model_validate(body(documents=[{"field": "text", "content": "x", "section": "3.2 Results"}]))
+    assert req.documents[0].section == "3.2 Results"
+    assert CreateJobRequest.model_validate(body()).documents[0].section is None
 
 
 def test_rejects_empty_content():
