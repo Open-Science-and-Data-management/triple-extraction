@@ -1,0 +1,48 @@
+[project]
+name = "extraction-api"
+version = "0.1.0"
+description = "Async extraction API — GLiNER-Relex rate-once slice-many"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "torch",
+    # pins ชุดเดียวกับ bake-off group gliner (memory glirel-setup)
+    "gliner",
+    "transformers==4.52.4",
+    "huggingface-hub<1.0",
+    "loguru",
+    "sentencepiece",
+    "protobuf",
+    "tiktoken",
+    "pysbd",
+    "fastapi",
+    "uvicorn",
+    "pydantic-settings",
+    "httpx",
+]
+
+[dependency-groups]
+dev = ["pytest", "ruff"]
+
+# torch cu128 wheel — รองรับ sm_89 + driver CUDA 13.3 (เหมือน bake-off)
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+markers = ["gpu: แตะ model/GPU จริง — รันด้วย -m gpu"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/extraction_api"]
