@@ -34,6 +34,7 @@ torch = { index = "pytorch-cu128" }
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+addopts = ['-m not gpu']  # default ไม่แตะ GPU — -m gpu ที่ CLI ทับค่านี้เสมอ
 markers = ["gpu: แตะ model/GPU จริง — รันด้วย -m gpu"]
 
 [tool.ruff]
