@@ -83,4 +83,4 @@ POST /jobs ตอนนี้รับได้แค่ `field="text"` (schemas
 | pysbd segment แถวตารางแปลก ๆ | Low | table ไม่ผ่าน split_sentences เลย — 1 cell-join/แถว |
 
 ## Open Questions (ตัดสินหลัง Task 5 ไม่บล็อกงาน)
-- Prefix ชื่อ column ตอน strip ตารางไหม — รอตัวเลขจาก GPU test แล้วถามผู้ใช้
+- ~~Prefix ชื่อ column ตอน strip ตารางไหม~~ — **ตัดสินแล้ว (2026-09-05): คงแถวล้วน** GPU test พบ prefix ได้จำนวน 2 เท่า (215 vs 111) แต่ noisy — ชื่อ column กลายเป็น entity ปลอม (`--achieves metric--> precision`) และ head ติด prefix (`"model gliner-relex"`) → ไม่ prefix, ไม่แก้ `_strip_table_rows`
